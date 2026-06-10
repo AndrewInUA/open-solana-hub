@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Light overview of the Solana ecosystem – validators, staking, apps, and where to learn more." />
+  <title>Ecosystem – Open Solana Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Outfit:wght@350;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./assets/logo.png" type="image/jpeg" />
+  <script src="./site.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+          <img src="./assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Learn before you stake</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./index.html">Home</a>
+        <a href="./basics.html">Basics</a>
+        <a href="./stay-safe.html">Stay safe</a>
+        <a href="./first-steps.html">First steps</a>
+        <a href="./ecosystem.html" class="active">Ecosystem</a>
+        <a href="./compare/">Compare</a>
+        <a href="./about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Toggle theme">☀</button>
+        <a class="btn btn-primary" href="./compare/">Compare validators</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>The Solana ecosystem (light map)</h1>
+    <p class="prose-lead">Enough context to orient yourself – not a full catalog. Go deeper on topics you care about.</p>
+
+    <h2>Validators and staking</h2>
+    <p>
+      Validators run software that helps Solana reach agreement on transactions. When you stake, you delegate SOL to a validator
+      you trust; they earn voting credits, and you may receive a share of inflation rewards minus their commission.
+    </p>
+    <ul>
+      <li><strong style="color:var(--heading)">Native staking</strong> – delegate from your wallet to a vote account.</li>
+      <li><strong style="color:var(--heading)">Liquid staking / pools</strong> – stake through a pool (Marinade, Jito, etc.); the pool picks validators.</li>
+      <li><strong style="color:var(--heading)">Compare before you delegate</strong> – use the <a href="./compare/">Transparency Dashboard</a> for open metrics.</li>
+    </ul>
+
+    <h2>Apps and tokens</h2>
+    <p>
+      Thousands of apps live on Solana – payments, games, marketplaces, DeFi. Most require a wallet connection.
+      Tokens are assets on the network; some represent projects, some are memes, some are useful. Not all are investments.
+    </p>
+
+    <h2>NFTs and digital ownership</h2>
+    <p>
+      NFTs are unique on-chain records – often used for art, memberships, or game items. Ownership is verifiable;
+      value is social and market-driven, not guaranteed.
+    </p>
+
+    <h2>Where to learn more (official-ish)</h2>
+    <ul>
+      <li><a href="https://solana.com/docs" target="_blank" rel="noopener">Solana documentation</a></li>
+      <li><a href="https://solana.com/docs/intro/quick-start" target="_blank" rel="noopener">Solana quick start (Playground)</a></li>
+      <li><a href="https://github.com/AndrewInUA/solana-validator-resources" target="_blank" rel="noopener">Validator resources on GitHub</a> – guides and assets</li>
+    </ul>
+
+    <blockquote>
+      The ecosystem is large. You do not need to understand all of it to use a wallet, compare validators, or stake thoughtfully.
+    </blockquote>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="./about.html">About this guide</a>
+      <a class="btn btn-ghost" href="./first-steps.html">Back to first steps</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+        <img src="./assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Built by AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="./compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
+    </div>
+    <p class="footer-note">Education only – not financial advice.</p>
+  </footer>
+</body>
+</html>
