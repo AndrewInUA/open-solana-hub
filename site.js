@@ -6,16 +6,23 @@
     "open-solana-hub.vercel.app",
   ];
 
+  function isHubThemePage() {
+    var btn = document.getElementById("theme-toggle");
+    return !!(btn && btn.classList.contains("theme-btn"));
+  }
+
   function applyTheme(t) {
     document.documentElement.setAttribute("data-theme", t);
     try {
       localStorage.setItem(KEY, t);
     } catch (e) {}
+    if (!isHubThemePage()) return;
     var btn = document.getElementById("theme-toggle");
     if (btn) btn.textContent = t === "dark" ? "☀" : "☾";
   }
 
   function initTheme() {
+    if (!isHubThemePage()) return;
     var t = "dark";
     try {
       var saved = localStorage.getItem(KEY);
@@ -119,15 +126,16 @@
   );
 
   document.addEventListener("DOMContentLoaded", function () {
-    initTheme();
-    initLinkTargets();
-
-    var btn = document.getElementById("theme-toggle");
-    if (btn) {
-      btn.addEventListener("click", function () {
-        var cur = document.documentElement.getAttribute("data-theme") || "dark";
-        applyTheme(cur === "dark" ? "light" : "dark");
-      });
+    if (isHubThemePage()) {
+      initTheme();
+      var btn = document.getElementById("theme-toggle");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          var cur = document.documentElement.getAttribute("data-theme") || "dark";
+          applyTheme(cur === "dark" ? "light" : "dark");
+        });
+      }
     }
+    initLinkTargets();
   });
 })();
