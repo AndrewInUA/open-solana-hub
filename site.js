@@ -1,5 +1,10 @@
 (function () {
   var KEY = "osg-theme";
+  var SITE_HOSTS = [
+    "opensolanahub.com",
+    "www.opensolanahub.com",
+    "open-solana-hub.vercel.app",
+  ];
 
   function applyTheme(t) {
     document.documentElement.setAttribute("data-theme", t);
@@ -20,28 +25,26 @@
     applyTheme(t);
   }
 
-  var INTERNAL_HOSTS = [
-    "opensolanahub.com",
-    "www.opensolanahub.com",
-    "open-solana-hub.vercel.app",
-  ];
+  function isInternalLink(href) {
+    if (!href || href === "#" || href.charAt(0) === "#") return true;
+    if (/^(mailto:|tel:|javascript:)/i.test(href)) return true;
+    if (href.indexOf("//") === 0) return false;
+    if (!/^https?:/i.test(href)) return true;
 
-  function isExternalLink(href) {
-    if (!href || href === "#" || href.charAt(0) === "#") return false;
-    if (/^(mailto:|tel:|javascript:)/i.test(href)) return false;
-    if (href.indexOf("//") === 0) return true;
-
-    if (/^https?:/i.test(href)) {
-      try {
-        var host = new URL(href, window.location.href).hostname.toLowerCase();
-        if (host === window.location.hostname.toLowerCase()) return false;
-        return INTERNAL_HOSTS.indexOf(host) === -1;
-      } catch (e) {
-        return false;
-      }
+    try {
+      var host = new URL(href, window.location.href).hostname.toLowerCase();
+      if (host === window.location.hostname.toLowerCase()) return true;
+      return SITE_HOSTS.indexOf(host) !== -1;
+    } catch (e) {
+      return true;
     }
+  }
 
-    return false;
+  function setExternalRel(link) {
+    var rel = (link.getAttribute("rel") || "").split(/\s+/).filter(Boolean);
+    if (rel.indexOf("noopener") === -1) rel.push("noopener");
+    if (rel.indexOf("noreferrer") === -1) rel.push("noreferrer");
+    link.setAttribute("rel", rel.join(" "));
   }
 
   function applyLinkTarget(link) {
@@ -50,20 +53,16 @@
     if (!href || href === "#") return;
     if (link.hasAttribute("download")) return;
 
-    if (!isExternalLink(href)) {
+    if (isInternalLink(href)) {
       if (link.getAttribute("target") === "_blank") link.removeAttribute("target");
       return;
     }
 
     link.setAttribute("target", "_blank");
-
-    var rel = (link.getAttribute("rel") || "").split(/\s+/).filter(Boolean);
-    if (rel.indexOf("noopener") === -1) rel.push("noopener");
-    if (rel.indexOf("noreferrer") === -1) rel.push("noreferrer");
-    link.setAttribute("rel", rel.join(" "));
+    setExternalRel(link);
   }
 
-  function initExternalLinksInNewTab() {
+  function initLinkTargets() {
     document.querySelectorAll("a[href]").forEach(applyLinkTarget);
 
     if (!window.MutationObserver || !document.body) return;
@@ -90,9 +89,38 @@
     });
   }
 
+  document.addEventListener(
+    "click",
+    function (e) {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      var link = e.target.closest("a[href]");
+      if (!link || link.dataset.newTab === "off") return;
+
+      var href = (link.getAttribute("href") || "").trim();
+      if (!href || href === "#" || href.charAt(0) === "#") return;
+      if (link.hasAttribute("download")) return;
+
+      if (isInternalLink(href)) {
+        if (link.getAttribute("target") === "_blank") {
+          e.preventDefault();
+          window.location.assign(link.href);
+        }
+        return;
+      }
+
+      if (link.getAttribute("target") !== "_blank") {
+        e.preventDefault();
+        window.open(link.href, "_blank", "noopener,noreferrer");
+      }
+    },
+    true
+  );
+
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
-    initExternalLinksInNewTab();
+    initLinkTargets();
 
     var btn = document.getElementById("theme-toggle");
     if (btn) {
