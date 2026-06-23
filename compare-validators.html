@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="How to compare Solana validators using open metrics: commission history, stability scores, voting consistency, and stake pool data – before you delegate." />
+  <title>How to Compare Solana Validators | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/compare-validators.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="How to Compare Solana Validators" />
+  <meta property="og:description" content="Open metrics to compare Solana validators: commission, stability, voting, and pools – not just APY." />
+  <meta property="og:url" content="https://www.opensolanahub.com/compare-validators.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="How to Compare Solana Validators" />
+  <meta name="twitter:description" content="Commission, stability, voting – how to compare Solana validators with open data before delegating." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Compare Solana Validators",
+    "description": "How to compare Solana validators using open transparency metrics before delegating.",
+    "url": "https://www.opensolanahub.com/compare-validators.html",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What should I check before delegating to a Solana validator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Look at commission (current and history), long-term stability, live voting status, and how much stake comes from known pools versus direct delegations. APY alone is not enough."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the Validator Transparency Dashboard different from APY ranking sites?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It focuses on transparency: all-time stability from daily snapshots, commission risk, voting consistency, and pool stake splits – not a single headline yield number."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I compare two Solana validators side by side?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. On the Validator Transparency Dashboard you can open any validator and use the on-page compare tool to put a second validator next to it on the same metrics."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./assets/logo.png" type="image/jpeg" />
+  <script src="./site.js?v=4" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+          <img src="./assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Learn before you stake</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./index.html">Home</a>
+        <a href="./basics.html">Basics</a>
+        <a href="./stay-safe.html">Stay safe</a>
+        <a href="./first-steps.html">First steps</a>
+        <a href="./ecosystem.html">Ecosystem</a>
+        <a href="./compare/">Compare</a>
+        <a href="./about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Toggle theme">☀</button>
+        <a class="btn btn-primary" href="./compare/">Compare validators</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>How to compare Solana validators</h1>
+    <p class="prose-lead">
+      Delegating SOL is a trust decision. This guide explains what to look at beyond a headline APY –
+      and how the <a href="./compare/">Validator Transparency Dashboard</a> helps you compare any mainnet validator with open data.
+    </p>
+
+    <h2>Why APY alone is not enough</h2>
+    <p>
+      Yield changes with network conditions. A validator can also raise <strong>commission</strong> (their fee on your rewards),
+      miss votes when the network is under load, or look fine today but show a weak long-term record.
+      If you only sort by APY, you optimize for a number – not for behaviour over time.
+    </p>
+    <p>
+      New to Solana? Start with <a href="./basics.html">what Solana and SOL are</a> and
+      <a href="./stay-safe.html">how to stay safe</a> before you delegate anything meaningful.
+    </p>
+
+    <h2>Metrics that matter for transparency</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Commission</strong> – current fee and whether it changed in the past. A jump to 100% can wipe out your rewards.</li>
+      <li><strong style="color:var(--heading)">Stability score</strong> – long-term consistency from daily full-network snapshots tracked in the dashboard.</li>
+      <li><strong style="color:var(--heading)">Live voting status</strong> – is the validator healthy right now or delinquent?</li>
+      <li><strong style="color:var(--heading)">Stake pool split</strong> – how much stake arrives via known pools versus direct wallet delegations (Trillium data).</li>
+      <li><strong style="color:var(--heading)">APY context</strong> – useful when read next to commission and stability, not as the only filter.</li>
+    </ul>
+
+    <h2>Three ways to use the dashboard</h2>
+    <ol>
+      <li><strong style="color:var(--heading)">Browse the directory</strong> – search by name or vote key, sort by stake, open any validator profile.</li>
+      <li><strong style="color:var(--heading)">Deep dive on one validator</strong> – read stability, commission history, epoch voting, and pool badges on a single page.</li>
+      <li><strong style="color:var(--heading)">Compare two validators</strong> – use the on-page A vs B tool when you have narrowed your shortlist.</li>
+    </ol>
+
+    <h2>A simple workflow</h2>
+    <ol>
+      <li>Read <a href="./first-steps.html">first practical steps</a> if you still need a wallet or a small test transfer.</li>
+      <li>Open the <a href="./compare/index.html#directory-section">validator directory</a> and pick a few names you have heard of – or search by vote key.</li>
+      <li>Check commission and stability on each profile; note anything that looks inconsistent.</li>
+      <li>If two validators look close, run a side-by-side compare on the same page.</li>
+      <li>Delegate in your wallet only when you are comfortable – this guide does not recommend a specific validator.</li>
+    </ol>
+
+    <blockquote>
+      The Hub’s learning pages explain <em>why</em> staking exists; the dashboard shows <em>open data</em> so you can compare before you act.
+      For a wider map of pools and rewards, see the <a href="./ecosystem.html">staking &amp; ecosystem overview</a>.
+    </blockquote>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="./compare/index.html#directory-section">Open validator directory</a>
+      <a class="btn btn-ghost" href="./first-steps.html">First steps guide</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+        <img src="./assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Built by AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="./compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
+    </div>
+    <p class="footer-note">Education only – not financial advice.</p>
+  </footer>
+</body>
+</html>
