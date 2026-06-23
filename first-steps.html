@@ -28,6 +28,38 @@
     "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I stake SOL as a beginner?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Install a reputable wallet (Phantom, Solflare, or Backpack), fund it with a small amount of SOL, send a test transaction, compare validators on open metrics, then delegate to a validator from your wallet when you are ready. Staking is optional and your SOL stays in your wallet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is staking SOL safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "When you stake natively, your SOL stays in your own wallet – you delegate, you do not send it away. The main risks are choosing a poor validator (high or rising commission, downtime) and scams. Compare validators first and never share your seed phrase."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I unstake SOL later?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can undelegate (unstake) at any time, but there is a cooldown period of roughly one epoch before the SOL becomes fully liquid again. You stay in control of your wallet throughout."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -118,6 +150,24 @@
       <li><strong style="color:var(--heading)">Live status</strong> – healthy vs delinquent right now.</li>
       <li><strong style="color:var(--heading)">Pool stake split</strong> – who delegates through known pools (Trillium data).</li>
     </ul>
+
+    <h2>Frequently asked questions</h2>
+    <h3>How do I stake SOL as a beginner?</h3>
+    <p>
+      Install a wallet, fund it with a small amount, send a test transaction,
+      <a href="./compare-validators.html">compare validators</a> on open metrics, then delegate from your
+      wallet when you are ready. Your SOL stays in your wallet.
+    </p>
+    <h3>Is staking SOL safe?</h3>
+    <p>
+      Native staking keeps your SOL in your own wallet – you delegate, you do not send it away. The main risks
+      are picking a poor validator and scams. <a href="./stay-safe.html">Stay safe</a> and compare before you choose.
+    </p>
+    <h3>Can I unstake SOL later?</h3>
+    <p>
+      Yes. You can undelegate at any time, with a cooldown of roughly one epoch before the SOL is fully liquid
+      again. You stay in control of your wallet throughout.
+    </p>
 
     <div class="path-row">
       <a class="btn btn-primary" href="./ecosystem.html">Next: ecosystem overview</a>
