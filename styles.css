@@ -154,6 +154,9 @@ a:hover { color: var(--link-hover); }
   flex-wrap: wrap;
   gap: 2px 20px;
   align-items: center;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
 }
 
 .site-nav a {
@@ -181,6 +184,8 @@ a:hover { color: var(--link-hover); }
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .btn {
@@ -638,8 +643,8 @@ html[data-theme="light"] .btn-primary {
     width: 100%;
     order: 3;
     gap: 4px 16px;
+    justify-content: flex-start;
   }
-  .header-actions { margin-left: auto; }
   .topic-item {
     grid-template-columns: 1fr;
   }

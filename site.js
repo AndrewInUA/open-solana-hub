@@ -34,11 +34,14 @@
 
   function isDashboardLink(href) {
     if (!href || href === "#") return false;
+    if (/compare-validators\.html/i.test(href)) return false;
     if (/^\.\.?\/compare(\/|\.|$|\?|#)/i.test(href) || /^\/compare(\/|\.|$|\?|#)/i.test(href)) {
       return true;
     }
     try {
-      return new URL(href, window.location.href).pathname.toLowerCase().indexOf("/compare") !== -1;
+      var pathname = new URL(href, window.location.href).pathname.toLowerCase();
+      if (/\/compare-validators\.html$/i.test(pathname)) return false;
+      return /\/compare(\/|$)/i.test(pathname);
     } catch (e) {
       return false;
     }
