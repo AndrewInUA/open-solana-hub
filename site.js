@@ -32,6 +32,18 @@
     applyTheme(t);
   }
 
+  function isDashboardLink(href) {
+    if (!href || href === "#") return false;
+    if (/^\.\.?\/compare(\/|\.|$|\?|#)/i.test(href) || /^\/compare(\/|\.|$|\?|#)/i.test(href)) {
+      return true;
+    }
+    try {
+      return new URL(href, window.location.href).pathname.toLowerCase().indexOf("/compare") !== -1;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function isInternalLink(href) {
     if (!href || href === "#" || href.charAt(0) === "#") return true;
     if (/^(mailto:|tel:|javascript:)/i.test(href)) return true;
@@ -59,6 +71,12 @@
     var href = (link.getAttribute("href") || "").trim();
     if (!href || href === "#") return;
     if (link.hasAttribute("download")) return;
+
+    if (isDashboardLink(href)) {
+      link.setAttribute("target", "_blank");
+      setExternalRel(link);
+      return;
+    }
 
     if (isInternalLink(href)) {
       if (link.getAttribute("target") === "_blank") link.removeAttribute("target");
@@ -108,6 +126,14 @@
       var href = (link.getAttribute("href") || "").trim();
       if (!href || href === "#" || href.charAt(0) === "#") return;
       if (link.hasAttribute("download")) return;
+
+      if (isDashboardLink(href)) {
+        if (link.getAttribute("target") !== "_blank") {
+          e.preventDefault();
+          window.open(link.href, "_blank", "noopener,noreferrer");
+        }
+        return;
+      }
 
       if (isInternalLink(href)) {
         if (link.getAttribute("target") === "_blank") {
