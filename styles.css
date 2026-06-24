@@ -188,6 +188,38 @@ a:hover { color: var(--link-hover); }
   margin-left: auto;
 }
 
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.lang-switch a {
+  color: var(--text3);
+  text-decoration: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.lang-switch a:hover {
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.lang-switch a.active {
+  color: var(--heading);
+  background: color-mix(in srgb, var(--heading) 8%, transparent);
+}
+
+.lang-sep {
+  color: var(--text3);
+  font-size: 11px;
+  user-select: none;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

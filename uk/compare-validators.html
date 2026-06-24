@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Як обрати і порівняти валідаторів Solana на відкритих метриках: історія комісії, stability score, голосування та дані stake pool – перед делегуванням, не лише APY." />
+  <title>Як обрати і порівняти валідаторів Solana | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/uk/compare-validators.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/compare-validators.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/compare-validators.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/compare-validators.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="uk_UA" />
+  <meta property="og:title" content="Як обрати і порівняти валідаторів Solana" />
+  <meta property="og:description" content="Як обрати валідатора Solana на відкритих метриках: комісія, стабільність, голосування та пули – не лише APY." />
+  <meta property="og:url" content="https://www.opensolanahub.com/uk/compare-validators.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Як обрати і порівняти валідаторів Solana" />
+  <meta name="twitter:description" content="Як обрати валідатора Solana: комісія, стабільність, голосування – порівняйте на відкритих даних перед делегуванням." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Як обрати і порівняти валідаторів Solana",
+    "description": "Як обрати і порівняти валідаторів Solana на відкритих метриках прозорості перед делегуванням.",
+    "url": "https://www.opensolanahub.com/uk/compare-validators.html",
+    "inLanguage": "uk",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/uk/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Як обрати валідатора Solana?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Оберіть валідатора, перевіряючи комісію та її історію, довгострокову стабільність, поточний статус голосування та частку стейку з пулів проти прямих делегацій – не лише APY. Порівняйте короткий список на одних метриках, потім делегуйте з гаманця, коли будете впевнені."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Що перевірити перед делегуванням до валідатора Solana?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Комісію (поточну та історію), довгострокову стабільність, поточний статус голосування та частку стейку з відомих пулів проти прямих делегацій. APY сам по себе недостатній."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Чим Validator Transparency Dashboard відрізняється від сайтів з APY?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Фокус на прозорості: all-time stability із денних знімків, ризик комісії, стабільність голосування та частка стейку з пулів – а не одна headline-число yield."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Можу я порівняти два валідатори Solana поруч?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Так. На Validator Transparency Dashboard відкрийте будь-який валідатор і використайте вбудований інструмент порівняння, щоб поставити другий валідатор поруч на тих самих метриках."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="../assets/logo.png" type="image/jpeg" />
+  <script src="../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA – andrewinua.com">
+          <img src="../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Спочатку навчіться</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Головне">
+        <a href="./index.html">Головна</a>
+        <a href="./basics.html">Основи</a>
+        <a href="./stay-safe.html">Безпека</a>
+        <a href="./first-steps.html">Перші кроки</a>
+        <a href="./ecosystem.html">Екосистема</a>
+        <a href="./compare-validators.html" class="active">Порівняння</a>
+        <a href="./about.html">Про нас</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Мова">
+          <a href="../compare-validators.html" lang="en" hreflang="en">EN</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./compare-validators.html" class="active" lang="uk" hreflang="uk">UA</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
+        <a class="btn btn-primary" href="../compare/">Відкрити панель</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>Як обрати і порівняти валідаторів Solana</h1>
+    <p class="prose-lead">
+      Делегування SOL – це вибір, кому довіряти. Цей гайд пояснює, як обрати валідатора Solana – на що дивитися
+      поза headline APY, і як <a href="../compare/">Validator Transparency Dashboard</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span> допомагає
+      порівняти будь-який mainnet-валідатор на відкритих даних.
+    </p>
+
+    <h2>Чому APY сам по себе недостатній</h2>
+    <p>
+      Yield змінюється з умовами мережі. Валідатор може підняти <strong>комісію</strong> (свою частку з ваших винагород),
+      пропустити голоси під нагрузкою мережі або виглядати добре сьогодні, але мати слабку довгострокову історію.
+      Якщо сортувати лише по APY, ви оптимізуєте число – а не поведінку в часі.
+    </p>
+    <p>
+      Новачок у Solana? Почніть з <a href="./basics.html">пояснення Solana та SOL</a> і
+      <a href="./stay-safe.html">безпеки</a>, перш ніж делегувати значну суму.
+    </p>
+
+    <h2>Метрики, що важливі для прозорості</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Commission</strong> – поточна комісія та зміни в минулому. Скачок до 100% може знищити ваші винагороди.</li>
+      <li><strong style="color:var(--heading)">Stability score</strong> – довгострокова стабільність із денних знімків усієї мережі на панелі.</li>
+      <li><strong style="color:var(--heading)">Live voting status</strong> – валідатор здоровий прямо зараз або delinquent?</li>
+      <li><strong style="color:var(--heading)">Stake pool split</strong> – частка стейку через відомі пули проти прямих делегацій з гаманця (дані Trillium).</li>
+      <li><strong style="color:var(--heading)">APY context</strong> – корисний поруч із комісією та стабільністю, а не як єдиний фільтр.</li>
+    </ul>
+
+    <h2>Три способи використати панель</h2>
+    <ol>
+      <li><strong style="color:var(--heading)">Каталог</strong> – пошук по назві або vote key, сортування по стейку, відкриття профілю валідатора.</li>
+      <li><strong style="color:var(--heading)">Глибокий профіль</strong> – stability, історія комісії, голосування по епохах і бейджі пулів на одній сторінці.</li>
+      <li><strong style="color:var(--heading)">Порівняння двох валідаторів</strong> – вбудований інструмент A vs B, коли короткий список уже сформований.</li>
+    </ol>
+
+    <h2>Простий workflow</h2>
+    <ol>
+      <li>Прочитайте <a href="./first-steps.html">перші практичні кроки</a>, якщо ще потрібен гаманець або тестовий переказ.</li>
+      <li>Відкрийте <a href="../compare/index.html#directory-section">каталог валідаторів</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span> і оберіть кілька назв, які чули – або пошук по vote key.</li>
+      <li>Перевірте комісію та stability на кожному профілі; зауважте все, що виглядає непослідовно.</li>
+      <li>Якщо два валідатори близькі – запустіть side-by-side compare на тій самій сторінці.</li>
+      <li>Делегуйте в гаманці лише коли впевнені – цей гайд не рекомендує конкретного валідатора.</li>
+    </ol>
+
+    <h2>Часті запитання</h2>
+    <h3>Як обрати валідатора Solana?</h3>
+    <p>
+      Оберіть валідатора, перевіряючи комісію та її історію, довгострокову стабільність, поточний статус голосування та
+      частку стейку з пулів проти прямих делегацій – не лише APY. Порівняйте короткий список на одних метриках, потім делегуйте
+      з гаманця, коли будете впевнені.
+    </p>
+    <h3>Що перевірити перед делегуванням до валідатора Solana?</h3>
+    <p>
+      Комісію (поточну та історію), довгострокову стабільність, поточний статус голосування та частку стейку з
+      відомих пулів проти прямих делегацій. APY сам по себі недостатній.
+    </p>
+    <h3>Чим Validator Transparency Dashboard відрізняється від сайтів з APY?</h3>
+    <p>
+      Фокус на прозорості: all-time stability із денних знімків, ризик комісії, стабільність голосування та
+      частка стейку з пулів – а не одна headline-число yield.
+    </p>
+    <h3>Можу я порівняти два валідатори Solana поруч?</h3>
+    <p>
+      Так. На <a href="../compare/">Validator Transparency Dashboard</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span> відкрийте будь-який валідатор і використайте
+      вбудований інструмент порівняння, щоб поставити другий валідатор поруч на тих самих метриках.
+    </p>
+
+    <blockquote>
+      Навчальні сторінки Hub пояснюють, <em>чому</em> існує стейкінг; панель показує <em>відкриті дані</em>, щоб порівняти перед дією.
+      Ширший огляд пулів і винагород – у <a href="./ecosystem.html">огляді стейкінгу та екосистеми</a>.
+    </blockquote>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="../compare/index.html#directory-section">Каталог валідаторів</a>
+      <a class="btn btn-ghost" href="./first-steps.html">Гайд «Перші кроки»</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA">
+        <img src="../assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Створено AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Лише для навчання – не фінансова порада.</p>
+  </footer>
+</body>
+</html>

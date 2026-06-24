@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Де стейкати SOL у Solana, як працюють винагороди за стейкінг, валідатори проти ліквідних пулів і короткий огляд екосистеми для новачків." />
+  <title>Стейкінг Solana та огляд екосистеми | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/uk/ecosystem.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/ecosystem.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/ecosystem.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/ecosystem.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="uk_UA" />
+  <meta property="og:title" content="Стейкінг Solana та огляд екосистеми" />
+  <meta property="og:description" content="Де стейкати SOL, як працюють винагороди, валідатори проти пулів і як складається екосистема Solana." />
+  <meta property="og:url" content="https://www.opensolanahub.com/uk/ecosystem.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Стейкінг Solana та огляд екосистеми" />
+  <meta name="twitter:description" content="Де стейкати SOL, як працюють винагороди за стейкінг і чим відрізняються валідатори від пулів – спокійний огляд." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Стейкінг Solana та огляд екосистеми",
+    "description": "Де стейкати SOL у Solana, як працюють винагороди за стейкінг, валідатори проти ліквідних пулів.",
+    "url": "https://www.opensolanahub.com/uk/ecosystem.html",
+    "inLanguage": "uk",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/uk/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="../assets/logo.png" type="image/jpeg" />
+  <script src="../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA – andrewinua.com">
+          <img src="../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Спочатку навчіться</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Головне">
+        <a href="./index.html">Головна</a>
+        <a href="./basics.html">Основи</a>
+        <a href="./stay-safe.html">Безпека</a>
+        <a href="./first-steps.html">Перші кроки</a>
+        <a href="./ecosystem.html" class="active">Екосистема</a>
+        <a href="./compare-validators.html">Порівняння</a>
+        <a href="./about.html">Про нас</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Мова">
+          <a href="../ecosystem.html" lang="en" hreflang="en">EN</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./ecosystem.html" class="active" lang="uk" hreflang="uk">UA</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
+        <a class="btn btn-primary" href="../compare/">Порівняти валідаторів</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>Стейкінг Solana та огляд екосистеми</h1>
+    <p class="prose-lead">Де стейкати SOL, як можна отримувати винагороди за стейкінг і як пов'язані валідатори, пули та додатки – достатньо контексту, щоб орієнтуватися.</p>
+
+    <h2>Де стейкати SOL</h2>
+    <p>
+      Більшість людей стейкають одним із двох способів: <strong>нативне делегування</strong> з гаманця (ви обираєте валідатора)
+      або через <strong>ліквідний стейкінг-пул</strong> (валідаторів обирає пул за вас).
+      У будь-якому випадку перед рішенням перегляньте комісію та історію – наш
+      <a href="./compare-validators.html">гайд з порівняння валідаторів</a> і
+      <a href="./first-steps.html">інструкція зі стейкінгу SOL</a> проведуть крок за кроком.
+    </p>
+
+    <h2>Валідатори та стейкінг</h2>
+    <p>
+      Валідатори запускають програмне забезпечення, яке допомагає Solana досягати згоди щодо транзакцій. Коли ви стейкаєте, ви делегуєте SOL валідатору,
+      якому довіряєте; він заробляє кредити голосування, а ви можете отримувати частку винагород від інфляції мінус його комісія.
+    </p>
+    <ul>
+      <li><strong style="color:var(--heading)">Нативний стейкінг</strong> – делегування з гаманця на vote account валідатора.</li>
+      <li><strong style="color:var(--heading)">Ліквідний стейкінг / пули</strong> – стейкінг через пул (Marinade, Jito тощо); валідаторів обирає пул.</li>
+      <li><strong style="color:var(--heading)">Порівняйте перед делегуванням</strong> – скористайтеся <a href="../compare/">Validator Transparency Dashboard</a> або спочатку прочитайте <a href="./compare-validators.html">як порівнювати валідаторів</a>.</li>
+    </ul>
+
+    <h2>Як працюють винагороди за стейкінг (без хайпу)</h2>
+    <p>
+      Стейкінг може приносити частку винагород від інфляції мережі мінус комісія валідатора (і комісії пулу, якщо ви користуєтесь пулом).
+      Дохідність змінюється разом з умовами мережі – ніхто не може обіцяти фіксовану ставку «заробітку на Solana».
+      Винагороди не гарантовані; розуміння ризиків важливіше за погоню за доходом.
+    </p>
+
+    <h2>Додатки та токени</h2>
+    <p>
+      На Solana працюють тисячі додатків – платежі, ігри, маркетплейси, DeFi. Більшість потребують підключення гаманця.
+      Токени – це активи в мережі; деякі представляють проєкти, деякі – меми, деякі – корисні інструменти. Не всі є інвестиціями.
+    </p>
+
+    <h2>NFT та цифрове володіння</h2>
+    <p>
+      NFT – унікальні записи в блокчейні, часто для мистецтва, членства або ігрових предметів. Володіння можна перевірити;
+      цінність визначається спільнотою та ринком, а не гарантується.
+    </p>
+
+    <h2>Де дізнатися більше (офіційні джерела)</h2>
+    <ul>
+      <li><a href="https://solana.com/docs" target="_blank" rel="noopener">Документація Solana</a></li>
+      <li><a href="https://solana.com/docs/intro/quick-start" target="_blank" rel="noopener">Швидкий старт Solana (Playground)</a></li>
+      <li><a href="https://github.com/AndrewInUA/solana-validator-resources" target="_blank" rel="noopener">Ресурси для валідаторів на GitHub</a> – гайди та матеріали</li>
+    </ul>
+
+    <blockquote>
+      Екосистема велика. Щоб користуватися гаманцем, порівнювати валідаторів або обдумано стейкати, не потрібно розуміти все одразу.
+    </blockquote>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="./about.html">Про цей гайд</a>
+      <a class="btn btn-ghost" href="./first-steps.html">Назад до перших кроків</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA">
+        <img src="../assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Створено AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Лише для навчання – не фінансова порада.</p>
+  </footer>
+</body>
+</html>

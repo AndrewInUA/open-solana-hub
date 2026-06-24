@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Безпека в Solana: як захистити seed phrase, розпізнати шахрайства та сформувати реалістичні очікування перед стейкінгом або DeFi." />
+  <title>Безпека в Solana – захист гаманця та уникнення шахрайств | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/uk/stay-safe.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/stay-safe.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/stay-safe.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/stay-safe.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="uk_UA" />
+  <meta property="og:title" content="Безпека в Solana – захист гаманця та уникнення шахрайств" />
+  <meta property="og:description" content="Безпека в Solana: правила seed phrase, типові шахрайства та реалістичні очікування перед стейкінгом." />
+  <meta property="og:url" content="https://www.opensolanahub.com/uk/stay-safe.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Безпека в Solana – захист гаманця та уникнення шахрайств" />
+  <meta name="twitter:description" content="Як бути в безпеці в Solana перед стейкінгом: seed phrase, шахрайства та реалістичні очікування." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Безпека в Solana",
+    "description": "Безпека в Solana: seed phrase, шахрайства та реалістичні очікування.",
+    "url": "https://www.opensolanahub.com/uk/stay-safe.html",
+    "inLanguage": "uk",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/uk/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="../assets/logo.png" type="image/jpeg" />
+  <script src="../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA – andrewinua.com">
+          <img src="../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Спочатку навчіться</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Головне">
+        <a href="./index.html">Головна</a>
+        <a href="./basics.html">Основи</a>
+        <a href="./stay-safe.html" class="active">Безпека</a>
+        <a href="./first-steps.html">Перші кроки</a>
+        <a href="./ecosystem.html">Екосистема</a>
+        <a href="./compare-validators.html">Порівняння</a>
+        <a href="./about.html">Про нас</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Мова">
+          <a href="../stay-safe.html" lang="en" hreflang="en">EN</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./stay-safe.html" class="active" lang="uk" hreflang="uk">UA</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
+        <a class="btn btn-primary" href="../compare/">Порівняти валідаторів</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>Безпека в Solana</h1>
+    <p class="prose-lead">Більшість втрат у крипто – від соціальної інженерії, а не від «зламаних» блокчейнів. Не поспішайте тут – це окупається. Якщо ви новачок у Solana, спочатку прочитайте <a href="./basics.html">основи</a>.</p>
+
+    <h2>Seed phrase – ваш головний ключ</h2>
+    <ul>
+      <li>Ніколи не вводьте його на сайті, у Telegram-боті або у формі «підтримки».</li>
+      <li>Ніколи не робіть скріншот і не зберігайте в облакових нотатках.</li>
+      <li>Легітимні додатки <em>ніколи</em> не попросять вставити seed phrase, щоб «підтвердити» або «синхронізувати» гаманець.</li>
+      <li>Якщо кто-то має вашу seed phrase, він контролює ваші кошти – відновлення зазвичай неможливе.</li>
+    </ul>
+
+    <h2>Типові схеми шахрайства</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Листи з обіцянкою безкоштовного SOL або NFT</strong> – особливо в Discord, X або Telegram.</li>
+      <li><strong style="color:var(--heading)">Фальшива підтримка</strong> – «ми виявили підозрілу активність, підключіть гаманець тут».</li>
+      <li><strong style="color:var(--heading)">Завищений APY</strong> – гарантований високий дохід – червоний сигнал; реальна дохідність стейкінгу змінюється і несе ризики.</li>
+      <li><strong style="color:var(--heading)">Тиск і терміновість</strong> – «дійте за 10 хвилин, інакше втратите доступ». Реальні інструменти так не змушують.</li>
+      <li><strong style="color:var(--heading)">Невідомі додатки</strong> – читайте, що підписуєте; шкідливі транзакції можуть спустошити токени, які ви дозволили.</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <strong>Правило на всі випадки</strong><br />
+      Якщо ви самі не шукали це посилання – вважайте його ворожим. Відкривайте офіційні сайти, вводячи URL вручну або через надійні закладки.
+    </div>
+
+    <h2>Перевіряйте, перш ніж довіряти</h2>
+    <ul>
+      <li>Перевіряйте назви валідаторів або проєктів у кількох джерелах.</li>
+      <li>Використовуйте експлорери (наприклад, Solscan, Solana Beach), щоб перевірити адреси – не лише красиві лендінги.</li>
+      <li>Порівнюйте валідатори відкритими інструментами – наприклад, <a href="../compare/">Validator Transparency Dashboard</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span> або нашим <a href="./compare-validators.html">гайдом з порівняння</a> – перед делегуванням.</li>
+    </ul>
+
+    <h2>Чого цей гайд ніколи не робить</h2>
+    <p>
+      Ми не просимо ваші ключі, не обіцяємо дохід і не кажемо стейкати сьогодні.
+      Спочатку навчання; дії – завжди ваш вибір.
+    </p>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="./first-steps.html">Далі: перші кроки</a>
+      <a class="btn btn-ghost" href="./basics.html">Назад до основ</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA">
+        <img src="../assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Створено AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Лише для навчання – не фінансова порада.</p>
+  </footer>
+</body>
+</html>

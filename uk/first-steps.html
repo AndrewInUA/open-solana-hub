@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Як стейкати SOL на Solana: налаштування гаманця, куди стейкати та як порівняти валідаторів перед делегуванням. Покроковий гайд – стейкінг необов'язковий." />
+  <title>Як стейкати SOL – покроковий гайд | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/uk/first-steps.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/first-steps.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/first-steps.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/first-steps.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="uk_UA" />
+  <meta property="og:title" content="Як стейкати SOL – покроковий гайд" />
+  <meta property="og:description" content="Як стейкати SOL: налаштування гаманця, куди стейкати на Solana та як порівняти валідаторів на відкритих даних перед делегуванням." />
+  <meta property="og:url" content="https://www.opensolanahub.com/uk/first-steps.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Як стейкати SOL – покроковий гайд" />
+  <meta name="twitter:description" content="Як стейкати SOL на Solana: гаманець, куди стейкати, спочатку порівняйте валідаторів. Не фінансова порада." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Як стейкати SOL – перші практичні кроки",
+    "description": "Як стейкати SOL на Solana: налаштування гаманця, куди стейкати та порівняння валідаторів перед делегуванням.",
+    "url": "https://www.opensolanahub.com/uk/first-steps.html",
+    "inLanguage": "uk",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/uk/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Як стейкати SOL новачку?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Встановіть надійний гаманець (Phantom, Solflare або Backpack), поповніть його невеликою сумою SOL, відправте тестову транзакцію, порівняйте валідаторів на відкритих метриках, потім делегуйте до валідатора з гаманця, коли будете готові. Стейкінг необов'язковий, і SOL залишається у вашому гаманці."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Безпечний стейкінг SOL?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "При нативному стейкінгу SOL залишається у вашому гаманці – ви делегуєте, а не відправляєте монети. Основні ризики: вибір слабкого валідатора (висока або зростаюча комісія, downtime) і шахрайства. Спочатку порівняйте валідаторів і ніколи не діліться seed-фразою."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Можу я потім unstake SOL?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Так. Ви можете undelegate (unstake) у будь-який момент, але є період очікування приблизно одну епоху, перш ніж SOL знову стане повністю доступним. Контроль над гаманцем залишається у вас."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="../assets/logo.png" type="image/jpeg" />
+  <script src="../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA – andrewinua.com">
+          <img src="../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Спочатку навчіться</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Головне">
+        <a href="./index.html">Головна</a>
+        <a href="./basics.html">Основи</a>
+        <a href="./stay-safe.html">Безпека</a>
+        <a href="./first-steps.html" class="active">Перші кроки</a>
+        <a href="./ecosystem.html">Екосистема</a>
+        <a href="./compare-validators.html">Порівняння</a>
+        <a href="./about.html">Про нас</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Мова">
+          <a href="../first-steps.html" lang="en" hreflang="en">EN</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./first-steps.html" class="active" lang="uk" hreflang="uk">UA</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
+        <a class="btn btn-primary" href="../compare/">Порівняти валідаторів</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>Як стейкати SOL – перші практичні кроки</h1>
+    <p class="prose-lead">Шукаєте, як стейкати SOL або куди стейкати на Solana? Почніть тут: гаманець, невеликі тестові перекази, порівняння валідаторів – і делегування лише тоді, коли будете готові.</p>
+
+    <ol class="step-list">
+      <li>
+        <strong style="color:var(--heading)">Встановіть гаманець</strong><br />
+        Оберіть надійний гаманець (Phantom, Solflare або Backpack). Завантажуйте лише з офіційних сайтів або магазинів приложень.
+        Запишіть seed-фразу на папір; зберігайте offline. Правила seed-фрази – у розділі <a href="./stay-safe.html">безпека</a>.
+      </li>
+      <li>
+        <strong style="color:var(--heading)">Поповніть невеликою сумою</strong><br />
+        Спочатку купіть або переведіть мінімальну суму SOL – достатньо, щоб зрозуміти комісії та перекази. Це навчання, а не інвестиційна теза.
+      </li>
+      <li>
+        <strong style="color:var(--heading)">Відправте тестову транзакцію</strong><br />
+        Перекажіть невелику суму SOL між своїми адресами або до другого гаманця, який контролюєте. Підтвердіть на explorer. Ви вчите ритм: підтвердити → confirm → чекати.
+      </li>
+      <li>
+        <strong style="color:var(--heading)">Порівняйте валідаторів перед стейкінгом</strong><br />
+        Стейкінг означає делегування до валідатора, який голосує в мережі. Комісія, uptime і історія мають значення.
+        Прочитайте <a href="./compare-validators.html">як порівнювати валідаторів</a>, потім відкрийте
+        <a href="../compare/index.html#directory-section">Validator Transparency Dashboard</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span>,
+        знайдіть по назві або vote key і перегляньте Stability, Commission та зведення відносно мережі.
+        Спробуйте порівняти два валідатори поруч.
+      </li>
+      <li>
+        <strong style="color:var(--heading)">Стейкайте лише коли готові</strong><br />
+        У гаманці знайдіть валідатора по назві або вставте vote account key.
+        SOL залишається у вашому гаманці; undelegate можна зробити пізніше (з періодом очікування).
+        Цей гайд не рекомендує конкретного валідатора – дослідіть, порівняйте, потім оберіть.
+      </li>
+    </ol>
+
+    <div class="callout">
+      <strong>Спробуйте інструмент</strong><br />
+      <span style="color:var(--text2);font-size:14px">
+        Відкрийте панель з прикладом профілю, потім оберіть будь-який валідатор у каталогу:
+      </span>
+      <div class="path-row" style="margin-top:12px">
+        <a class="btn btn-primary" href="../compare/index.html?vote=3QPGLackJy5LKctYYoPGmA4P8ncyE197jdxr1zP2ho8K">Приклад валідатора</a>
+        <a class="btn btn-ghost" href="../compare/index.html#directory-section">Каталог валідаторів</a>
+      </div>
+    </div>
+
+    <h2>На що дивитися на панелі</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Commission</strong> – комісія валідатора з винагород; зазвичай нижча краща для вас (комісії пулів можуть додаватися).</li>
+      <li><strong style="color:var(--heading)">Stability score</strong> – довгострокова стабільність із збережених знімків.</li>
+      <li><strong style="color:var(--heading)">Live status</strong> – здоровий або delinquent прямо зараз.</li>
+      <li><strong style="color:var(--heading)">Pool stake split</strong> – хто делегує через відомі пули (дані Trillium).</li>
+    </ul>
+
+    <h2>Часті запитання</h2>
+    <h3>Як стейкати SOL новачку?</h3>
+    <p>
+      Встановіть гаманець, поповніть невеликою сумою, відправте тестову транзакцію,
+      <a href="./compare-validators.html">порівняйте валідаторів</a> на відкритих метриках, потім делегуйте з
+      гаманця, коли будете готові. SOL залишається у вашому гаманці.
+    </p>
+    <h3>Безпечний стейкінг SOL?</h3>
+    <p>
+      Нативний стейкінг зберігає SOL у вашому гаманці – ви делегуєте, а не відправляєте монети. Основні ризики –
+      вибір слабкого валідатора і шахрайства. <a href="./stay-safe.html">Безпека</a> і порівняння перед вибором.
+    </p>
+    <h3>Можу я потім unstake SOL?</h3>
+    <p>
+      Так. Undelegate можна зробити у будь-який момент, з періодом очікування приблизно одну епоху, перш ніж SOL
+      знову стане повністю доступним. Контроль над гаманцем залишається у вас.
+    </p>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="./ecosystem.html">Далі: огляд екосистеми</a>
+      <a class="btn btn-ghost" href="./stay-safe.html">Назад до безпеки</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA">
+        <img src="../assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Створено AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Лише для навчання – не фінансова порада.</p>
+  </footer>
+</body>
+</html>
