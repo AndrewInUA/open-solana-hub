@@ -1,8 +1,8 @@
 # Open Solana Hub
 
-One place to **learn Solana** and **compare validators** – plain-English education for newcomers plus the open Validator Transparency Dashboard for delegators, researchers, and operators.
+One place to **learn Solana** and **assess validators** – plain-English education for newcomers plus the open Validator Transparency Dashboard for delegators, researchers, and operators.
 
-> Learn before you stake.
+> Solana in simple terms.
 
 ## Structure
 
