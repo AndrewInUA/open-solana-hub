@@ -31,6 +31,38 @@
     "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What should I do if I shared my seed phrase?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Act immediately: create a brand-new wallet with a new seed phrase and move everything you can to it – the compromised wallet can be emptied at any moment. Do not reuse the old seed phrase anywhere, and assume anything left behind may be lost."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I recognize a Solana scam?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Common red flags: unsolicited DMs offering free SOL or NFTs, fake support asking you to connect your wallet or verify your seed phrase, guaranteed high APY, and artificial urgency. Legitimate tools never ask for your seed phrase and never pressure you with deadlines."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it safe to connect my wallet to a website?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Connecting alone is usually low-risk – the danger is in what you sign afterwards. Only connect to sites you sought out yourself, read every transaction before approving, and consider a separate wallet with small amounts for experiments."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -58,6 +90,7 @@
         <a href="./stay-safe.html" class="active">Stay safe</a>
         <a href="./first-steps.html">First steps</a>
         <a href="./ecosystem.html">Ecosystem</a>
+        <a href="./glossary.html">Glossary</a>
         <a href="./compare-validators.html">Validator assessment</a>
         <a href="./about.html">About</a>
       </nav>
@@ -107,10 +140,39 @@
       <li>Assess validators with open tools – e.g. the <a href="./compare/">Validator Transparency Dashboard</a> or our <a href="./compare-validators.html">assessment guide</a> – before delegating.</li>
     </ul>
 
+    <h2>If something already went wrong</h2>
+    <p>
+      Mistakes happen to careful people too. What matters is the next ten minutes:
+    </p>
+    <ul>
+      <li><strong style="color:var(--heading)">Shared your seed phrase?</strong> Create a brand-new wallet with a new phrase and move everything you can, immediately. The old wallet is compromised forever – never reuse that phrase.</li>
+      <li><strong style="color:var(--heading)">Signed something suspicious?</strong> Move remaining funds to a fresh wallet, then review and revoke token approvals with a reputable tool before using the old address again.</li>
+      <li><strong style="color:var(--heading)">Sent funds to a scammer?</strong> On-chain transfers are final – no support line can reverse them. Document what happened, warn the community where it occurred, and treat it as paid tuition.</li>
+      <li><strong style="color:var(--heading)">Received strange tokens or NFTs?</strong> Just leave them. Interacting with unknown airdrops is how many drains start – ignoring them costs nothing.</li>
+    </ul>
+
+    <h2>Frequently asked questions</h2>
+    <h3>What should I do if I shared my seed phrase?</h3>
+    <p>
+      Create a new wallet with a new seed phrase and move everything you can – the compromised wallet can be
+      emptied at any moment. Never reuse the old phrase, even "temporarily."
+    </p>
+    <h3>How do I recognize a Solana scam?</h3>
+    <p>
+      Unsolicited DMs with free SOL, "support" asking to verify your wallet, guaranteed APY, countdown timers.
+      Real tools never ask for your seed phrase and never rush you.
+    </p>
+    <h3>Is it safe to connect my wallet to a website?</h3>
+    <p>
+      Connecting is usually low-risk; the danger lives in what you <em>sign</em> afterwards. Only connect to
+      sites you found yourself, read every transaction, and keep a separate small wallet for experiments.
+    </p>
+
     <h2>What this guide will never do</h2>
     <p>
       We will not ask for your keys, promise returns, or tell you to stake today.
-      Education first; actions are always your choice.
+      Education first; actions are always your choice. New words tripping you up?
+      The <a href="./glossary.html">Solana glossary</a> explains them all in one sentence each.
     </p>
 
     <div class="path-row">

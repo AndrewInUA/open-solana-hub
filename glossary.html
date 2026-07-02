@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Solana glossary in simple terms: 40 short definitions – SOL, staking, validator, epoch, commission, seed phrase, liquid staking and more. One sentence each, no jargon." />
+  <title>Solana Glossary – 40 Terms in Simple Words | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/glossary.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/glossary.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/glossary.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/glossary.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Solana Glossary – 40 Terms in Simple Words" />
+  <meta property="og:description" content="Every Solana term you keep meeting – SOL, epoch, validator, commission, seed phrase – explained in one plain sentence each." />
+  <meta property="og:url" content="https://www.opensolanahub.com/glossary.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Solana Glossary – 40 Terms in Simple Words" />
+  <meta name="twitter:description" content="SOL, staking, validator, epoch, commission, seed phrase – short plain-English definitions, no jargon." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    "name": "Solana Glossary in Simple Words",
+    "url": "https://www.opensolanahub.com/glossary.html",
+    "inLanguage": "en",
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is an epoch on Solana?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An epoch is Solana's internal calendar unit, roughly 2–3 days long. Staking changes – delegating, undelegating, commission updates – take effect at epoch boundaries, and staking rewards are paid once per epoch."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is validator commission?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Commission is the percentage a validator keeps from the staking rewards earned by the stake delegated to it. A 5% commission means the validator keeps 5% of rewards and passes 95% on to delegators."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between native and liquid staking?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "With native staking you delegate SOL from your own wallet to a validator you choose, and the SOL stays under your control. With liquid staking you deposit SOL into a pool that spreads it across validators and gives you a liquid token (like mSOL or JitoSOL) in return."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="./assets/logo.png" type="image/jpeg" />
+  <script src="./site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+          <img src="./assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Solana in simple terms</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./index.html">Home</a>
+        <a href="./basics.html">Basics</a>
+        <a href="./stay-safe.html">Stay safe</a>
+        <a href="./first-steps.html">First steps</a>
+        <a href="./ecosystem.html">Ecosystem</a>
+        <a href="./glossary.html" class="active">Glossary</a>
+        <a href="./compare-validators.html">Validator assessment</a>
+        <a href="./about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Language">
+          <a href="./uk/glossary.html" lang="uk" hreflang="uk">UA</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./glossary.html" class="active" lang="en" hreflang="en">EN</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Toggle theme">☀</button>
+        <a class="btn btn-primary" href="./compare/">Assess validators</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+    <h1>Solana glossary – the terms, in simple words</h1>
+    <p class="prose-lead">
+      Every field has its dialect; crypto just speaks it louder. Here are the 40 words you will actually meet
+      on Solana – one plain sentence each, no lecture. Bookmark it, come back whenever a guide or a wallet
+      says something strange.
+    </p>
+
+    <h2>The basics</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Blockchain</strong> – a shared record book copied across thousands of computers; no single company owns it, and everyone can verify the rules.</li>
+      <li><strong style="color:var(--heading)">Solana</strong> – a public blockchain built for fast, low-cost transactions; the network these guides are about.</li>
+      <li><strong style="color:var(--heading)">SOL</strong> – Solana's native coin: it pays network fees and can optionally be staked.</li>
+      <li><strong style="color:var(--heading)">Lamport</strong> – the smallest unit of SOL, like a cent to a dollar; 1 SOL = 1&nbsp;billion lamports.</li>
+      <li><strong style="color:var(--heading)">Transaction</strong> – any action recorded on the network: a transfer, a swap, a stake delegation.</li>
+      <li><strong style="color:var(--heading)">Fee</strong> – the small amount of SOL a transaction costs; on Solana usually a fraction of a cent.</li>
+      <li><strong style="color:var(--heading)">Address</strong> – your public "account number" on Solana; safe to share, unlike your keys.</li>
+      <li><strong style="color:var(--heading)">Explorer</strong> – a public website (Solscan, Solana FM) where anyone can look up transactions, addresses, and validators.</li>
+      <li><strong style="color:var(--heading)">Epoch</strong> – Solana's calendar unit, roughly 2–3 days; staking changes and rewards happen on epoch boundaries.</li>
+      <li><strong style="color:var(--heading)">Mainnet</strong> – the real network with real value, as opposed to test networks used for practice.</li>
+      <li><strong style="color:var(--heading)">Devnet / testnet</strong> – practice networks where coins have no value; developers and curious people break things here safely.</li>
+    </ul>
+
+    <h2>Wallets and security</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Wallet</strong> – software or a device that holds your keys and lets you approve transactions; Phantom, Solflare, and Backpack are popular on Solana.</li>
+      <li><strong style="color:var(--heading)">Seed phrase</strong> – the 12–24 words that back up your wallet; whoever knows them controls your funds, forever, no appeals.</li>
+      <li><strong style="color:var(--heading)">Private key</strong> – the secret code that signs your transactions; your seed phrase can regenerate it, which is why both must stay secret.</li>
+      <li><strong style="color:var(--heading)">Public key</strong> – the shareable half of the pair; your address is derived from it.</li>
+      <li><strong style="color:var(--heading)">Hardware wallet</strong> – a physical device (Ledger and similar) that keeps keys offline; strong protection for meaningful amounts.</li>
+      <li><strong style="color:var(--heading)">Signing</strong> – approving a transaction with your key; read what you sign, because a signature is consent.</li>
+      <li><strong style="color:var(--heading)">Phishing</strong> – fake sites, messages, or "support" designed to trick you into revealing keys or signing something harmful.</li>
+      <li><strong style="color:var(--heading)">Drainer</strong> – a malicious transaction or app that empties a wallet once you approve it; the reason "read what you sign" is rule one.</li>
+      <li><strong style="color:var(--heading)">Self-custody</strong> – holding your own keys instead of trusting an exchange; more freedom, more responsibility.</li>
+    </ul>
+
+    <h2>Staking and validators</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Staking</strong> – locking SOL to support the network's security and earn a share of rewards; on Solana it is optional and reversible.</li>
+      <li><strong style="color:var(--heading)">Delegation</strong> – pointing your staked SOL at a validator you choose; the SOL never leaves your wallet.</li>
+      <li><strong style="color:var(--heading)">Validator</strong> – an operator running servers that confirm transactions and vote on the state of the network; when you stake, you pick one to back.</li>
+      <li><strong style="color:var(--heading)">Vote account</strong> – a validator's public identity for voting and receiving delegations; the long key you can search on the dashboard.</li>
+      <li><strong style="color:var(--heading)">Commission</strong> – the percentage of rewards a validator keeps for running the infrastructure; check its history, not just today's number.</li>
+      <li><strong style="color:var(--heading)">Stake account</strong> – the on-chain account that holds your delegated SOL; created automatically by your wallet when you stake.</li>
+      <li><strong style="color:var(--heading)">Undelegate / deactivate</strong> – the way out of staking: you request it, then wait until the epoch ends for the SOL to become liquid.</li>
+      <li><strong style="color:var(--heading)">Rewards</strong> – the extra SOL staking earns, paid every epoch; the amount varies with the network, so treat any fixed promise with suspicion.</li>
+      <li><strong style="color:var(--heading)">APY</strong> – annualized yield estimate; useful as context, misleading as the only filter for choosing a validator.</li>
+      <li><strong style="color:var(--heading)">Inflation</strong> – the scheduled issuance of new SOL that funds staking rewards; it declines over time by design.</li>
+      <li><strong style="color:var(--heading)">Delinquent</strong> – a validator that has stopped voting; delegating to one earns nothing until it recovers.</li>
+      <li><strong style="color:var(--heading)">Native staking</strong> – delegating from your own wallet to a validator you choose; maximum control, and this Hub's main subject.</li>
+      <li><strong style="color:var(--heading)">Liquid staking</strong> – depositing SOL into a pool that stakes for you and gives you a liquid token in return; convenient, adds pool fees and smart-contract risk.</li>
+      <li><strong style="color:var(--heading)">Stake pool</strong> – a service (Marinade, Jito, and others) that spreads deposited SOL across many validators.</li>
+      <li><strong style="color:var(--heading)">LST</strong> – "liquid staking token" (mSOL, JitoSOL) – the receipt token a pool gives you, tradable while the underlying SOL is staked.</li>
+      <li><strong style="color:var(--heading)">MEV</strong> – "maximal extractable value" – extra income validators can earn from transaction ordering; on Solana often via Jito; a detail worth knowing, not fearing.</li>
+    </ul>
+
+    <h2>Ecosystem and slang</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">dApp</strong> – a "decentralized application" – an app that runs against the blockchain and connects to your wallet instead of a login.</li>
+      <li><strong style="color:var(--heading)">DeFi</strong> – financial apps (swaps, lending) built on public networks; powerful, and a place to walk slowly.</li>
+      <li><strong style="color:var(--heading)">NFT</strong> – a unique on-chain record used for art, memberships, or game items; ownership is verifiable, value is not guaranteed.</li>
+      <li><strong style="color:var(--heading)">Token</strong> – any asset issued on the network besides SOL itself; some are useful, some are jokes, few are investments.</li>
+      <li><strong style="color:var(--heading)">Airdrop</strong> – free tokens sent to wallets, sometimes real marketing, often scam bait; unexpected tokens are best left untouched.</li>
+      <li><strong style="color:var(--heading)">RPC</strong> – the connection point apps use to talk to the network; when a wallet "can't connect," it is usually an RPC hiccup, not lost funds.</li>
+      <li><strong style="color:var(--heading)">DYOR</strong> – "do your own research" – the house rule of this entire site.</li>
+    </ul>
+
+    <h2>Frequently asked questions</h2>
+    <h3>What is an epoch on Solana?</h3>
+    <p>
+      An epoch is Solana's internal calendar unit, roughly 2–3 days long. Staking changes – delegating,
+      undelegating, commission updates – take effect at epoch boundaries, and rewards are paid once per epoch.
+    </p>
+    <h3>What is validator commission?</h3>
+    <p>
+      The percentage a validator keeps from staking rewards. A 5% commission means 95% of rewards reach
+      delegators. History matters more than the current number – our
+      <a href="./compare-validators.html">assessment guide</a> explains why.
+    </p>
+    <h3>What is the difference between native and liquid staking?</h3>
+    <p>
+      Native staking: you delegate from your own wallet to a validator you choose, and the SOL stays under
+      your control. Liquid staking: you deposit into a pool, it spreads the stake across validators, and you
+      hold a liquid token (mSOL, JitoSOL) instead. More on both in the
+      <a href="./ecosystem.html">ecosystem overview</a>.
+    </p>
+
+    <blockquote>
+      A term you keep forgetting is not a personal failure – it is a bookmark waiting to happen.
+      When you are ready to use these words in practice, start with <a href="./basics.html">the basics</a>
+      or go straight to <a href="./first-steps.html">first practical steps</a>.
+    </blockquote>
+
+    <div class="path-row">
+      <a class="btn btn-primary" href="./basics.html">Start with basics</a>
+      <a class="btn btn-ghost" href="./compare/">Assess validators</a>
+    </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+        <img src="./assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Built by AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="./compare/">Validator Transparency Dashboard</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <p class="footer-note">Education only – not financial advice.</p>
+  </footer>
+</body>
+</html>

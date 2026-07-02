@@ -31,6 +31,38 @@
     "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Where is the best place to stake SOL?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There is no single best place – it depends on how much control you want. Native delegation from your own wallet gives you full choice of validator and keeps SOL under your control; liquid staking pools (Marinade, Jito) are more hands-off but add pool fees and smart-contract risk. Assess validators on open data before either path."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I lose my SOL if my validator fails?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "With native staking your SOL stays in your own stake account – a failing or delinquent validator costs you missed rewards, not your principal. Solana currently has no slashing of delegated stake. The real risks are scams and your own key management, not validator downtime."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is liquid staking on Solana?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Liquid staking means depositing SOL into a pool that delegates it across many validators and gives you a tradable token (like mSOL or JitoSOL) in return. You keep liquidity while earning staking yield, but you take on pool fees and smart-contract risk in exchange."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -58,6 +90,7 @@
         <a href="./stay-safe.html">Stay safe</a>
         <a href="./first-steps.html">First steps</a>
         <a href="./ecosystem.html" class="active">Ecosystem</a>
+        <a href="./glossary.html">Glossary</a>
         <a href="./compare-validators.html">Validator assessment</a>
         <a href="./about.html">About</a>
       </nav>
@@ -115,6 +148,40 @@
     <p>
       NFTs are unique on-chain records – often used for art, memberships, or game items. Ownership is verifiable;
       value is social and market-driven, not guaranteed.
+    </p>
+
+    <h2>Native staking vs liquid staking – quick comparison</h2>
+    <ul>
+      <li><strong style="color:var(--heading)">Control</strong> – native: you pick the validator; liquid: the pool picks for you.</li>
+      <li><strong style="color:var(--heading)">Custody</strong> – native: SOL stays in your own stake account; liquid: SOL sits in the pool's smart contract, you hold a receipt token (mSOL, JitoSOL).</li>
+      <li><strong style="color:var(--heading)">Liquidity</strong> – native: undelegating takes until the end of the epoch; liquid: the token is tradable right away.</li>
+      <li><strong style="color:var(--heading)">Fees</strong> – native: validator commission only; liquid: commission plus the pool's own fee.</li>
+      <li><strong style="color:var(--heading)">Extra risk</strong> – native: picking a poor validator; liquid: smart-contract risk and the token's market price.</li>
+    </ul>
+    <p>
+      Neither is "better" – they answer different needs. If you want to understand and choose,
+      go native and <a href="./compare-validators.html">assess validators</a> first. If you want
+      set-and-forget, a reputable pool is a fair trade.
+    </p>
+
+    <h2>Frequently asked questions</h2>
+    <h3>Where is the best place to stake SOL?</h3>
+    <p>
+      There is no single best place – it depends on how much control you want. Native delegation gives you
+      full choice and custody; liquid pools are hands-off but add fees and smart-contract risk. Either way,
+      look at open data first – that is what the <a href="./compare/">dashboard</a> is for.
+    </p>
+    <h3>Can I lose my SOL if my validator fails?</h3>
+    <p>
+      With native staking, a failing validator costs you missed rewards, not your principal – Solana currently
+      has no slashing of delegated stake. The real dangers are <a href="./stay-safe.html">scams and key
+      management</a>, not downtime.
+    </p>
+    <h3>What is liquid staking on Solana?</h3>
+    <p>
+      Depositing SOL into a pool that delegates across many validators and hands you a tradable token
+      (mSOL, JitoSOL) in return. Liquidity now, pool fees and smart-contract risk as the price.
+      Unsure about a term? Check the <a href="./glossary.html">glossary</a>.
     </p>
 
     <h2>Where to learn more (official-ish)</h2>
