@@ -32,6 +32,14 @@
     applyTheme(t);
   }
 
+  function isInsideDashboard() {
+    try {
+      return /\/compare(\/|$)/i.test(window.location.pathname.toLowerCase());
+    } catch (e) {
+      return false;
+    }
+  }
+
   function isDashboardLink(href) {
     if (!href || href === "#") return false;
     if (/compare-validators\.html/i.test(href)) return false;
@@ -76,6 +84,10 @@
     if (link.hasAttribute("download")) return;
 
     if (isDashboardLink(href)) {
+      if (isInsideDashboard()) {
+        if (link.getAttribute("target") === "_blank") link.removeAttribute("target");
+        return;
+      }
       link.setAttribute("target", "_blank");
       setExternalRel(link);
       return;
@@ -131,6 +143,13 @@
       if (link.hasAttribute("download")) return;
 
       if (isDashboardLink(href)) {
+        if (isInsideDashboard()) {
+          if (link.getAttribute("target") === "_blank") {
+            e.preventDefault();
+            window.location.assign(link.href);
+          }
+          return;
+        }
         if (link.getAttribute("target") !== "_blank") {
           e.preventDefault();
           window.open(link.href, "_blank", "noopener,noreferrer");
