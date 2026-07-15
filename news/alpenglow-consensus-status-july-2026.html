@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Where Solana's Alpenglow consensus upgrade stands in July 2026: Votor, ~150ms finality, the end of on-chain vote transactions, testnet timing, and what it means for stakers." />
+  <title>Alpenglow Status July 2026 – Solana's Biggest Consensus Change | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/news/alpenglow-consensus-status-july-2026.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Alpenglow Moves Closer to Mainnet: Where Solana's Biggest Consensus Change Stands" />
+  <meta property="og:description" content="Votor, ~150ms finality, and the end of on-chain vote transactions – Alpenglow's status in July 2026, explained calmly." />
+  <meta property="og:url" content="https://www.opensolanahub.com/news/alpenglow-consensus-status-july-2026.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta property="article:published_time" content="2026-07-15" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Alpenglow Status July 2026 – Solana's Biggest Consensus Change" />
+  <meta name="twitter:description" content="Votor, ~150ms finality, and the end of on-chain vote transactions – explained in plain English." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "Alpenglow moves closer to mainnet: where Solana's biggest consensus change stands",
+    "description": "Where Solana's Alpenglow consensus upgrade stands in July 2026 – Votor, ~150ms finality, testnet timing, and what it means for stakers.",
+    "url": "https://www.opensolanahub.com/news/alpenglow-consensus-status-july-2026.html",
+    "datePublished": "2026-07-15",
+    "dateModified": "2026-07-15",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="icon" href="../assets/logo.png" type="image/jpeg" />
+  <script src="../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+          <img src="../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="../index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Solana in simple terms</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Main">
+        <a href="../index.html">Home</a>
+        <a href="../basics.html">Basics</a>
+        <a href="../stay-safe.html">Stay safe</a>
+        <a href="../first-steps.html">First steps</a>
+        <a href="../ecosystem.html">Ecosystem</a>
+        <a href="../glossary.html">Glossary</a>
+        <a href="../compare-validators.html">Validator assessment</a>
+        <a href="./index.html" class="active">News</a>
+        <a href="../about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Language">
+          <a href="../uk/" lang="uk" hreflang="uk">UA</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./index.html" class="active" lang="en" hreflang="en">EN</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Toggle theme">☀</button>
+        <a class="btn btn-primary" href="../compare/">Assess validators</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+      <a class="article-back" href="./index.html">← All Solana news</a>
+      <h1>Alpenglow moves closer to mainnet: where Solana's biggest consensus change stands</h1>
+      <div class="article-meta">
+        <time datetime="2026-07-15">July 15, 2026</time>
+        <span class="news-tag">Consensus</span>
+      </div>
+      <p class="prose-lead">
+        Alpenglow is the largest change to how Solana agrees on blocks since the network launched.
+        As of mid-July 2026 it is rolling out through the Agave validator client, with testnet activation
+        expected this summer and mainnet activation later in the year, after community testing and security audits.
+      </p>
+
+      <h2>What Alpenglow actually is</h2>
+      <p>
+        Today, Solana validators agree on the state of the network using Tower BFT, supported by Proof of History,
+        and they cast their votes as regular on-chain transactions. Those vote transactions are invisible to most
+        users but consume a large share of every block – commonly cited at around three quarters of block space.
+      </p>
+      <p>
+        Alpenglow replaces this with a new voting and finality protocol called <strong>Votor</strong>. Votes move
+        off-chain into direct messages between validators, and the network can finalize a block in roughly
+        100–150 milliseconds – down from several seconds today. For everyday use, that is the difference between
+        "wait a moment" and "as fast as tapping a bank card."
+      </p>
+
+      <h2>How it got here</h2>
+      <ul>
+        <li><strong>May 2025</strong> – Anza unveiled Alpenglow at Solana Accelerate, written up as SIMD-0326.</li>
+        <li><strong>September 2025</strong> – the validator governance vote passed with about 98% approval, one of the strongest mandates in Solana's history.</li>
+        <li><strong>May 2026</strong> – Alpenglow went live on a community test cluster, the first time external validators ran it.</li>
+        <li><strong>July 2026</strong> – the final feature flag work has been merged into Agave, and testnet activation is expected over the summer, with mainnet to follow once audits and testing complete – most estimates point to late 2026.</li>
+      </ul>
+
+      <h2>What it changes – and what it does not</h2>
+      <p>
+        The version heading to mainnet covers the Votor consensus change only. Other parts of the original
+        Alpenglow paper – the Rotor data-distribution layer and slashing mechanisms – are deferred to future
+        proposals. So the headline improvement is finality time and the removal of vote transactions, not
+        the full redesign in one step.
+      </p>
+      <p>
+        One notable economic change: Alpenglow introduces a <strong>Validator Admission Ticket (VAT)</strong> –
+        a fee (currently proposed at 1.6 SOL per epoch) that validators pay to participate in consensus. Combined
+        with the removal of per-vote transaction fees, this reshapes validator operating costs, which is worth
+        watching if you care about the health of smaller independent validators.
+      </p>
+
+      <h2>What it means for you as a staker</h2>
+      <p>
+        Nothing you need to act on. Your stake, your rewards mechanism, and your validator relationship carry over.
+        The practical effects arrive indirectly: faster confirmations for apps you use, and shifting validator
+        economics as vote fees disappear and the VAT arrives. If you delegate, it is a good moment to check that
+        your validator communicates openly and keeps its infrastructure current – upgrades like this reward
+        well-run operations. Our <a href="../compare-validators.html">assessment guide</a> explains what to look at,
+        and the <a href="../compare/">Validator Transparency Dashboard</a> shows live stability and voting data
+        for every mainnet validator.
+      </p>
+
+      <div class="callout">
+        <strong>In one sentence</strong>
+        Alpenglow replaces Solana's original voting system with a faster, simpler one – finality in a blink –
+        and it is on track to reach mainnet later in 2026 after public testing.
+      </div>
+
+      <div class="path-row">
+        <a class="btn btn-primary" href="./index.html">More Solana news</a>
+        <a class="btn btn-ghost" href="../glossary.html">Glossary of terms</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
+        <img src="../assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Built by AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency Dashboard</a>
+      <a href="./index.html">Solana news</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Education only – not financial advice.</p>
+  </footer>
+</body>
+</html>

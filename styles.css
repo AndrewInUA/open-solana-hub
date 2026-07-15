@@ -462,6 +462,174 @@ html[data-theme="light"] .btn-primary {
 
 .path-steps a:hover { color: var(--link); text-decoration: none; }
 
+/* Homepage hub blocks */
+.hub-block {
+  max-width: var(--wide);
+  margin-top: 2.75rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--heading) 2.5%, transparent);
+}
+
+.hub-block-kicker {
+  display: block;
+  margin: 0 0 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.hub-block h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--heading);
+  letter-spacing: -0.01em;
+}
+
+.hub-block > p {
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  color: var(--text2);
+  line-height: 1.65;
+  max-width: 40em;
+  font-weight: 350;
+}
+
+.hub-block .path-row { margin-top: 1.5rem; }
+
+/* Guide grid inside the Learn block */
+.guide-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 24px;
+}
+
+.guide-grid a {
+  display: block;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none !important;
+}
+
+.guide-grid a:hover .guide-title { color: var(--link-hover); }
+
+.guide-title {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--heading);
+  transition: color 0.2s ease;
+}
+
+.guide-desc {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text2);
+  font-weight: 350;
+  line-height: 1.45;
+}
+
+.hub-block .path-flow {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  max-width: none;
+}
+
+/* News cards */
+.news-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.news-card {
+  display: block;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none !important;
+  transition: padding-left 0.25s ease;
+}
+
+.news-card:hover { padding-left: 6px; }
+
+.news-card:hover .news-title { color: var(--link-hover); }
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.3rem;
+}
+
+.news-date {
+  font-size: 0.8rem;
+  color: var(--text3);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+.news-tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  padding: 2px 9px;
+}
+
+.news-title {
+  display: block;
+  font-size: 1.08rem;
+  font-weight: 500;
+  color: var(--heading);
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.news-teaser {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.92rem;
+  color: var(--text2);
+  font-weight: 350;
+  line-height: 1.55;
+  max-width: 44em;
+}
+
+.news-all-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* News article pages */
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text3);
+}
+
+.article-back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
 /* Article pages */
 .prose-panel {
   max-width: var(--max);
@@ -682,5 +850,8 @@ html[data-theme="light"] .btn-primary {
   }
   .topic-arrow {
     display: none;
+  }
+  .guide-grid {
+    grid-template-columns: 1fr;
   }
 }
