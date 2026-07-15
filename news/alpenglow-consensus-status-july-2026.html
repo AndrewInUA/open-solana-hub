@@ -8,6 +8,8 @@
   <title>Alpenglow Status July 2026 – Solana's Biggest Consensus Change | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/news/alpenglow-consensus-status-july-2026.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/alpenglow-consensus-status-july-2026.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/alpenglow-consensus-status-july-2026.html" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Alpenglow Moves Closer to Mainnet: Where Solana's Biggest Consensus Change Stands" />
   <meta property="og:description" content="Votor, ~150ms finality, and the end of on-chain vote transactions – Alpenglow's status in July 2026, explained calmly." />
@@ -66,7 +68,7 @@
       </nav>
       <div class="header-actions">
         <nav class="lang-switch" aria-label="Language">
-          <a href="../uk/" lang="uk" hreflang="uk">UA</a>
+          <a href="../uk/news/alpenglow-consensus-status-july-2026.html" lang="uk" hreflang="uk">UA</a>
           <span class="lang-sep" aria-hidden="true">·</span>
           <a href="./index.html" class="active" lang="en" hreflang="en">EN</a>
         </nav>
@@ -94,52 +96,72 @@
       <p>
         Today, Solana validators agree on the state of the network using Tower BFT, supported by Proof of History,
         and they cast their votes as regular on-chain transactions. Those vote transactions are invisible to most
-        users but consume a large share of every block – commonly cited at around three quarters of block space.
+        users but consume a large share of every block (commonly cited at around three quarters of block space).
       </p>
       <p>
         Alpenglow replaces this with a new voting and finality protocol called <strong>Votor</strong>. Votes move
         off-chain into direct messages between validators, and the network can finalize a block in roughly
-        100–150 milliseconds – down from several seconds today. For everyday use, that is the difference between
+        100–150 milliseconds, down from several seconds today. For everyday use, that is the difference between
         "wait a moment" and "as fast as tapping a bank card."
       </p>
 
       <h2>How it got here</h2>
       <ul>
-        <li><strong>May 2025</strong> – Anza unveiled Alpenglow at Solana Accelerate, written up as SIMD-0326.</li>
-        <li><strong>September 2025</strong> – the validator governance vote passed with about 98% approval, one of the strongest mandates in Solana's history.</li>
-        <li><strong>May 2026</strong> – Alpenglow went live on a community test cluster, the first time external validators ran it.</li>
-        <li><strong>July 2026</strong> – the final feature flag work has been merged into Agave, and testnet activation is expected over the summer, with mainnet to follow once audits and testing complete – most estimates point to late 2026.</li>
+        <li><strong>May 2025:</strong> Anza unveiled Alpenglow at Solana Accelerate, written up as SIMD-0326.</li>
+        <li><strong>September 2025:</strong> the validator governance vote passed with about 98% approval, one of the strongest mandates in Solana's history.</li>
+        <li><strong>May 2026:</strong> Alpenglow went live on a community test cluster, the first time external validators ran it.</li>
+        <li><strong>July 2026:</strong> the final feature flag work has been merged into Agave; testnet activation is expected over the summer, with mainnet to follow once audits and testing complete. Most estimates point to late 2026.</li>
       </ul>
 
-      <h2>What it changes – and what it does not</h2>
+      <h2>What it changes, and what it does not</h2>
       <p>
         The version heading to mainnet covers the Votor consensus change only. Other parts of the original
-        Alpenglow paper – the Rotor data-distribution layer and slashing mechanisms – are deferred to future
+        Alpenglow paper (the Rotor data-distribution layer and slashing mechanisms) are deferred to future
         proposals. So the headline improvement is finality time and the removal of vote transactions, not
         the full redesign in one step.
       </p>
       <p>
-        One notable economic change: Alpenglow introduces a <strong>Validator Admission Ticket (VAT)</strong> –
+        One notable economic change: Alpenglow introduces a <strong>Validator Admission Ticket (VAT)</strong>,
         a fee (currently proposed at 1.6 SOL per epoch) that validators pay to participate in consensus. Combined
         with the removal of per-vote transaction fees, this reshapes validator operating costs, which is worth
         watching if you care about the health of smaller independent validators.
       </p>
 
-      <h2>What it means for you as a staker</h2>
+      <h2>What it means for…</h2>
+
+      <h3>Validators</h3>
       <p>
-        Nothing you need to act on. Your stake, your rewards mechanism, and your validator relationship carry over.
-        The practical effects arrive indirectly: faster confirmations for apps you use, and shifting validator
-        economics as vote fees disappear and the VAT arrives. If you delegate, it is a good moment to check that
-        your validator communicates openly and keeps its infrastructure current – upgrades like this reward
-        well-run operations. Our <a href="../compare-validators.html">assessment guide</a> explains what to look at,
-        and the <a href="../compare/">Validator Transparency Dashboard</a> shows live stability and voting data
-        for every mainnet validator.
+        Alpenglow is delivered through Agave releases, so plan upgrade windows early. Vote transactions
+        leave the blocks, and the Validator Admission Ticket (VAT, currently proposed at 1.6 SOL per epoch)
+        replaces per-vote fees. Operating costs shift; smaller independent operators need to model the
+        new economics before mainnet activation.
+      </p>
+
+      <h3>Delegators</h3>
+      <p>
+        No migration or restaking required. The indirect effect is validator economics: operators who
+        communicate upgrade plans and stay current on Agave handle the transition better than those who
+        lag. Worth checking stability and voting history in the
+        <a href="../compare/">Validator Transparency Dashboard</a>.
+      </p>
+
+      <h3>Builders</h3>
+      <p>
+        Finality drops to roughly 100–150 ms once Votor is live on mainnet. Apps that today wait several
+        seconds for confirmation can tighten UX assumptions, though the full Rotor layer (faster block
+        propagation in simulations) ships later. Design for Votor-only improvements first.
+      </p>
+
+      <h3>Everyone else</h3>
+      <p>
+        If you hold or use SOL without running infrastructure, the practical change is faster transaction
+        confirmations in wallets and apps. Nothing to configure on your side.
       </p>
 
       <div class="callout">
         <strong>In one sentence</strong>
-        Alpenglow replaces Solana's original voting system with a faster, simpler one – finality in a blink –
-        and it is on track to reach mainnet later in 2026 after public testing.
+        Alpenglow replaces Solana's original voting system with a faster, simpler one: finality in a blink.
+        Mainnet activation is on track for late 2026 after public testing.
       </div>
 
       <div class="path-row">

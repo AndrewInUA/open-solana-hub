@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Solana Governance Proposals (SGP) запрацювали 2 липня 2026. Як працює ончейн-голосування, що таке staker sovereignty і чому вибір валідатора тепер має політичну вагу." />
+  <title>Ончейн-голосування Solana (SGP) – стейк як голос | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/uk/news/solana-onchain-governance-sgp.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/solana-onchain-governance-sgp.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/solana-onchain-governance-sgp.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="uk_UA" />
+  <meta property="og:title" content="У Solana з'явилося ончейн-голосування, і стейк тепер має вагу голосу" />
+  <meta property="og:description" content="Solana Governance Proposals з 2 липня 2026: як працюють SGP і що означає staker sovereignty." />
+  <meta property="og:url" content="https://www.opensolanahub.com/uk/news/solana-onchain-governance-sgp.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
+  <meta property="article:published_time" content="2026-07-08" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Ончейн-голосування Solana (SGP)" />
+  <meta name="twitter:description" content="Як працюють Solana Governance Proposals і чому делегатори можуть скасувати голос валідатора." />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "У Solana з'явилося ончейн-голосування, і стейк тепер має вагу голосу",
+    "description": "Solana Governance Proposals з 2 липня 2026. Як працюють SGP, staker sovereignty і роль валідаторів.",
+    "url": "https://www.opensolanahub.com/uk/news/solana-onchain-governance-sgp.html",
+    "datePublished": "2026-07-08",
+    "dateModified": "2026-07-08",
+    "inLanguage": "uk",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="icon" href="../../assets/logo.png" type="image/jpeg" />
+  <script src="../../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA – andrewinua.com">
+          <img src="../../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        </a>
+        <a href="../index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Про Солану українською</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Головне">
+        <a href="../index.html">Головна</a>
+        <a href="../basics.html">Основи</a>
+        <a href="../stay-safe.html">Безпека</a>
+        <a href="../first-steps.html">Перші кроки</a>
+        <a href="../ecosystem.html">Екосистема</a>
+        <a href="../glossary.html">Словник</a>
+        <a href="../compare-validators.html">Оцінка валідаторів</a>
+        <a href="./index.html" class="active">Новини</a>
+        <a href="../about.html">Про проєкт</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Мова">
+          <a href="../../news/solana-onchain-governance-sgp.html" lang="en" hreflang="en">EN</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./solana-onchain-governance-sgp.html" class="active" lang="uk" hreflang="uk">UA</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
+        <a class="btn btn-primary" href="../../compare/">Оцінити валідаторів</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+      <a class="article-back" href="./index.html">← Усі новини Solana</a>
+      <h1>У Solana з'явилося ончейн-голосування, і стейк тепер має вагу голосу</h1>
+      <div class="article-meta">
+        <time datetime="2026-07-08">8 липня 2026</time>
+        <span class="news-tag">Голосування</span>
+      </div>
+      <p class="prose-lead">
+        2 липня 2026 року Solana Foundation активувала <strong>Solana Governance Proposals (SGP)</strong>,
+        перший формальний ончейн-механізм голосування за напрям розвитку мережі. Важливі рішення
+        тепер фіксуються з вагою стейку на ланцюзі. Якщо ви делегуєте SOL, можете проголосувати самі.
+      </p>
+
+      <h2>Як працює SGP</h2>
+      <ul>
+        <li><strong>Хто може подати пропозицію:</strong> валідатор із щонайменше 100 000 SOL у делегованому стейку. Поріг це фільтр від спаму, не обмеження на голосування. Голосувати може будь-хто зі стейком.</li>
+        <li><strong>До голосування:</strong> пропозиція має зібрати підтримку 15% активного стейку.</li>
+        <li><strong>Проходження:</strong> потрібна дві третини голосів «за» або «проти» (утримання не рахуються), мінімальної явки немає.</li>
+        <li><strong>Запис:</strong> результат верифікується ончейн.</li>
+      </ul>
+
+      <h2>Staker sovereignty</h2>
+      <p>
+        За замовчуванням валідатор голосує від імені делегованого стейку. Але ви не прив'язані до його
+        позиції: можете проголосувати напряму з вагою свого стейку і скасувати голос валідатора для
+        вашої частки. Solana Foundation називає це <strong>staker sovereignty</strong>: вага голосу
+        залишається у власників токенів.
+      </p>
+      <p>
+        Більшість делегаторів не голосуватимуть по кожній пропозиції. Саме тому вибір валідатора
+        набуває нового значення: для більшості стейку голос валідатора <em>і є</em> їхнім голосом.
+      </p>
+
+      <h2>SGP проти SIMD</h2>
+      <p>
+        SGP не замінюють технічний процес. Solana Improvement Document (SIMD) як і раніше описує
+        <em>як</em> реалізувати зміну на рівні протоколу. SGP відповідають на питання <em>чи варто</em>
+        рухатися в цьому напрямку. Якщо SGP проходить, інженерна робота йде через один або кілька SIMD.
+      </p>
+
+      <h2>Що це означає для…</h2>
+
+      <h3>Валідаторів</h3>
+      <p>
+        Будь-який валідатор із 100 000+ SOL у делегованому стейку може подати SGP. Публікація того,
+        як і чому ви голосуєте, стає частиною репутації оператора, поруч із комісією, аптаймом і
+        консистентністю голосування.
+      </p>
+
+      <h3>Делегаторів</h3>
+      <p>
+        Ви можете скасувати голос валідатора по будь-якій пропозиції, з вагою свого стейку. Більшість
+        делегаторів не голосуватимуть по кожному пункту, тож вибір валідатора тепер також вибір
+        у governance. Відстежуйте патерни голосування у
+        <a href="../../compare/">Validator Transparency Dashboard</a>.
+      </p>
+
+      <h3>Білдерів</h3>
+      <p>
+        SGP сигналізують напрям мережі до початку реалізації на рівні SIMD. Якщо пропозиція проходить,
+        очікуйте інженерну роботу. Варто стежити за змінами протоколу, що впливають на ваш продукт.
+      </p>
+
+      <h3>Звичайних користувачів</h3>
+      <p>
+        Ончейн-голосування формалізує рішення, які раніше узгоджувались офчейн. Непрямий ефект: пріоритети
+        мережі можуть змінюватися через голоси з вагою стейку, навіть якщо ви не берете участі напряму.
+      </p>
+
+      <div class="callout">
+        <strong>Коротко</strong>
+        У Solana з'явилося формальне ончейн-голосування з вагою стейку. Делегатори можуть
+        завжди скасувати позицію валідатора.
+      </div>
+
+      <div class="path-row">
+        <a class="btn btn-primary" href="./index.html">Інші новини Solana</a>
+        <a class="btn btn-ghost" href="../compare-validators.html">Як оцінити валідаторів</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA">
+        <img src="../../assets/logo.png" alt="" width="36" height="36" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Незалежний освітній проєкт · Створено AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../../compare/">Validator Transparency Dashboard</a>
+      <a href="./index.html">Новини Solana</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Лише для навчання – не фінансова порада.</p>
+  </footer>
+</body>
+</html>

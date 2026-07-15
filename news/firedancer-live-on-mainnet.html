@@ -8,6 +8,8 @@
   <title>Firedancer Live on Solana Mainnet – Why Client Diversity Matters | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/news/firedancer-live-on-mainnet.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/firedancer-live-on-mainnet.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/firedancer-live-on-mainnet.html" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Firedancer Is Live on Mainnet: Why a Second Validator Client Matters" />
   <meta property="og:description" content="Jump Crypto's independent Solana client is producing blocks in production. The real story for SOL holders is network resilience, not raw speed." />
@@ -66,7 +68,7 @@
       </nav>
       <div class="header-actions">
         <nav class="lang-switch" aria-label="Language">
-          <a href="../uk/" lang="uk" hreflang="uk">UA</a>
+          <a href="../uk/news/firedancer-live-on-mainnet.html" lang="uk" hreflang="uk">UA</a>
           <span class="lang-sep" aria-hidden="true">·</span>
           <a href="./index.html" class="active" lang="en" hreflang="en">EN</a>
         </nav>
@@ -85,16 +87,16 @@
         <span class="news-tag">Clients</span>
       </div>
       <p class="prose-lead">
-        Firedancer – the Solana validator client built from scratch by Jump Crypto – is now running in
+        Firedancer, the Solana validator client built from scratch by Jump Crypto, is now running in
         production on mainnet, producing blocks and processing tens of millions of transactions. It is
-        Solana's first fully independent second client, and for everyday SOL holders the real story is
-        reliability, not speed.
+        Solana's first fully independent second client. The headline is network resilience: a single client
+        bug no longer halts the entire chain.
       </p>
 
       <h2>Why one client was a problem</h2>
       <p>
         For most of Solana's history, every validator ran the same software lineage (Agave, formerly the
-        Solana Labs client). When one codebase runs the whole network, one bug can stop the whole network –
+        Solana Labs client). When one codebase runs the whole network, one bug can stop the whole network,
         which is exactly what happened in past outages, including the February 2024 incident traced to a
         single bug that hit every validator at once. No diversity meant no fallback.
       </p>
@@ -102,35 +104,51 @@
       <h2>What Firedancer is</h2>
       <p>
         Firedancer is a clean-room reimplementation of the Solana protocol in the C language, sharing no code
-        with Agave. Its hybrid predecessor, <strong>Frankendancer</strong> – Firedancer's networking layer
-        bolted onto Agave's runtime – has been live since September 2024 and now carries a meaningful share
+        with Agave. Its hybrid predecessor, <strong>Frankendancer</strong> (Firedancer's networking layer
+        bolted onto Agave's runtime), has been live since September 2024 and now carries a meaningful share
         of network stake. The full, standalone Firedancer entered mainnet production this year and is
         actively producing blocks.
       </p>
       <p>
         The rollout is deliberately cautious. Jump has said publicly that it does not want a large share of
-        the network switching before full security audits are complete – a public bug-bounty competition
+        the network switching before full security audits are complete. A public bug-bounty competition
         with a $1 million pool was part of that process. Expect adoption to grow gradually rather than
         overnight.
       </p>
 
-      <h2>What it means for SOL holders and stakers</h2>
-      <ul>
-        <li><strong>Fewer full outages:</strong> with two independent implementations, a bug in one client is far less likely to halt the entire network.</li>
-        <li><strong>More headroom:</strong> Firedancer was engineered with high-frequency-trading techniques and demonstrated very high throughput in testing – useful during launch congestion and traffic spikes.</li>
-        <li><strong>A new validator signal:</strong> which client a validator runs, and how carefully they manage upgrades, is becoming part of assessing operator quality.</li>
-      </ul>
+      <h2>What it means for…</h2>
+
+      <h3>Validators</h3>
       <p>
-        None of this requires action from you. But if you delegate, it is another reason to look at how your
-        validator operates – uptime, communication, and upgrade discipline. Our
-        <a href="../compare-validators.html">validator assessment guide</a> covers what to look for, and the
-        <a href="../compare/">Validator Transparency Dashboard</a> shows stability and voting history for
-        every mainnet validator.
+        A second independent client is live in production. Adoption will grow gradually as audits finish,
+        but operators already running Frankendancer or Firedancer signal active infrastructure management.
+        Which client you run is becoming a standard quality signal.
+      </p>
+
+      <h3>Delegators</h3>
+      <p>
+        Network resilience improves when validators run different implementations. A bug in Agave no longer
+        halts every node at once. When choosing where to delegate, operator upgrade discipline and client
+        choice are worth weighing alongside commission and stability in the
+        <a href="../compare/">Validator Transparency Dashboard</a>.
+      </p>
+
+      <h3>Builders</h3>
+      <p>
+        More headroom during congestion spikes and large launches. Firedancer was built with
+        high-frequency-trading architecture and demonstrated very high throughput in testing. The network
+        tolerates traffic peaks better with two clients in production.
+      </p>
+
+      <h3>Everyone else</h3>
+      <p>
+        Fewer full-network outages. For wallets and everyday transactions, the change is mostly invisible
+        until the next stress event, when client diversity is what keeps the chain online.
       </p>
 
       <div class="callout">
         <strong>In one sentence</strong>
-        Solana went from one validator codebase to two independent ones – a quiet change that makes the
+        Solana went from one validator codebase to two independent ones. That makes the
         network meaningfully harder to knock offline.
       </div>
 
