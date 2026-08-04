@@ -36,7 +36,9 @@ npx serve .
 
 ## Deploy
 
-Import the repo on [Vercel](https://vercel.com) as a static site (no build command).
+Import the repo on [Vercel](https://vercel.com). Build command is `npm run build` (Markdown → news HTML). Serverless routes under `/api` handle Decap GitHub OAuth.
+
+Content admin: [/admin/](https://www.opensolanahub.com/admin/) — see [ADMIN.md](./ADMIN.md).
 
 ## Origins
 

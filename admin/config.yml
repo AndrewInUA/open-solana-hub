@@ -1,0 +1,103 @@
+# Decap CMS – production (GitHub OAuth via Vercel /api/auth + /api/callback).
+# Local trial: set local_backend: true and run `npx decap-server` (see ADMIN.md).
+
+local_backend: false
+
+backend:
+  name: github
+  repo: AndrewInUA/open-solana-hub
+  branch: main
+  base_url: https://www.opensolanahub.com
+  auth_endpoint: api/auth
+
+media_folder: content/news/media
+public_folder: /content/news/media
+
+collections:
+  - name: news_en
+    label: News (EN)
+    label_singular: EN post
+    folder: content/news/en
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    summary: "{{date}} — {{title}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - {
+          label: Publish date,
+          name: date,
+          widget: datetime,
+          date_format: YYYY-MM-DD,
+          time_format: false,
+          format: YYYY-MM-DD,
+        }
+      - {
+          label: Tag,
+          name: tag,
+          widget: select,
+          options: [Clients, Consensus, Governance, Ecosystem],
+        }
+      - {
+          label: Meta description,
+          name: description,
+          widget: text,
+          hint: "Used for <meta name=description> and SEO.",
+        }
+      - {
+          label: Teaser,
+          name: teaser,
+          widget: text,
+          hint: "Short blurb for the news index card.",
+        }
+      - {
+          label: Body,
+          name: body,
+          widget: markdown,
+          hint: "Article body. First paragraph becomes the lead.",
+        }
+
+  - name: news_uk
+    label: News (UK)
+    label_singular: UK post
+    folder: content/news/uk
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    summary: "{{date}} — {{title}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - {
+          label: Publish date,
+          name: date,
+          widget: datetime,
+          date_format: YYYY-MM-DD,
+          time_format: false,
+          format: YYYY-MM-DD,
+        }
+      - {
+          label: Tag,
+          name: tag,
+          widget: select,
+          options: [Clients, Consensus, Governance, Ecosystem],
+        }
+      - {
+          label: Meta description,
+          name: description,
+          widget: text,
+          hint: "Опис для meta description / SEO.",
+        }
+      - {
+          label: Teaser,
+          name: teaser,
+          widget: text,
+          hint: "Короткий текст для картки в списку новин.",
+        }
+      - {
+          label: Body,
+          name: body,
+          widget: markdown,
+          hint: "Текст статті. Перший абзац стає лідом.",
+        }

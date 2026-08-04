@@ -215,4 +215,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+  <!-- cms-sitemap-start -->
+
+      <!-- cms-sitemap-end -->
 </urlset>
