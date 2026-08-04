@@ -6,8 +6,8 @@
  * Writes: news/{slug}.html, uk/news/{slug}.html
  * Patches: news/index.html, uk/news/index.html, index.html, uk/index.html, sitemap.xml
  *
- * Handcrafted HTML posts (no matching MD) stay on disk and remain in indexes
- * via the <!-- handcrafted-news --> block. CMS posts are injected above them.
+ * All editorial posts live in content/news/{en,uk}/*.md and are rebuilt here.
+ * Index / homepage lists are filled between <!-- cms-news-start/end --> markers.
  */
 
 import fs from "node:fs";

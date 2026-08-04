@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Inject CMS page YAML (media + key text) into static HTML.
+ * Inject CMS page YAML into static HTML (full editorial fields).
  *
- * Reads:  content/pages/{en,uk}/homepage.yml
- *         content/pages/{en,uk}/guides/*.yml
- * Patches marked regions in index.html / uk/index.html / guide HTML files.
+ * Reads:  content/pages/{en,uk}/home.yml
+ *         content/pages/{en,uk}/{slug}.yml
+ * Patches marked regions in index.html / uk/index.html / page HTML files.
  *
- * Empty image fields clear the media slot (no broken placeholders).
- * Missing YAML or empty text fields leave existing HTML text alone.
+ * Empty image fields clear the media slot. Empty text fields leave HTML alone
+ * (except body: empty body clears the body slot).
  */
 
 import fs from "node:fs";
@@ -21,7 +21,7 @@ const ROOT = path.resolve(__dirname, "..");
 
 marked.setOptions({ gfm: true, breaks: false });
 
-const GUIDE_PAGES = [
+const CONTENT_PAGES = [
   "basics",
   "stay-safe",
   "first-steps",
@@ -98,6 +98,11 @@ function mdToInnerHtml(md) {
   return html;
 }
 
+function mdToBlockHtml(md) {
+  if (md == null || String(md).trim() === "") return "";
+  return marked.parse(String(md).trim(), { async: false }).trim();
+}
+
 function patchText(html, startMarker, endMarker, value, { asMarkdown = false } = {}) {
   if (!hasMarkers(html, startMarker)) return html;
   if (value == null || String(value).trim() === "") return html;
@@ -118,10 +123,37 @@ function patchMedia(html, startMarker, endMarker, image, alt, caption, className
   );
 }
 
-function buildHomepage(lang) {
-  const data = readYaml(
-    path.join(ROOT, "content", "pages", lang, "homepage.yml")
+function looksLikeHtml(value) {
+  const s = String(value).trim();
+  return /^<[a-z][\s\S]*>/i.test(s);
+}
+
+function patchBody(html, value) {
+  if (!hasMarkers(html, "<!-- cms-page-body-start -->")) return html;
+  // Explicit empty string clears; null/undefined leaves alone
+  if (value == null) return html;
+  if (String(value).trim() === "") {
+    return patchBetween(
+      html,
+      "<!-- cms-page-body-start -->",
+      "<!-- cms-page-body-end -->",
+      ""
+    );
+  }
+  // Migrated pages store HTML; new edits may be Markdown.
+  const inner = looksLikeHtml(value) ? String(value).trim() : mdToBlockHtml(value);
+  return patchBetween(
+    html,
+    "<!-- cms-page-body-start -->",
+    "<!-- cms-page-body-end -->",
+    inner
   );
+}
+
+function buildHomepage(lang) {
+  const data =
+    readYaml(path.join(ROOT, "content", "pages", lang, "home.yml")) ||
+    readYaml(path.join(ROOT, "content", "pages", lang, "homepage.yml"));
   if (!data) {
     console.log(`  · skip homepage ${lang} (no YAML)`);
     return;
@@ -178,19 +210,68 @@ function buildHomepage(lang) {
     "cms-figure cms-figure-section"
   );
 
+  html = patchText(
+    html,
+    "<!-- cms-learn-kicker-start -->",
+    "<!-- cms-learn-kicker-end -->",
+    data.learn_kicker
+  );
+  html = patchText(
+    html,
+    "<!-- cms-learn-title-start -->",
+    "<!-- cms-learn-title-end -->",
+    data.learn_title
+  );
+  html = patchText(
+    html,
+    "<!-- cms-learn-intro-start -->",
+    "<!-- cms-learn-intro-end -->",
+    data.learn_intro,
+    { asMarkdown: true }
+  );
+  html = patchText(
+    html,
+    "<!-- cms-dashboard-kicker-start -->",
+    "<!-- cms-dashboard-kicker-end -->",
+    data.dashboard_kicker
+  );
+  html = patchText(
+    html,
+    "<!-- cms-dashboard-title-start -->",
+    "<!-- cms-dashboard-title-end -->",
+    data.dashboard_title
+  );
+  html = patchText(
+    html,
+    "<!-- cms-dashboard-body-start -->",
+    "<!-- cms-dashboard-body-end -->",
+    data.dashboard_body,
+    { asMarkdown: true }
+  );
+
   fs.writeFileSync(htmlPath, html);
-  console.log(`  ✓ homepage ${lang}`);
+  console.log(`  ✓ home ${lang}`);
 }
 
-function buildGuide(lang, slug) {
+function buildPage(lang, slug) {
   const data = readYaml(
-    path.join(ROOT, "content", "pages", lang, "guides", `${slug}.yml`)
+    path.join(ROOT, "content", "pages", lang, `${slug}.yml`)
   );
   if (!data) {
-    console.log(`  · skip ${lang}/${slug} (no YAML)`);
-    return;
+    // Legacy path during transition
+    const legacy = readYaml(
+      path.join(ROOT, "content", "pages", lang, "guides", `${slug}.yml`)
+    );
+    if (!legacy) {
+      console.log(`  · skip ${lang}/${slug} (no YAML)`);
+      return;
+    }
+    return buildPageFromData(lang, slug, legacy);
   }
+  return buildPageFromData(lang, slug, data);
+}
 
+function buildPageFromData(lang, slug, data) {
   const htmlPath =
     lang === "en"
       ? path.join(ROOT, `${slug}.html`)
@@ -224,6 +305,7 @@ function buildGuide(lang, slug) {
     data.page_image_caption,
     "cms-figure cms-figure-page"
   );
+  html = patchBody(html, data.body);
 
   fs.writeFileSync(htmlPath, html);
   console.log(`  ✓ ${lang}/${slug}`);
@@ -233,7 +315,7 @@ function main() {
   console.log("Building pages from content/pages/…");
   for (const lang of ["en", "uk"]) {
     buildHomepage(lang);
-    for (const slug of GUIDE_PAGES) buildGuide(lang, slug);
+    for (const slug of CONTENT_PAGES) buildPage(lang, slug);
   }
   console.log("Done pages.");
 }

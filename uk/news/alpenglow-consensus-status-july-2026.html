@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="Стан оновлення консенсусу Alpenglow у липні 2026: Votor, фіналізація ~150 мс, кінець ончейн vote-транзакцій, таймінг testnet і що зміниться на mainnet." />
-  <title>Alpenglow у липні 2026 – найбільша зміна консенсусу Solana | Open Solana Hub</title>
+  <title>Alpenglow наближається до mainnet: де зараз найбільша зміна консенсусу Solana | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/uk/news/alpenglow-consensus-status-july-2026.html" />
   <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/alpenglow-consensus-status-july-2026.html" />
@@ -13,23 +13,23 @@
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="uk_UA" />
   <meta property="og:title" content="Alpenglow наближається до mainnet: де зараз найбільша зміна консенсусу Solana" />
-  <meta property="og:description" content="Votor, фіналізація ~150 мс і кінець ончейн vote-транзакцій – стан Alpenglow у липні 2026." />
+  <meta property="og:description" content="Стан оновлення консенсусу Alpenglow у липні 2026: Votor, фіналізація ~150 мс, кінець ончейн vote-транзакцій, таймінг testnet і що зміниться на mainnet." />
   <meta property="og:url" content="https://www.opensolanahub.com/uk/news/alpenglow-consensus-status-july-2026.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="https://www.opensolanahub.com/assets/logo.png" />
   <meta property="article:published_time" content="2026-07-15" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Alpenglow у липні 2026 – консенсус Solana" />
-  <meta name="twitter:description" content="Votor, ~150 мс фіналізації, кінець vote-транзакцій – що відомо зараз." />
+  <meta name="twitter:title" content="Alpenglow наближається до mainnet: де зараз найбільша зміна консенсусу Solana" />
+  <meta name="twitter:description" content="Стан оновлення консенсусу Alpenglow у липні 2026: Votor, фіналізація ~150 мс, кінець ончейн vote-транзакцій, таймінг testnet і що зміниться на mainnet." />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "headline": "Alpenglow наближається до mainnet: де зараз найбільша зміна консенсусу Solana",
-    "description": "Стан оновлення консенсусу Alpenglow у липні 2026 – Votor, фіналізація, testnet і зміни для валідаторів.",
+    "description": "Стан оновлення консенсусу Alpenglow у липні 2026: Votor, фіналізація ~150 мс, кінець ончейн vote-транзакцій, таймінг testnet і що зміниться на mainnet.",
     "url": "https://www.opensolanahub.com/uk/news/alpenglow-consensus-status-july-2026.html",
     "datePublished": "2026-07-15",
-    "dateModified": "2026-08-03",
+    "dateModified": "2026-07-15",
     "inLanguage": "uk",
     "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
     "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
@@ -87,95 +87,70 @@
       <div class="article-meta">
         <time datetime="2026-07-15">15 липня 2026</time>
         <span class="news-tag">Консенсус</span>
-        <span class="article-updated">Оновлено <time datetime="2026-08-03">3 серп 2026</time></span>
       </div>
-      <p class="prose-lead">
-        Alpenglow є найбільшою зміною в тому, як Solana узгоджує блоки, від моменту запуску мережі.
-        На середину липня 2026 року оновлення розгортається через клієнт валідатора Agave: активація
-        на testnet очікується цього літа, mainnet після тестування спільноти та аудитів безпеки.
-      </p>
-      <div class="callout">
-        <strong>Оновлення серпня 2026</strong>
+      <p class="prose-lead">Alpenglow є найбільшою зміною в тому, як Solana узгоджує блоки, від моменту запуску мережі.
+ На середину липня 2026 року оновлення розгортається через клієнт валідатора Agave: активація
+ на testnet очікується цього літа, mainnet після тестування спільноти та аудитів безпеки.</p>
+<div class="callout">
+<strong>Оновлення серпня 2026</strong>
         <a href="./agave-4-2-release-august-2026.html">Agave 4.2</a> уже містить повний код Alpenglow
         для community test cluster і security review. Активація на mainnet очікується в Agave 4.3
         (орієнтовно жовтень 2026), не в 4.2. Anza також проводить bug bounty для Alpenglow
         (до 50 000 SOL) з 5 по 19 серпня 2026.
-      </div>
+</div>
 
-      <h2>Що таке Alpenglow</h2>
-      <p>
-        Зараз валідатори Solana узгоджують стан мережі через Tower BFT із підтримкою Proof of History
-        і голосують звичайними ончейн-транзакціями. Ці vote-транзакції непомітні більшості користувачів,
-        але займають велику частку кожного блоку (за різними оцінками, до трьох чвертей простору).
-      </p>
-      <p>
-        Alpenglow замінює це новим протоколом голосування та фіналізації <strong>Votor</strong>. Голоси
-        переходять офчейн, у прямі повідомлення між валідаторами, і мережа може фіналізувати блок
-        приблизно за 100–150 мілісекунд замість кількох секунд сьогодні. Для застосунків це різниця
-        між очікуванням і майже миттєвим підтвердженням.
-      </p>
+      
 
-      <h2>Хронологія</h2>
-      <ul>
-        <li><strong>Травень 2025:</strong> Anza представила Alpenglow на Solana Accelerate (SIMD-0326).</li>
-        <li><strong>Вересень 2025:</strong> голосування валідаторів, ~98% «за», один із найсильніших мандатів в історії Solana.</li>
-        <li><strong>Травень 2026:</strong> Alpenglow запущено на community test cluster, вперше з зовнішніми валідаторами.</li>
-        <li><strong>Липень 2026:</strong> фінальні feature flags змерджено в Agave; testnet цього літа, mainnet після аудитів; більшість оцінок вказує на кінець 2026 року.</li>
-        <li><strong>31 липня / серпень 2026:</strong> Agave 4.2 виходить із feature-complete Alpenglow для тест-кластерів; активація консенсусу на mainnet цілиться на Agave 4.3 у жовтні 2026.</li>
-      </ul>
-
-      <h2>Що входить у реліз, а що ні</h2>
-      <p>
-        На mainnet йде лише зміна консенсусу Votor. Інші частини оригінального плану Alpenglow
-        (шар розподілу даних Rotor і механізми slashing) відкладені на майбутні пропозиції. Головний
-        виграш першого етапу: швидша фіналізація та прибирання vote-транзакцій з блоків.
-      </p>
-      <p>
-        Економічна зміна: Alpenglow вводить <strong>Validator Admission Ticket (VAT)</strong>,
-        комісію (наразі пропонується 1,6 SOL за епоху), яку валідатори платять за участь у консенсусі.
-        Разом із прибиранням комісій за кожен голос це перебудовує операційні витрати валідаторів,
-        особливо для незалежних операторів меншого розміру.
-      </p>
-
-      <h2>Що це означає для…</h2>
-
-      <h3>Валідаторів</h3>
-      <p>
-        Alpenglow приходить через релізи Agave, тож плануйте вікна оновлень заздалегідь. Vote-транзакції
-        зникають з блоків, а Validator Admission Ticket (VAT, наразі пропонується 1,6 SOL за епоху)
-        замінює комісії за кожен голос. Операційні витрати змінюються; незалежним операторам варто
-        порахувати нову економіку до активації на mainnet.
-      </p>
-
-      <h3>Делегаторів</h3>
-      <p>
-        Міграція чи повторне делегування не потрібні. Непрямий ефект стосується економіки валідаторів:
-        оператори, які комунікують план апгрейдів і вчасно оновлюють Agave, пройдуть перехід краще.
-      </p>
-
-      <h3>Білдерів</h3>
-      <p>
-        Після активації Votor на mainnet фіналізація впаде до ~100–150 мс. Застосунки, які сьогодні чекають
-        кілька секунд, можуть звужувати UX-очікування, хоча повний шар Rotor (швидший розподіл блоків у
-        симуляціях) прийде пізніше. Поки що орієнтуйтесь на покращення лише від Votor.
-      </p>
-
-      <h3>Звичайних користувачів</h3>
-      <p>
-        Якщо ви просто тримаєте або використовуєте SOL без інфраструктури, практична зміна у швидшому
-        підтвердженні транзакцій у гаманцях і застосунках. Нічого налаштовувати не потрібно.
-      </p>
-
-      <div class="callout">
-        <strong>Коротко</strong>
+<h2>Що таке Alpenglow</h2>
+<p>Зараз валідатори Solana узгоджують стан мережі через Tower BFT із підтримкою Proof of History
+ і голосують звичайними ончейн-транзакціями. Ці vote-транзакції непомітні більшості користувачів,
+ але займають велику частку кожного блоку (за різними оцінками, до трьох чвертей простору).</p>
+<p>Alpenglow замінює це новим протоколом голосування та фіналізації <strong>Votor</strong>. Голоси
+ переходять офчейн, у прямі повідомлення між валідаторами, і мережа може фіналізувати блок
+ приблизно за 100–150 мілісекунд замість кількох секунд сьогодні. Для застосунків це різниця
+ між очікуванням і майже миттєвим підтвердженням.</p>
+<h2>Хронологія</h2>
+<ul>
+<li><strong>Травень 2025:</strong> Anza представила Alpenglow на Solana Accelerate (SIMD-0326).</li>
+<li><strong>Вересень 2025:</strong> голосування валідаторів, ~98% «за», один із найсильніших мандатів в історії Solana.</li>
+<li><strong>Травень 2026:</strong> Alpenglow запущено на community test cluster, вперше з зовнішніми валідаторами.</li>
+<li><strong>Липень 2026:</strong> фінальні feature flags змерджено в Agave; testnet цього літа, mainnet після аудитів; більшість оцінок вказує на кінець 2026 року.</li>
+<li><strong>31 липня / серпень 2026:</strong> Agave 4.2 виходить із feature-complete Alpenglow для тест-кластерів; активація консенсусу на mainnet цілиться на Agave 4.3 у жовтні 2026.</li>
+</ul>
+<h2>Що входить у реліз, а що ні</h2>
+<p>На mainnet йде лише зміна консенсусу Votor. Інші частини оригінального плану Alpenglow
+ (шар розподілу даних Rotor і механізми slashing) відкладені на майбутні пропозиції. Головний
+ виграш першого етапу: швидша фіналізація та прибирання vote-транзакцій з блоків.</p>
+<p>Економічна зміна: Alpenglow вводить <strong>Validator Admission Ticket (VAT)</strong>,
+ комісію (наразі пропонується 1,6 SOL за епоху), яку валідатори платять за участь у консенсусі.
+ Разом із прибиранням комісій за кожен голос це перебудовує операційні витрати валідаторів,
+ особливо для незалежних операторів меншого розміру.</p>
+<h2>Що це означає для…</h2>
+<h3>Валідаторів</h3>
+<p>Alpenglow приходить через релізи Agave, тож плануйте вікна оновлень заздалегідь. Vote-транзакції
+ зникають з блоків, а Validator Admission Ticket (VAT, наразі пропонується 1,6 SOL за епоху)
+ замінює комісії за кожен голос. Операційні витрати змінюються; незалежним операторам варто
+ порахувати нову економіку до активації на mainnet.</p>
+<h3>Делегаторів</h3>
+<p>Міграція чи повторне делегування не потрібні. Непрямий ефект стосується економіки валідаторів:
+ оператори, які комунікують план апгрейдів і вчасно оновлюють Agave, пройдуть перехід краще.</p>
+<h3>Білдерів</h3>
+<p>Після активації Votor на mainnet фіналізація впаде до ~100–150 мс. Застосунки, які сьогодні чекають
+ кілька секунд, можуть звужувати UX-очікування, хоча повний шар Rotor (швидший розподіл блоків у
+ симуляціях) прийде пізніше. Поки що орієнтуйтесь на покращення лише від Votor.</p>
+<h3>Звичайних користувачів</h3>
+<p>Якщо ви просто тримаєте або використовуєте SOL без інфраструктури, практична зміна у швидшому
+ підтвердженні транзакцій у гаманцях і застосунках. Нічого налаштовувати не потрібно.</p>
+<div class="callout">
+<strong>Коротко</strong>
         Alpenglow замінює стару систему голосування на швидшу й простішу: фіналізація за сотні
         мілісекунд. Повний код уже в Agave 4.2 для тестів; активація на mainnet цілиться на Agave 4.3
         пізніше у 2026 році.
-      </div>
+</div>
 
       <div class="path-row">
-        <a class="btn btn-primary" href="./agave-4-2-release-august-2026.html">Реліз Agave 4.2</a>
-        <a class="btn btn-ghost" href="../glossary.html">Словник термінів</a>
+        <a class="btn btn-primary" href="./index.html">Більше новин Solana</a>
+        <a class="btn btn-ghost" href="../ecosystem.html">Як працює стейкінг</a>
       </div>
     </article>
   </main>

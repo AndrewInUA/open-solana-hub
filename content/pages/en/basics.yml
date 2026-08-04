@@ -1,0 +1,77 @@
+title: What is Solana in simple terms?
+lead: >-
+  If you are searching for what Solana is, how SOL works, or how to get started – here is Solana
+  explained in plain English, without the jargon.
+page_image: ""
+page_image_alt: ""
+page_image_caption: ""
+body: |
+  <h2>Blockchain in one paragraph</h2>
+    <p>
+    A blockchain is a shared record book copied across many computers. No single company owns the book.
+    Everyone can verify the rules; changes follow consensus. Solana is one such network – optimized for
+    fast, low-cost transactions at scale.
+    </p>
+  
+    <h2>What is SOL?</h2>
+    <p>
+    SOL is Solana’s native token. You use it to pay small network fees and, if you choose, to participate
+    in staking.       Holding SOL does not automatically earn rewards – staking is a separate, optional step.
+    See <a href="./first-steps.html">first practical steps</a> when you are ready to explore that path.
+    </p>
+  
+    <h2>What is a wallet?</h2>
+    <p>
+    A wallet is software (or hardware) that holds your keys – secret codes that prove you control an address on Solana.
+    Popular options include Phantom, Solflare, and Backpack. The wallet shows your balance and lets you approve transactions.
+    Read <a href="./stay-safe.html">how to stay safe on Solana</a> before you store meaningful amounts.
+    </p>
+    <ul>
+    <li><strong>Your keys, your control.</strong> If you lose your seed phrase, no bank can reset it.</li>
+    <li><strong>Transactions are public.</strong> Amounts and addresses are visible on explorers – privacy works differently than a bank account.</li>
+    <li><strong>Start small.</strong> Try a tiny amount before moving anything meaningful.</li>
+    </ul>
+  
+    <h2>How is Solana different from Bitcoin and Ethereum?</h2>
+    <p>
+    Think of them as three tools, not three competitors in a race. Bitcoin is designed as digital money –
+    scarce, slow on purpose, hard to change. Ethereum pioneered smart contracts, the idea that a network
+    can run programs, not just move coins. Solana takes that idea and optimizes for speed and cost:
+    transactions confirm in seconds and typically cost a fraction of a cent. That is what makes
+    everyday actions – payments, small transfers, frequent app use – practical rather than theoretical.
+    </p>
+  
+    <h2>Web3 – what people mean</h2>
+    <p>
+    “Web3” usually means apps and assets that run on public networks like Solana instead of inside one company’s database.
+    You connect a wallet instead of creating yet another password. The hype is optional; the infrastructure is real.
+    Meet an unfamiliar word along the way? The <a href="./glossary.html">Solana glossary</a> covers 40 terms in one sentence each.
+    </p>
+  
+    <h2>Frequently asked questions</h2>
+    <h3>What is Solana in simple terms?</h3>
+    <p>
+    Solana is a public blockchain – a shared record book copied across many computers, with no single
+    company in control. It is built for fast, low-cost transactions. SOL is its native token.
+    </p>
+    <h3>What is SOL used for?</h3>
+    <p>
+    SOL pays small network fees and can optionally be staked to help secure the network and earn a share
+    of rewards. Holding SOL alone does not earn rewards – <a href="./first-steps.html">staking</a> is a separate, optional step.
+    </p>
+    <h3>What is a Solana wallet?</h3>
+    <p>
+    A wallet holds your keys – secret codes proving you control an address. Popular options include Phantom,
+    Solflare, and Backpack. Your seed phrase is the master key; read <a href="./stay-safe.html">how to stay safe</a> before storing meaningful amounts.
+    </p>
+    <h3>How is Solana different from Bitcoin and Ethereum?</h3>
+    <p>
+    Bitcoin is digital money with a fixed supply; Ethereum pioneered smart contracts; Solana optimizes both
+    ideas for speed and cost – seconds to confirm, fractions of a cent per transaction. Different tools,
+    different jobs.
+    </p>
+  
+    <blockquote>
+    Learning comes before earning. Understand wallets and fees before you stake or use DeFi apps.
+    Planning to delegate later? Read <a href="./compare-validators.html">how to assess validators</a> before you choose.
+    </blockquote>

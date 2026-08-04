@@ -11,81 +11,105 @@ Production admin: **https://www.opensolanahub.com/admin/**
 
 No local `npx serve` or `decap-server` needed for day-to-day use.
 
-## What you can edit
+## Whole picture: admin → live URL
 
-| Collection | What it controls |
-|------------|------------------|
-| **News (EN)** / **News (UK)** | Full news articles (Markdown → HTML on build) |
-| **Homepage (EN)** / **Homepage (UK)** | Hero title & lead, “What is Solana?” text, hero + section images |
-| **Guides (EN)** / **Guides (UK)** | Title, lead, and page image for Basics, Stay safe, First steps, Ecosystem, Glossary, Validator assessment, About |
+Collections mirror the site navigation (EN + UK).
 
-The interactive **Validator Transparency Dashboard** (`/compare/`) is not CMS-edited — it is a live data tool.
+| Admin collection / entry | Live URL (EN) | Live URL (UK) |
+|--------------------------|---------------|---------------|
+| **Pages (EN)** → Home | `/` (`index.html`) | — |
+| **Pages (UK)** → Головна | — | `/uk/` |
+| **Pages** → Basics / Основи | `/basics.html` | `/uk/basics.html` |
+| **Pages** → Stay safe / Безпека | `/stay-safe.html` | `/uk/stay-safe.html` |
+| **Pages** → First steps / Перші кроки | `/first-steps.html` | `/uk/first-steps.html` |
+| **Pages** → Ecosystem / Екосистема | `/ecosystem.html` | `/uk/ecosystem.html` |
+| **Pages** → Glossary / Словник | `/glossary.html` | `/uk/glossary.html` |
+| **Pages** → Validator assessment / Оцінка валідаторів | `/compare-validators.html` | `/uk/compare-validators.html` |
+| **Pages** → About / Про проєкт | `/about.html` | `/uk/about.html` |
+| **News (EN)** / **News (UK)** | `/news/{slug}.html` | `/uk/news/{slug}.html` |
+| **Media** | `/content/media/...` | same |
 
-Decap is **not** a Figma-like page builder. You edit structured fields (text + images). Layout, navigation, and most body copy on guide pages stay in the HTML templates on purpose.
+### Not in the CMS (by design)
+
+| Area | Why |
+|------|-----|
+| **Validator Transparency Dashboard** (`/compare/`) | Live data app (API, charts, directory). Edit code/backend, not Decap. |
+| **Nav, footer, SEO shell** (canonical, FAQ JSON-LD, language switch) | Layout chrome — kept in HTML templates so design stays consistent. |
+| **Homepage guide cards / suggested path** | Structural links to pages; titles of those pages are edited under each Pages entry. |
+| **Brand-new site sections** (new nav items) | File list is fixed to the current nav. Ask a developer to add a page file + HTML shell if you need a new section. |
+
+## How to edit a page body
+
+1. Login → **Pages (EN)** or **Pages (UK)**
+2. Open the nav-named entry (e.g. **Basics**)
+3. Edit **Title**, **Lead**, optional **Page image**
+4. Edit **Body** — full article content (headings, lists, links, media)
+   - Existing pages were migrated as **HTML** so the live text is already there: change wording inside the tags, or add Markdown blocks for new sections
+   - Insert images from **Media**
+5. **Publish** → wait for Vercel (~1–2 min) → hard-refresh the live page
+
+Bottom “Next / Back” buttons stay in the template (site navigation), not in the body field.
+
+### Homepage
+
+Under **Home** / **Головна** you can edit:
+
+- Hero title, lead, optional hero image
+- “What is Solana?” title, body, optional image
+- Learn section kicker / title / intro
+- Dashboard blurb kicker / title / body
+
+News cards on the homepage come from the **News** collections automatically.
+
+## News
+
+All four existing posts are in the CMS (`content/news/en|uk/*.md`).
+
+1. **News (EN)** → New post (or open an existing one)
+2. Set **slug** carefully (URL path) — use the **same slug** in **News (UK)** for bilingual pairs
+3. Fill title, date, tag, meta description, teaser, body
+4. **Publish**
+
+Build generates article HTML, news index cards, homepage cards, and sitemap entries.
 
 ## Media library
 
-1. In the admin sidebar, open **Media**.
-2. Upload photos/graphics (PNG, JPG, WebP, SVG, etc.).
-3. Files are stored under `content/media/` and served at `/content/media/...`.
-4. Reuse the same upload on Homepage, Guides, and inside News article bodies.
-
-Tip: prefer wide images (~1600px) for the homepage hero; keep file size reasonable for visitors on mobile.
-
-## Add a photo to the homepage
-
-1. Login → **Homepage (EN)** (and the same for **Homepage (UK)** if you want parity).
-2. Upload or pick an image in **Hero image** (under the CTAs) and/or **Section image** (under “What is Solana?”).
-3. Fill **alt** text (accessibility) and optional **caption**.
-4. Click **Publish**.
-5. Wait for the Vercel deploy (~1–2 minutes). The live homepage will show the image.
-
-Same idea for a guide: open **Guides (EN)** → pick the page → set **Page image** → Publish.
-
-## Create a bilingual news post
-
-1. In **News (EN)**, create a post. Set the **slug** carefully (e.g. `my-topic-august-2026`).
-2. In **News (UK)**, create the Ukrainian version with the **same slug**.
-3. Fill title, date, tag, meta description, teaser, and body.
-4. Insert images from the Media library into the body as needed.
-5. Click **Publish** — Decap commits to GitHub.
-
-On the next Vercel deploy, `npm run build` generates:
-
-- `news/{slug}.html` and `uk/news/{slug}.html`
-- Cards on the news indexes and homepage
-- Sitemap entries for new slugs
-- Homepage / guide media & text from `content/pages/`
-
-Existing handcrafted HTML news posts are left alone and stay on the indexes below CMS cards.
+1. Sidebar → **Media**
+2. Upload PNG / JPG / WebP / SVG
+3. Files live in `content/media/` → served as `/content/media/...`
+4. Reuse on any Page or inside News bodies
 
 ## EN + UK parity
 
-Edit both language collections when you change text or add images. The CMS does not auto-translate or copy images between EN and UK — use the same Media file in both if you want matching photos.
+Edit both language collections when you change text or images. The CMS does not auto-translate.
+
+## After publish
+
+1. Wait for the Vercel deploy to finish
+2. Hard-refresh `/admin/` (and the public page) so you see the latest entries
+3. Local/CI build: `npm run build` runs `build-news` then `build-pages`
 
 ## One-time setup (GitHub OAuth + Vercel env)
 
-If login fails with a missing client id / secret, complete this once:
+If login fails with a missing client id / secret:
 
-### A. Create a GitHub OAuth App
+### A. GitHub OAuth App
 
-1. Open https://github.com/settings/developers → **OAuth Apps** → **New OAuth App**
-2. Application name: `Open Solana Hub CMS`
+1. https://github.com/settings/developers → **OAuth Apps** → **New OAuth App**
+2. Name: `Open Solana Hub CMS`
 3. Homepage URL: `https://www.opensolanahub.com`
-4. Authorization callback URL: `https://www.opensolanahub.com/api/callback`
-5. Register → copy **Client ID** and generate a **Client secret**
+4. Callback URL: `https://www.opensolanahub.com/api/callback`
+5. Copy **Client ID** and generate a **Client secret**
 
-### B. Set Vercel environment variables
-
-In the Vercel project for this repo → **Settings** → **Environment Variables** (Production):
+### B. Vercel env (Production)
 
 | Name | Value |
 |------|--------|
-| `GITHUB_CLIENT_ID` | Client ID from step A |
-| `GITHUB_CLIENT_SECRET` | Client secret from step A |
+| `GITHUB_CLIENT_ID` | from step A |
+| `GITHUB_CLIENT_SECRET` | from step A |
 | `OAUTH_REDIRECT_URI` | `https://www.opensolanahub.com/api/callback` |
 
-Redeploy after saving env vars.
+Redeploy after saving.
 
 ## Local trial (optional)
 
@@ -102,14 +126,19 @@ Production config has `local_backend: false` and uses the Vercel OAuth proxy.
 ```bash
 npm run build        # news + pages
 npm run build:news   # news only
-npm run build:pages  # homepage/guides only
+npm run build:pages  # pages only
 ```
 
-## Undo / scope
+## Repo map
 
-- Admin UI: `admin/` (script loads after `#nc-root` — do not move it into `<head>`)
-- News drafts: `content/news/`
-- Page fields: `content/pages/`
-- Media: `content/media/`
-- OAuth proxy: `api/auth.js`, `api/callback.js`
-- Build: `scripts/build-news.mjs`, `scripts/build-pages.mjs`
+| Path | Role |
+|------|------|
+| `admin/` | Decap UI (`index.html` loads script **after** `#nc-root` — do not move it into `<head>`) |
+| `admin/config.yml` | Collections: Pages EN/UK, News EN/UK, Media |
+| `content/pages/{en,uk}/` | Home + each nav page YAML (title, lead, image, **body**) |
+| `content/news/{en,uk}/` | News Markdown (frontmatter + body) |
+| `content/media/` | Uploaded media |
+| `api/auth.js`, `api/callback.js` | OAuth proxy |
+| `scripts/build-news.mjs` | MD → news HTML, indexes, homepage cards, sitemap |
+| `scripts/build-pages.mjs` | YAML → inject title/lead/body/images into HTML shells |
+| `scripts/migrate-to-cms.mjs` | One-shot importer (already run; keep for reference) |

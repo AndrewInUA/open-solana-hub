@@ -15,6 +15,285 @@ media_folder: content/media
 public_folder: /content/media
 
 collections:
+  # ── Pages (mirrors site nav) ──────────────────────────
+  - name: pages_en
+    label: Pages (EN)
+    description: "English site pages – labels match the main navigation."
+    files:
+      - label: Home
+        name: home
+        file: content/pages/en/home.yml
+        fields: &home_fields_en
+          - { label: Hero title, name: hero_title, widget: string }
+          - {
+              label: Hero lead,
+              name: hero_lead,
+              widget: markdown,
+              hint: "Intro under the title. Links OK (Markdown).",
+            }
+          - {
+              label: Hero image,
+              name: hero_image,
+              widget: image,
+              required: false,
+              hint: "Optional wide image under the hero CTAs.",
+            }
+          - {
+              label: Hero image alt,
+              name: hero_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Hero caption,
+              name: hero_caption,
+              widget: string,
+              required: false,
+            }
+          - { label: "What is Solana – title", name: section_title, widget: string }
+          - {
+              label: "What is Solana – body",
+              name: section_body,
+              widget: markdown,
+              hint: "Paragraph under the section title. **bold** and links OK.",
+            }
+          - {
+              label: Section image,
+              name: section_image,
+              widget: image,
+              required: false,
+            }
+          - {
+              label: Section image alt,
+              name: section_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Section caption,
+              name: section_caption,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Learn kicker,
+              name: learn_kicker,
+              widget: string,
+              hint: "Small label above the Learn section (e.g. Learn).",
+            }
+          - { label: Learn title, name: learn_title, widget: string }
+          - {
+              label: Learn intro,
+              name: learn_intro,
+              widget: markdown,
+              hint: "Intro under the Learn title. Guide cards stay structural.",
+            }
+          - {
+              label: Dashboard kicker,
+              name: dashboard_kicker,
+              widget: string,
+              hint: "Small label above the dashboard blurb.",
+            }
+          - { label: Dashboard title, name: dashboard_title, widget: string }
+          - {
+              label: Dashboard body,
+              name: dashboard_body,
+              widget: markdown,
+              hint: "Text under the dashboard title. Buttons stay structural.",
+            }
+
+      - label: Basics
+        name: basics
+        file: content/pages/en/basics.yml
+        fields: &page_fields_en
+          - { label: Title, name: title, widget: string }
+          - {
+              label: Lead,
+              name: lead,
+              widget: markdown,
+              hint: "Opening paragraph under the title.",
+            }
+          - {
+              label: Page image,
+              name: page_image,
+              widget: image,
+              required: false,
+              hint: "Optional image under the lead.",
+            }
+          - {
+              label: Image alt,
+              name: page_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Image caption,
+              name: page_image_caption,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Body,
+              name: body,
+              widget: markdown,
+              hint: "Full page content. Existing pages use HTML (edit text in place). New sections can use Markdown. Images from Media. Bottom nav buttons stay in the template.",
+            }
+
+      - label: Stay safe
+        name: stay_safe
+        file: content/pages/en/stay-safe.yml
+        fields: *page_fields_en
+
+      - label: First steps
+        name: first_steps
+        file: content/pages/en/first-steps.yml
+        fields: *page_fields_en
+
+      - label: Ecosystem
+        name: ecosystem
+        file: content/pages/en/ecosystem.yml
+        fields: *page_fields_en
+
+      - label: Glossary
+        name: glossary
+        file: content/pages/en/glossary.yml
+        fields: *page_fields_en
+
+      - label: Validator assessment
+        name: compare_validators
+        file: content/pages/en/compare-validators.yml
+        fields: *page_fields_en
+
+      - label: About
+        name: about
+        file: content/pages/en/about.yml
+        fields: *page_fields_en
+
+  - name: pages_uk
+    label: Pages (UK)
+    description: "Українські сторінки – назви як у головній навігації."
+    files:
+      - label: Головна
+        name: home
+        file: content/pages/uk/home.yml
+        fields: &home_fields_uk
+          - { label: Hero title, name: hero_title, widget: string }
+          - {
+              label: Hero lead,
+              name: hero_lead,
+              widget: markdown,
+              hint: "Вступ під заголовком. Посилання — Markdown.",
+            }
+          - {
+              label: Hero image,
+              name: hero_image,
+              widget: image,
+              required: false,
+            }
+          - {
+              label: Hero image alt,
+              name: hero_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Hero caption,
+              name: hero_caption,
+              widget: string,
+              required: false,
+            }
+          - { label: "Що таке Solana – заголовок", name: section_title, widget: string }
+          - {
+              label: "Що таке Solana – текст",
+              name: section_body,
+              widget: markdown,
+            }
+          - {
+              label: Section image,
+              name: section_image,
+              widget: image,
+              required: false,
+            }
+          - {
+              label: Section image alt,
+              name: section_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Section caption,
+              name: section_caption,
+              widget: string,
+              required: false,
+            }
+          - { label: Learn kicker, name: learn_kicker, widget: string }
+          - { label: Learn title, name: learn_title, widget: string }
+          - { label: Learn intro, name: learn_intro, widget: markdown }
+          - { label: Dashboard kicker, name: dashboard_kicker, widget: string }
+          - { label: Dashboard title, name: dashboard_title, widget: string }
+          - { label: Dashboard body, name: dashboard_body, widget: markdown }
+
+      - label: Основи
+        name: basics
+        file: content/pages/uk/basics.yml
+        fields: &page_fields_uk
+          - { label: Title, name: title, widget: string }
+          - { label: Lead, name: lead, widget: markdown }
+          - {
+              label: Page image,
+              name: page_image,
+              widget: image,
+              required: false,
+            }
+          - {
+              label: Image alt,
+              name: page_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Image caption,
+              name: page_image_caption,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Body,
+              name: body,
+              widget: markdown,
+              hint: "Повний текст сторінки. Існуючі сторінки — HTML (редагуйте текст на місці). Нові блоки можна писати Markdown. Нижні кнопки — у шаблоні.",
+            }
+
+      - label: Безпека
+        name: stay_safe
+        file: content/pages/uk/stay-safe.yml
+        fields: *page_fields_uk
+
+      - label: Перші кроки
+        name: first_steps
+        file: content/pages/uk/first-steps.yml
+        fields: *page_fields_uk
+
+      - label: Екосистема
+        name: ecosystem
+        file: content/pages/uk/ecosystem.yml
+        fields: *page_fields_uk
+
+      - label: Словник
+        name: glossary
+        file: content/pages/uk/glossary.yml
+        fields: *page_fields_uk
+
+      - label: Оцінка валідаторів
+        name: compare_validators
+        file: content/pages/uk/compare-validators.yml
+        fields: *page_fields_uk
+
+      - label: Про проєкт
+        name: about
+        file: content/pages/uk/about.yml
+        fields: *page_fields_uk
+
   # ── News ──────────────────────────────────────────────
   - name: news_en
     label: News (EN)
@@ -102,201 +381,4 @@ collections:
           name: body,
           widget: markdown,
           hint: "Текст статті. Перший абзац стає лідом. Зображення — з Media.",
-        }
-
-  # ── Homepage ──────────────────────────────────────────
-  - name: homepage_en
-    label: Homepage (EN)
-    files:
-      - label: Homepage
-        name: homepage
-        file: content/pages/en/homepage.yml
-        fields:
-          - { label: Hero title, name: hero_title, widget: string }
-          - {
-              label: Hero lead,
-              name: hero_lead,
-              widget: markdown,
-              hint: "Intro under the title. Links OK (Markdown).",
-            }
-          - {
-              label: Hero image,
-              name: hero_image,
-              widget: image,
-              required: false,
-              hint: "Optional wide image under the hero CTAs.",
-            }
-          - {
-              label: Hero image alt,
-              name: hero_image_alt,
-              widget: string,
-              required: false,
-            }
-          - {
-              label: Hero caption,
-              name: hero_caption,
-              widget: string,
-              required: false,
-            }
-          - { label: Section title, name: section_title, widget: string }
-          - {
-              label: Section body,
-              name: section_body,
-              widget: markdown,
-              hint: '"What is Solana?" paragraph. **bold** and links OK.',
-            }
-          - {
-              label: Section image,
-              name: section_image,
-              widget: image,
-              required: false,
-              hint: "Optional image under the What is Solana section.",
-            }
-          - {
-              label: Section image alt,
-              name: section_image_alt,
-              widget: string,
-              required: false,
-            }
-          - {
-              label: Section caption,
-              name: section_caption,
-              widget: string,
-              required: false,
-            }
-
-  - name: homepage_uk
-    label: Homepage (UK)
-    files:
-      - label: Homepage
-        name: homepage
-        file: content/pages/uk/homepage.yml
-        fields:
-          - { label: Hero title, name: hero_title, widget: string }
-          - {
-              label: Hero lead,
-              name: hero_lead,
-              widget: markdown,
-              hint: "Вступ під заголовком. Посилання — Markdown.",
-            }
-          - {
-              label: Hero image,
-              name: hero_image,
-              widget: image,
-              required: false,
-              hint: "Необов'язкове широке зображення під кнопками героя.",
-            }
-          - {
-              label: Hero image alt,
-              name: hero_image_alt,
-              widget: string,
-              required: false,
-            }
-          - {
-              label: Hero caption,
-              name: hero_caption,
-              widget: string,
-              required: false,
-            }
-          - { label: Section title, name: section_title, widget: string }
-          - {
-              label: Section body,
-              name: section_body,
-              widget: markdown,
-              hint: "Абзац «Що таке Solana?». **жирний** і посилання OK.",
-            }
-          - {
-              label: Section image,
-              name: section_image,
-              widget: image,
-              required: false,
-            }
-          - {
-              label: Section image alt,
-              name: section_image_alt,
-              widget: string,
-              required: false,
-            }
-          - {
-              label: Section caption,
-              name: section_caption,
-              widget: string,
-              required: false,
-            }
-
-  # ── Guides & static pages ─────────────────────────────
-  - name: guides_en
-    label: Guides (EN)
-    label_singular: Guide
-    folder: content/pages/en/guides
-    create: false
-    delete: false
-    extension: yml
-    format: yaml
-    identifier_field: title
-    summary: "{{title}}"
-    fields:
-      - { label: Title, name: title, widget: string }
-      - {
-          label: Lead,
-          name: lead,
-          widget: markdown,
-          hint: "Opening paragraph under the title.",
-        }
-      - {
-          label: Page image,
-          name: page_image,
-          widget: image,
-          required: false,
-          hint: "Optional image under the lead.",
-        }
-      - {
-          label: Image alt,
-          name: page_image_alt,
-          widget: string,
-          required: false,
-        }
-      - {
-          label: Image caption,
-          name: page_image_caption,
-          widget: string,
-          required: false,
-        }
-
-  - name: guides_uk
-    label: Guides (UK)
-    label_singular: Guide
-    folder: content/pages/uk/guides
-    create: false
-    delete: false
-    extension: yml
-    format: yaml
-    identifier_field: title
-    summary: "{{title}}"
-    fields:
-      - { label: Title, name: title, widget: string }
-      - {
-          label: Lead,
-          name: lead,
-          widget: markdown,
-          hint: "Вступний абзац під заголовком.",
-        }
-      - {
-          label: Page image,
-          name: page_image,
-          widget: image,
-          required: false,
-          hint: "Необов'язкове зображення під лідом.",
-        }
-      - {
-          label: Image alt,
-          name: page_image_alt,
-          widget: string,
-          required: false,
-        }
-      - {
-          label: Image caption,
-          name: page_image_caption,
-          widget: string,
-          required: false,
         }

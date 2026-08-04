@@ -1,0 +1,80 @@
+title: How to stake SOL – first practical steps
+lead: >-
+  Looking for how to stake SOL or where to stake on Solana? Start here: wallet, small test
+  transfers, assess validators, then delegate only when you are ready.
+page_image: ""
+page_image_alt: ""
+page_image_caption: ""
+body: |
+  <ol class="step-list">
+    <li>
+    <strong>Install a wallet</strong><br />
+    Pick a reputable wallet (Phantom, Solflare, or Backpack). Download only from official sites or app stores.
+    Write your seed phrase on paper; store it offline. See <a href="./stay-safe.html">stay safe</a> for seed phrase rules.
+    </li>
+    <li>
+    <strong>Fund with a small amount</strong><br />
+    Buy or transfer a tiny amount of SOL first – enough to learn fees and sends. Treat it as tuition, not an investment thesis.
+    </li>
+    <li>
+    <strong>Send yourself a test transaction</strong><br />
+    Move a little SOL between your own addresses or to a second wallet you control. Confirm it on an explorer. You are learning the rhythm of approve → confirm → wait.
+    </li>
+    <li>
+    <strong>Assess validators before you stake</strong><br />
+    Staking means delegating to a validator who votes on the network. Commission, uptime, and history matter.
+    Read <a href="./compare-validators.html">how to assess validators</a>, then open the
+    <a href="./compare/index.html#directory-section">Validator Transparency Dashboard</a>,
+    search by name or vote key, and read Stability, Commission, and the network-relative summary.
+    Try comparing two validators side by side.
+    </li>
+    <li>
+    <strong>Stake only when you are ready</strong><br />
+    In your wallet, search for a validator by name or paste a vote account key.
+    Your SOL stays in your wallet; you can undelegate later (with a cooldown period).
+    This guide does not recommend a specific validator – explore, assess, then decide.
+    </li>
+    </ol>
+  
+    <div class="callout">
+    <strong>Try the tool now</strong><br />
+    <span style="color:var(--text2);font-size:14px">
+    Open the dashboard with an example profile, then pick any validator from the directory:
+    </span>
+    <div class="path-row" style="margin-top:12px">
+    <a class="btn btn-primary" href="./compare/index.html?vote=3QPGLackJy5LKctYYoPGmA4P8ncyE197jdxr1zP2ho8K">Open example validator</a>
+    <a class="btn btn-ghost" href="./compare/index.html#directory-section">Browse directory</a>
+    </div>
+    </div>
+  
+    <h2>What to look for on the dashboard</h2>
+    <ul>
+    <li><strong>Commission</strong> – validator fee on rewards; lower is usually better for you (pool fees may still apply).</li>
+    <li><strong>Stability score</strong> – long-term consistency from stored snapshots.</li>
+    <li><strong>Live status</strong> – healthy vs delinquent right now.</li>
+    <li><strong>Pool stake split</strong> – who delegates through known pools (Trillium data).</li>
+    </ul>
+  
+    <h2>Frequently asked questions</h2>
+    <h3>How do I stake SOL as a beginner?</h3>
+    <p>
+    Install a wallet, fund it with a small amount, send a test transaction,
+    <a href="./compare-validators.html">assess validators</a> on open metrics, then delegate from your
+    wallet when you are ready. Your SOL stays in your wallet.
+    </p>
+    <h3>Is staking SOL safe?</h3>
+    <p>
+    Native staking keeps your SOL in your own wallet – you delegate, you do not send it away. The main risks
+    are picking a poor validator and scams. <a href="./stay-safe.html">Stay safe</a> and assess before you choose.
+    </p>
+    <h3>Can I unstake SOL later?</h3>
+    <p>
+    Yes. You can undelegate at any time, with a cooldown of roughly one epoch before the SOL is fully liquid
+    again. You stay in control of your wallet throughout.
+    </p>
+    <h3>How much SOL do I need to start staking?</h3>
+    <p>
+    There is no meaningful minimum – you can delegate a fraction of a SOL. Keep a little undelegated for
+    fees, and start with an amount you are comfortable learning with. Terms like "epoch" or "vote account"
+    unclear? The <a href="./glossary.html">glossary</a> has them all in one sentence each.
+    </p>
