@@ -301,6 +301,43 @@ html[data-theme="light"] .btn-primary {
   font-weight: 350;
 }
 
+/* CMS-injected media (homepage + guides) */
+.cms-figure {
+  margin: 1.75rem 0 0;
+  max-width: min(100%, 42rem);
+}
+
+.cms-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg2, transparent);
+}
+
+.cms-figure figcaption {
+  margin-top: 0.55rem;
+  font-size: 0.88rem;
+  color: var(--text3, var(--text2));
+  line-height: 1.45;
+  max-width: 40em;
+}
+
+.cms-figure-hero {
+  margin-top: 2rem;
+  max-width: min(100%, 48rem);
+}
+
+.cms-figure-section {
+  margin-top: 1.5rem;
+}
+
+.prose .cms-figure-page {
+  margin: 1.5rem 0 2rem;
+  max-width: min(100%, 40rem);
+}
+
 .path-row {
   display: flex;
   flex-wrap: wrap;

@@ -10,10 +10,12 @@ backend:
   base_url: https://www.opensolanahub.com
   auth_endpoint: api/auth
 
-media_folder: content/news/media
-public_folder: /content/news/media
+# Site-wide media library (news + pages). Upload once, reuse anywhere.
+media_folder: content/media
+public_folder: /content/media
 
 collections:
+  # ── News ──────────────────────────────────────────────
   - name: news_en
     label: News (EN)
     label_singular: EN post
@@ -55,7 +57,7 @@ collections:
           label: Body,
           name: body,
           widget: markdown,
-          hint: "Article body. First paragraph becomes the lead.",
+          hint: "Article body. First paragraph becomes the lead. Insert images from Media.",
         }
 
   - name: news_uk
@@ -99,5 +101,202 @@ collections:
           label: Body,
           name: body,
           widget: markdown,
-          hint: "Текст статті. Перший абзац стає лідом.",
+          hint: "Текст статті. Перший абзац стає лідом. Зображення — з Media.",
+        }
+
+  # ── Homepage ──────────────────────────────────────────
+  - name: homepage_en
+    label: Homepage (EN)
+    files:
+      - label: Homepage
+        name: homepage
+        file: content/pages/en/homepage.yml
+        fields:
+          - { label: Hero title, name: hero_title, widget: string }
+          - {
+              label: Hero lead,
+              name: hero_lead,
+              widget: markdown,
+              hint: "Intro under the title. Links OK (Markdown).",
+            }
+          - {
+              label: Hero image,
+              name: hero_image,
+              widget: image,
+              required: false,
+              hint: "Optional wide image under the hero CTAs.",
+            }
+          - {
+              label: Hero image alt,
+              name: hero_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Hero caption,
+              name: hero_caption,
+              widget: string,
+              required: false,
+            }
+          - { label: Section title, name: section_title, widget: string }
+          - {
+              label: Section body,
+              name: section_body,
+              widget: markdown,
+              hint: '"What is Solana?" paragraph. **bold** and links OK.',
+            }
+          - {
+              label: Section image,
+              name: section_image,
+              widget: image,
+              required: false,
+              hint: "Optional image under the What is Solana section.",
+            }
+          - {
+              label: Section image alt,
+              name: section_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Section caption,
+              name: section_caption,
+              widget: string,
+              required: false,
+            }
+
+  - name: homepage_uk
+    label: Homepage (UK)
+    files:
+      - label: Homepage
+        name: homepage
+        file: content/pages/uk/homepage.yml
+        fields:
+          - { label: Hero title, name: hero_title, widget: string }
+          - {
+              label: Hero lead,
+              name: hero_lead,
+              widget: markdown,
+              hint: "Вступ під заголовком. Посилання — Markdown.",
+            }
+          - {
+              label: Hero image,
+              name: hero_image,
+              widget: image,
+              required: false,
+              hint: "Необов'язкове широке зображення під кнопками героя.",
+            }
+          - {
+              label: Hero image alt,
+              name: hero_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Hero caption,
+              name: hero_caption,
+              widget: string,
+              required: false,
+            }
+          - { label: Section title, name: section_title, widget: string }
+          - {
+              label: Section body,
+              name: section_body,
+              widget: markdown,
+              hint: "Абзац «Що таке Solana?». **жирний** і посилання OK.",
+            }
+          - {
+              label: Section image,
+              name: section_image,
+              widget: image,
+              required: false,
+            }
+          - {
+              label: Section image alt,
+              name: section_image_alt,
+              widget: string,
+              required: false,
+            }
+          - {
+              label: Section caption,
+              name: section_caption,
+              widget: string,
+              required: false,
+            }
+
+  # ── Guides & static pages ─────────────────────────────
+  - name: guides_en
+    label: Guides (EN)
+    label_singular: Guide
+    folder: content/pages/en/guides
+    create: false
+    delete: false
+    extension: yml
+    format: yaml
+    identifier_field: title
+    summary: "{{title}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - {
+          label: Lead,
+          name: lead,
+          widget: markdown,
+          hint: "Opening paragraph under the title.",
+        }
+      - {
+          label: Page image,
+          name: page_image,
+          widget: image,
+          required: false,
+          hint: "Optional image under the lead.",
+        }
+      - {
+          label: Image alt,
+          name: page_image_alt,
+          widget: string,
+          required: false,
+        }
+      - {
+          label: Image caption,
+          name: page_image_caption,
+          widget: string,
+          required: false,
+        }
+
+  - name: guides_uk
+    label: Guides (UK)
+    label_singular: Guide
+    folder: content/pages/uk/guides
+    create: false
+    delete: false
+    extension: yml
+    format: yaml
+    identifier_field: title
+    summary: "{{title}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - {
+          label: Lead,
+          name: lead,
+          widget: markdown,
+          hint: "Вступний абзац під заголовком.",
+        }
+      - {
+          label: Page image,
+          name: page_image,
+          widget: image,
+          required: false,
+          hint: "Необов'язкове зображення під лідом.",
+        }
+      - {
+          label: Image alt,
+          name: page_image_alt,
+          widget: string,
+          required: false,
+        }
+      - {
+          label: Image caption,
+          name: page_image_caption,
+          widget: string,
+          required: false,
         }

@@ -3,11 +3,13 @@
   "private": true,
   "description": "Open Solana Hub static site + Decap CMS admin",
   "scripts": {
-    "build": "node scripts/build-news.mjs",
-    "build:news": "node scripts/build-news.mjs"
+    "build": "node scripts/build-news.mjs && node scripts/build-pages.mjs",
+    "build:news": "node scripts/build-news.mjs",
+    "build:pages": "node scripts/build-pages.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
+    "js-yaml": "^4.3.1",
     "marked": "^15.0.12"
   },
   "engines": {
