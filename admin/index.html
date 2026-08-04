@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex,nofollow" />
   <title>Open Solana Hub – Content Admin</title>
-  <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
 </head>
 <body>
-  <!-- Decap CMS. Production: Login with GitHub. See ADMIN.md -->
+  <!-- Decap mounts here. Script must load after body exists (not in <head>). -->
+  <div id="nc-root"></div>
+  <script src="https://unpkg.com/decap-cms@^3.3.3/dist/decap-cms.js"></script>
 </body>
 </html>
