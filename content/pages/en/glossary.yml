@@ -1,6 +1,6 @@
 title: Solana glossary – the terms, in simple words
 lead: >-
-  Every field has its dialect; crypto just speaks it louder. Here are the 40 words you will actually
+  Every field has its dialect; crypto just speaks it louder. Here are the words you will actually
   meet on Solana – one plain sentence each, no lecture. Bookmark it, come back whenever a guide or a
   wallet says something strange.
 page_image: ""
@@ -62,6 +62,7 @@ body: |
     <li><strong>NFT</strong> – a unique on-chain record used for art, memberships, or game items; ownership is verifiable, value is not guaranteed.</li>
     <li><strong>Token</strong> – any asset issued on the network besides SOL itself; some are useful, some are jokes, few are investments.</li>
     <li><strong>Airdrop</strong> – free tokens sent to wallets, sometimes real marketing, often scam bait; unexpected tokens are best left untouched.</li>
+    <li><strong>Bounty</strong> – a paid task posted by a project (writing, design, code); Superteam Earn is the main Solana board. Pay is for work delivered, not a staking yield.</li>
     <li><strong>RPC</strong> – the connection point apps use to talk to the network; when a wallet "can't connect," it is usually an RPC hiccup, not lost funds.</li>
     <li><strong>DYOR</strong> – "do your own research" – the house rule of this entire site.</li>
     </ul>
