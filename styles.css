@@ -721,6 +721,7 @@ html[data-theme="light"] .btn-primary {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--heading);
+  scroll-margin-top: 7.5rem;
 }
 
 .prose h3 {
