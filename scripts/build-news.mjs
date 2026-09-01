@@ -94,6 +94,17 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
+// Posts with an `image` get a large Twitter/OG card; the rest fall back to the logo.
+function socialCard(post) {
+  if (!post.image) {
+    return { image: `${SITE}/assets/logo.png`, card: "summary" };
+  }
+  const src = post.image.startsWith("http")
+    ? post.image
+    : `${SITE}${post.image.startsWith("/") ? "" : "/"}${post.image}`;
+  return { image: src, card: "summary_large_image" };
+}
+
 function parseDate(raw) {
   // gray-matter may yield a Date for YAML dates, or a string "YYYY-MM-DD".
   let y;
@@ -158,6 +169,7 @@ function readPosts(lang) {
         description: String(data.description || data.teaser || ""),
         teaser: String(data.teaser || data.description || ""),
         tag: String(data.tag || "Ecosystem"),
+        image: data.image ? String(data.image) : "",
         date,
         body: content.trim(),
       };
@@ -181,6 +193,7 @@ function renderArticleEn(post) {
   const titleEsc = escapeHtml(title);
   const descEsc = escapeHtml(description);
   const tagEsc = escapeHtml(tag);
+  const social = socialCard(post);
 
   return `<!doctype html>
 <html lang="en">
@@ -199,11 +212,12 @@ function renderArticleEn(post) {
   <meta property="og:description" content="${descEsc}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:site_name" content="Open Solana Hub" />
-  <meta property="og:image" content="${SITE}/assets/logo.png" />
+  <meta property="og:image" content="${social.image}" />
   <meta property="article:published_time" content="${date.iso}" />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="${social.card}" />
   <meta name="twitter:title" content="${titleEsc}" />
   <meta name="twitter:description" content="${descEsc}" />
+  <meta name="twitter:image" content="${social.image}" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -211,6 +225,7 @@ function renderArticleEn(post) {
     "headline": ${JSON.stringify(title)},
     "description": ${JSON.stringify(description)},
     "url": "${url}",
+    "image": "${social.image}",
     "datePublished": "${date.iso}",
     "dateModified": "${date.iso}",
     "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "${SITE}/" },
@@ -312,6 +327,7 @@ function renderArticleUk(post) {
   const titleEsc = escapeHtml(title);
   const descEsc = escapeHtml(description);
   const tagLabel = escapeHtml(TAG_UK[tag] || tag);
+  const social = socialCard(post);
 
   return `<!doctype html>
 <html lang="uk">
@@ -331,11 +347,12 @@ function renderArticleUk(post) {
   <meta property="og:description" content="${descEsc}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:site_name" content="Open Solana Hub" />
-  <meta property="og:image" content="${SITE}/assets/logo.png" />
+  <meta property="og:image" content="${social.image}" />
   <meta property="article:published_time" content="${date.iso}" />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="${social.card}" />
   <meta name="twitter:title" content="${titleEsc}" />
   <meta name="twitter:description" content="${descEsc}" />
+  <meta name="twitter:image" content="${social.image}" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -343,6 +360,7 @@ function renderArticleUk(post) {
     "headline": ${JSON.stringify(title)},
     "description": ${JSON.stringify(description)},
     "url": "${url}",
+    "image": "${social.image}",
     "datePublished": "${date.iso}",
     "dateModified": "${date.iso}",
     "inLanguage": "uk",

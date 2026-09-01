@@ -333,6 +333,13 @@ collections:
           hint: "Short blurb for the news index card.",
         }
       - {
+          label: Social share image,
+          name: image,
+          widget: image,
+          required: false,
+          hint: "1200×630. Used for the Twitter/X and Telegram link preview. Falls back to the logo.",
+        }
+      - {
           label: Body,
           name: body,
           widget: markdown,
@@ -375,6 +382,13 @@ collections:
           name: teaser,
           widget: text,
           hint: "Короткий текст для картки в списку новин.",
+        }
+      - {
+          label: Social share image,
+          name: image,
+          widget: image,
+          required: false,
+          hint: "1200×630. Прев’ю для посилання у Twitter/X і Telegram. За замовчуванням – лого.",
         }
       - {
           label: Body,
