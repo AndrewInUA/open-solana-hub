@@ -30,8 +30,16 @@ function fmtSol(n) {
 function applyTheme(theme) {
   const t = theme === "dark" ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", t);
+  const label = $("theme-toggle-label");
   const btn = $("theme-toggle");
-  if (btn) btn.textContent = t === "dark" ? "Dark" : "Light";
+  if (label) label.textContent = t === "dark" ? "Light" : "Dark";
+  if (btn) {
+    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+    btn.setAttribute(
+      "aria-label",
+      t === "dark" ? "Switch to light theme" : "Switch to dark theme"
+    );
+  }
   try {
     localStorage.setItem(THEME_KEY, t);
   } catch {
