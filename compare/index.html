@@ -2067,6 +2067,21 @@
     .nav-back-arrow { font-size: 14px; line-height: 1; }
     html.app-landing .nav-back-btn { display: none !important; }
 
+    .nav-stake-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--accent);
+      color: var(--accent-dark);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .nav-stake-btn:hover { text-decoration: none; filter: brightness(0.97); }
+
     .hub-nav-btn {
       display: inline-flex;
       align-items: center;
@@ -2492,6 +2507,7 @@
       </div>
     </div>
     <div class="header-actions">
+      <a href="./mystake.html" class="nav-stake-btn" title="Verdict on your native stake">My stake</a>
       <a href="../index.html" class="hub-nav-btn" title="Open Solana Hub – plain-English Solana education">
         <span class="nav-back-arrow" aria-hidden="true">←</span>
         <span>Learn</span>
@@ -2529,6 +2545,8 @@
         <p class="landing-example">
           Example (creator’s node):
           <a id="landing-example-link" href="#">Open AndrewInUA</a>
+          <span> · </span>
+          <a href="./mystake.html">Already staked? See how your stake is doing</a>
         </p>
         <div id="landing-system-signals" class="last-updated" style="margin-top:14px">System signals: …</div>
       </div>
@@ -3003,6 +3021,7 @@
             <div class="pill pill-ok">Done: Directory on home – search by name or vote key (<a href="./index.html#directory-section">open home</a>)</div>
             <div class="pill pill-ok">Done: First-glance KPI strip + richer directory &amp; pickers (context before you open a profile)</div>
             <div class="pill pill-ok">Done: Change history exports – copy summary and daily snapshot CSV</div>
+            <div class="pill pill-ok">In progress: My stake – plain-language verdict on your native position</div>
             <div class="pill">Next: Per-epoch detail page</div>
             <div class="pill">Next: Delinquency alerts &amp; proactive signals</div>
             <div class="pill">Next: Network-wide change signals (directory &amp; compare views)</div>
