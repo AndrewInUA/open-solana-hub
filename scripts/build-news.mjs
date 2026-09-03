@@ -151,6 +151,102 @@ function formatDateUkShort({ y, m, d }) {
   return `${d} ${MONTH_UK_SHORT[m - 1]} ${y}`;
 }
 
+function parseKeywords(data) {
+  if (Array.isArray(data.keywords)) {
+    return data.keywords.map((k) => String(k).trim()).filter(Boolean);
+  }
+  if (typeof data.keywords === "string" && data.keywords.trim()) {
+    return data.keywords
+      .split(",")
+      .map((k) => k.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function parseEvent(data) {
+  const e = data.event;
+  if (!e || typeof e !== "object" || !e.name) return null;
+  return {
+    name: String(e.name),
+    start: e.start ? String(e.start).slice(0, 10) : "",
+    end: e.end ? String(e.end).slice(0, 10) : "",
+    venue: e.venue ? String(e.venue) : "",
+    city: e.city ? String(e.city) : "",
+    country: e.country ? String(e.country) : "",
+    organizer: e.organizer ? String(e.organizer) : "",
+    superEvent: e.super_event ? String(e.super_event) : "",
+    superStart: e.super_start ? String(e.super_start).slice(0, 10) : "",
+    superEnd: e.super_end ? String(e.super_end).slice(0, 10) : "",
+  };
+}
+
+function articleTagMetas(post) {
+  const lines = [`  <meta property="article:section" content="${escapeHtml(post.tag)}" />`];
+  for (const k of post.keywords) {
+    lines.push(`  <meta property="article:tag" content="${escapeHtml(k)}" />`);
+  }
+  return lines.join("\n");
+}
+
+function articleJsonLd(post, { url, lang }) {
+  const social = socialCard(post);
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: post.title,
+    description: post.description,
+    url,
+    image: social.image,
+    datePublished: post.date.iso,
+    dateModified: post.date.iso,
+    inLanguage: lang,
+    articleSection: post.tag,
+    isPartOf: { "@type": "WebSite", name: "Open Solana Hub", url: `${SITE}/` },
+    author: {
+      "@type": "Person",
+      name: "Andrii (AndrewInUA)",
+      url: "https://andrewinua.com/",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Open Solana Hub",
+      url: `${SITE}/`,
+    },
+  };
+  if (post.keywords.length) data.keywords = post.keywords;
+  if (post.event) {
+    const about = { "@type": "Event", name: post.event.name };
+    if (post.event.start) about.startDate = post.event.start;
+    if (post.event.end) about.endDate = post.event.end;
+    if (post.event.venue || post.event.city) {
+      about.location = {
+        "@type": "Place",
+        name: post.event.venue || post.event.city,
+      };
+      if (post.event.city || post.event.country) {
+        about.location.address = { "@type": "PostalAddress" };
+        if (post.event.city) about.location.address.addressLocality = post.event.city;
+        if (post.event.country) about.location.address.addressCountry = post.event.country;
+      }
+    }
+    if (post.event.organizer) {
+      about.organizer = { "@type": "Organization", name: post.event.organizer };
+    }
+    if (post.event.superEvent) {
+      const superEvent = { "@type": "Event", name: post.event.superEvent };
+      if (post.event.superStart) superEvent.startDate = post.event.superStart;
+      if (post.event.superEnd) superEvent.endDate = post.event.superEnd;
+      about.superEvent = superEvent;
+    }
+    data.about = about;
+  }
+  return JSON.stringify(data, null, 2)
+    .split("\n")
+    .map((line, i) => (i === 0 ? line : `  ${line}`))
+    .join("\n");
+}
+
 function readPosts(lang) {
   const dir = path.join(ROOT, "content", "news", lang);
   if (!fs.existsSync(dir)) return [];
@@ -166,10 +262,13 @@ function readPosts(lang) {
         slug,
         lang,
         title: String(data.title || slug),
+        seoTitle: String(data.seo_title || data.title || slug),
         description: String(data.description || data.teaser || ""),
         teaser: String(data.teaser || data.description || ""),
         tag: String(data.tag || "Ecosystem"),
         image: data.image ? String(data.image) : "",
+        keywords: parseKeywords(data),
+        event: parseEvent(data),
         date,
         body: content.trim(),
       };
@@ -185,12 +284,13 @@ function bodyToHtml(markdown) {
 }
 
 function renderArticleEn(post) {
-  const { slug, title, description, tag, date, body } = post;
+  const { slug, title, seoTitle, description, tag, date, body } = post;
   const url = `${SITE}/news/${slug}.html`;
   const ukUrl = `${SITE}/uk/news/${slug}.html`;
   const dateLong = formatDateEnLong(date);
   const bodyHtml = bodyToHtml(body);
   const titleEsc = escapeHtml(title);
+  const seoTitleEsc = escapeHtml(seoTitle);
   const descEsc = escapeHtml(description);
   const tagEsc = escapeHtml(tag);
   const social = socialCard(post);
@@ -202,36 +302,27 @@ function renderArticleEn(post) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="${descEsc}" />
-  <title>${titleEsc} | Open Solana Hub</title>
+  <title>${seoTitleEsc} | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="${url}" />
   <link rel="alternate" hreflang="en" href="${url}" />
   <link rel="alternate" hreflang="uk" href="${ukUrl}" />
+  <link rel="alternate" hreflang="x-default" href="${url}" />
   <meta property="og:type" content="article" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:title" content="${titleEsc}" />
   <meta property="og:description" content="${descEsc}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="${social.image}" />
   <meta property="article:published_time" content="${date.iso}" />
+${articleTagMetas(post)}
   <meta name="twitter:card" content="${social.card}" />
   <meta name="twitter:title" content="${titleEsc}" />
   <meta name="twitter:description" content="${descEsc}" />
   <meta name="twitter:image" content="${social.image}" />
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "headline": ${JSON.stringify(title)},
-    "description": ${JSON.stringify(description)},
-    "url": "${url}",
-    "image": "${social.image}",
-    "datePublished": "${date.iso}",
-    "dateModified": "${date.iso}",
-    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "${SITE}/" },
-    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
-    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "${SITE}/" }
-  }
+  ${articleJsonLd(post, { url, lang: "en" })}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -319,12 +410,13 @@ function renderArticleEn(post) {
 }
 
 function renderArticleUk(post) {
-  const { slug, title, description, tag, date, body } = post;
+  const { slug, title, seoTitle, description, tag, date, body } = post;
   const url = `${SITE}/uk/news/${slug}.html`;
   const enUrl = `${SITE}/news/${slug}.html`;
   const dateLong = formatDateUkLong(date);
   const bodyHtml = bodyToHtml(body);
   const titleEsc = escapeHtml(title);
+  const seoTitleEsc = escapeHtml(seoTitle);
   const descEsc = escapeHtml(description);
   const tagLabel = escapeHtml(TAG_UK[tag] || tag);
   const social = socialCard(post);
@@ -336,11 +428,12 @@ function renderArticleUk(post) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="description" content="${descEsc}" />
-  <title>${titleEsc} | Open Solana Hub</title>
+  <title>${seoTitleEsc} | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="${url}" />
   <link rel="alternate" hreflang="en" href="${enUrl}" />
   <link rel="alternate" hreflang="uk" href="${url}" />
+  <link rel="alternate" hreflang="x-default" href="${enUrl}" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="uk_UA" />
   <meta property="og:title" content="${titleEsc}" />
@@ -349,25 +442,13 @@ function renderArticleUk(post) {
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="${social.image}" />
   <meta property="article:published_time" content="${date.iso}" />
+${articleTagMetas(post)}
   <meta name="twitter:card" content="${social.card}" />
   <meta name="twitter:title" content="${titleEsc}" />
   <meta name="twitter:description" content="${descEsc}" />
   <meta name="twitter:image" content="${social.image}" />
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "headline": ${JSON.stringify(title)},
-    "description": ${JSON.stringify(description)},
-    "url": "${url}",
-    "image": "${social.image}",
-    "datePublished": "${date.iso}",
-    "dateModified": "${date.iso}",
-    "inLanguage": "uk",
-    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "${SITE}/" },
-    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
-    "publisher": { "@type": "Organization", "name": "Open Solana Hub", "url": "${SITE}/" }
-  }
+  ${articleJsonLd(post, { url, lang: "uk" })}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -578,6 +659,7 @@ function sitemapEntry(enPath, ukPath, lastmod) {
     <loc>${SITE}${enPath}</loc>
     <xhtml:link rel="alternate" hreflang="en" href="${SITE}${enPath}" />
     <xhtml:link rel="alternate" hreflang="uk" href="${SITE}${ukPath}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${enPath}" />
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -586,6 +668,7 @@ function sitemapEntry(enPath, ukPath, lastmod) {
     <loc>${SITE}${ukPath}</loc>
     <xhtml:link rel="alternate" hreflang="en" href="${SITE}${enPath}" />
     <xhtml:link rel="alternate" hreflang="uk" href="${SITE}${ukPath}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${enPath}" />
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

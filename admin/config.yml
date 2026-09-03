@@ -307,6 +307,13 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - {
+          label: SEO title,
+          name: seo_title,
+          widget: string,
+          required: false,
+          hint: "Google tab title, under ~55 characters. Falls back to Title. Do not add | Open Solana Hub.",
+        }
+      - {
           label: Publish date,
           name: date,
           widget: datetime,
@@ -324,8 +331,63 @@ collections:
           label: Meta description,
           name: description,
           widget: text,
-          hint: "Used for <meta name=description> and SEO.",
+          hint: "Used for <meta name=description> and SEO. About 150 characters. Put the event name first.",
         }
+      - {
+          label: SEO keywords,
+          name: keywords,
+          widget: list,
+          required: false,
+          hint: "Search terms for this page: event name, city, venue. Used in structured data, not a Google ranking tag.",
+        }
+      - label: Event (SEO)
+        name: event
+        widget: object
+        required: false
+        collapsed: true
+        hint: "If the article is about a conference, this helps Google understand the event."
+        fields:
+          - { label: Name, name: name, widget: string }
+          - {
+              label: Start date,
+              name: start,
+              widget: datetime,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+            }
+          - {
+              label: End date,
+              name: end,
+              widget: datetime,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+              required: false,
+            }
+          - { label: Venue, name: venue, widget: string, required: false }
+          - { label: City, name: city, widget: string, required: false }
+          - { label: Country code, name: country, widget: string, required: false, hint: "ISO code, e.g. RS" }
+          - { label: Organizer, name: organizer, widget: string, required: false }
+          - { label: Parent event, name: super_event, widget: string, required: false, hint: "e.g. Belgrade Blockchain Week" }
+          - {
+              label: Parent start,
+              name: super_start,
+              widget: datetime,
+              required: false,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+            }
+          - {
+              label: Parent end,
+              name: super_end,
+              widget: datetime,
+              required: false,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+            }
       - {
           label: Teaser,
           name: teaser,
@@ -358,6 +420,13 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - {
+          label: SEO title,
+          name: seo_title,
+          widget: string,
+          required: false,
+          hint: "Google tab title, under ~55 characters. Falls back to Title. Do not add | Open Solana Hub.",
+        }
+      - {
           label: Publish date,
           name: date,
           widget: datetime,
@@ -375,8 +444,63 @@ collections:
           label: Meta description,
           name: description,
           widget: text,
-          hint: "Опис для meta description / SEO.",
+          hint: "Опис для meta description / SEO. Близько 150 символів. Назва події — на початку.",
         }
+      - {
+          label: SEO keywords,
+          name: keywords,
+          widget: list,
+          required: false,
+          hint: "Пошукові терміни: назва події, місто, локація. Для structured data, не для Google ranking.",
+        }
+      - label: Event (SEO)
+        name: event
+        widget: object
+        required: false
+        collapsed: true
+        hint: "Якщо стаття про конференцію — допомагає Google зрозуміти подію."
+        fields:
+          - { label: Name, name: name, widget: string }
+          - {
+              label: Start date,
+              name: start,
+              widget: datetime,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+            }
+          - {
+              label: End date,
+              name: end,
+              widget: datetime,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+              required: false,
+            }
+          - { label: Venue, name: venue, widget: string, required: false }
+          - { label: City, name: city, widget: string, required: false }
+          - { label: Country code, name: country, widget: string, required: false, hint: "ISO-код, напр. RS" }
+          - { label: Organizer, name: organizer, widget: string, required: false }
+          - { label: Parent event, name: super_event, widget: string, required: false, hint: "напр. Belgrade Blockchain Week" }
+          - {
+              label: Parent start,
+              name: super_start,
+              widget: datetime,
+              required: false,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+            }
+          - {
+              label: Parent end,
+              name: super_end,
+              widget: datetime,
+              required: false,
+              date_format: YYYY-MM-DD,
+              time_format: false,
+              format: YYYY-MM-DD,
+            }
       - {
           label: Teaser,
           name: teaser,
