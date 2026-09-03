@@ -1,6 +1,6 @@
 ---
 title: 'My Solana Summit in Belgrade 2026: the most interesting part happened away from the stage'
-seo_title: 'Solana Summit Serbia 2026 in Belgrade: what happened there'
+seo_title: 'Solana Summit Serbia 2026 in Belgrade: what happened'
 date: '2026-09-01'
 tag: Ecosystem
 description: >-

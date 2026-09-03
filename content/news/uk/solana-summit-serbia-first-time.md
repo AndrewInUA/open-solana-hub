@@ -1,6 +1,6 @@
 ---
 title: 'Мій Solana Summit у Белграді 2026: найцікавіше відбувалося поза сценою'
-seo_title: 'Solana Summit Serbia 2026 у Белграді: що там відбувалося'
+seo_title: 'Solana Summit Serbia 2026 у Белграді: що відбувалося'
 date: '2026-09-01'
 tag: Ecosystem
 description: >-
