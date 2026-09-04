@@ -68,7 +68,7 @@ A second independent client is live in production. Adoption will grow gradually 
 Network resilience improves when validators run different implementations. A bug in Agave no longer
  halts every node at once. When choosing where to delegate, operator upgrade discipline and client
  choice are worth weighing alongside commission and stability in the
- [Validator Transparency Dashboard](../compare/).
+ [Validator Transparency](../compare/).
 
       
 

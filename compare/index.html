@@ -4,25 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="Compare Solana validators with open transparency metrics: stability scores, commission history, voting consistency, and stake pool data. Free Validator Transparency Dashboard." />
+  <meta name="description" content="Compare Solana validators with open transparency metrics: stability scores, commission history, voting consistency, and stake pool data. Free Validator Transparency." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/compare/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Compare Solana Validators – Validator Transparency Dashboard" />
+  <meta property="og:title" content="Compare Solana Validators – Validator Transparency" />
   <meta property="og:description" content="Compare Solana validators with stability history, commission risk, voting consistency, and pool stake splits. Open data for every mainnet validator." />
   <meta property="og:url" content="https://www.opensolanahub.com/compare/" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="https://www.opensolanahub.com/compare/assets/logo-transparent.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Compare Solana Validators – Validator Transparency Dashboard" />
+  <meta name="twitter:title" content="Compare Solana Validators – Validator Transparency" />
   <meta name="twitter:description" content="Open Solana validator metrics: stability, commission, voting, and pool splits. Compare any mainnet validator." />
   <meta name="twitter:image" content="https://www.opensolanahub.com/compare/assets/logo-transparent.png" />
-  <title>Compare Solana Validators – Validator Transparency Dashboard | Open Solana Hub</title>
+  <title>Compare Solana Validators – Validator Transparency | Open Solana Hub</title>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "Validator Transparency Dashboard",
+    "name": "Validator Transparency",
     "url": "https://www.opensolanahub.com/compare/",
     "description": "Compare Solana validators with open transparency metrics: stability, commission, voting, and stake pool data.",
     "applicationCategory": "FinanceApplication",
@@ -182,15 +182,14 @@
 
     .product-name {
       font-family: var(--font);
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text2);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--heading);
       margin: 0;
-      margin-bottom: 0;
       min-width: 0;
-      line-height: 1;
+      line-height: 1.2;
     }
 
     .top-bar {
@@ -2103,13 +2102,22 @@
       border-color: var(--border2);
       text-decoration: none;
     }
+    .product-brand-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 3px;
+      min-width: 0;
+    }
     .product-brand-sub {
       display: block;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--text2);
-      letter-spacing: 0.02em;
-      margin-top: 2px;
+      letter-spacing: 0;
+      margin: 0;
+      line-height: 1.3;
     }
     .product-brand-sub a {
       color: inherit;
@@ -2501,9 +2509,9 @@
   <div class="top-bar">
     <div class="product-brand">
       <img src="./assets/logo-transparent.png" alt="Validator Transparency logo" class="product-logo" width="48" height="48" />
-      <div>
-        <div class="product-name">Validator Transparency Dashboard</div>
-        <span class="product-brand-sub">Part of <a href="../index.html">Open Solana Hub</a> · Solana in simple terms</span>
+      <div class="product-brand-text">
+        <div class="product-name">Validator Transparency</div>
+        <span class="product-brand-sub"><a href="../index.html">Open Solana Hub</a></span>
       </div>
     </div>
     <div class="header-actions">
@@ -2677,7 +2685,7 @@
     <details class="verdict-color-help">
       <summary>What do the colored labels mean?</summary>
       <p>
-        Color bands group <strong>metrics tracked in this dashboard</strong> – snapshot depth plus stability, commission, and voting signals – so you can compare validators at a glance.
+        Color bands group <strong>metrics tracked here</strong> – snapshot depth plus stability, commission, and voting signals – so you can compare validators at a glance.
         Lime = longer steady history here; mint = healthy signals but newer here; gray = chart still filling in; yellow = mixed or average vs network; orange = risk flag – read commission and stability above.
       </p>
     </details>

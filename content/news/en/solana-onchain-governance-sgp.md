@@ -75,7 +75,7 @@ Any validator with 100,000+ SOL delegated can file an SGP. Publishing how and wh
 
 You can override your validator's vote on any proposal, weighted by your stake. Most delegators
  will not vote on every item, which means validator choice is now also a governance choice. Track
- voting patterns in the [Validator Transparency Dashboard](../compare/).
+ voting patterns in the [Validator Transparency](../compare/).
 
       
 

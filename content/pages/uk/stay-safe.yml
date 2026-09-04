@@ -34,7 +34,7 @@ body: |
     <ul>
     <li>Звіряйте назви валідаторів і проєктів за кількома джерелами, а не за одним красивим сайтом.</li>
     <li>Перевіряйте адреси в оглядачах блокчейну (Solscan, Solana Beach), а не лише на гарній вітрині сайту.</li>
-    <li>Оцінюйте валідаторів відкритими інструментами – <a href="../compare/">Validator Transparency Dashboard</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span> або нашим <a href="./compare-validators.html">посібником з оцінки</a> – ще до делегування.</li>
+    <li>Оцінюйте валідаторів відкритими інструментами – <a href="../compare/">Validator Transparency</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span> або нашим <a href="./compare-validators.html">посібником з оцінки</a> – ще до делегування.</li>
     </ul>
   
     <h2>Якщо щось уже пішло не так</h2>

@@ -1,7 +1,6 @@
 title: Про проєкт
 lead: >-
-  **Open Solana Hub** – це зрозумілі матеріали про Solana разом із відкритим [Validator Transparency
-  Dashboard](../compare/). Тут одночасно знайдуть щось для себе і новачки, які хочуть розібратися
+  **Open Solana Hub** – це зрозумілі матеріали про Solana разом із відкритим [Validator Transparency](../compare/). Тут одночасно знайдуть щось для себе і новачки, які хочуть розібратися
   перед тим, як щось робити, і ті, хто вже делегує або працює з інфраструктурою.
 page_image: ""
 page_image_alt: ""
@@ -12,7 +11,7 @@ body: |
     <strong>Навчальні сторінки</strong> пояснюють основи основ: блокчейн, гаманці, безпеку та стейкінг. 
     
     У розділі <strong>Оцінка валідаторів</strong> – це
-    <a href="../compare/">Validator Transparency Dashboard</a>:
+    <a href="../compare/">Validator Transparency</a>:
     довгострокова стабільність на основі щоденних снепшотів мережі, історія комісій, голосування
     та розподіл стейку між пулами для кожного валідатора mainnet. Особисто я виходжу з того, що інформація 
     первинна, а вже потім можна заглиблюватися в дані, коли вони знадобляться. Стейкінг розглядається як можливість для заробітку, 
@@ -35,7 +34,7 @@ body: |
     <h2>Інші проєкти</h2>
     <ul>
     <li><a href="./compare-validators.html">Як обрати і оцінити валідаторів</a> – про відкриті показники перед делегуванням</li>
-    <li><a href="../compare/">Validator Transparency Dashboard</a> – перегляд і оцінка будь-якого валідатора mainnet <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span></li>
+    <li><a href="../compare/">Validator Transparency</a> – перегляд і оцінка будь-якого валідатора mainnet <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span></li>
     <li><a href="https://github.com/AndrewInUA/solana-validator-metrics-html-widget" target="_blank" rel="noopener">Validator Metrics Widget</a> – жива статистика на вашому сайті</li>
     <li><a href="https://github.com/AndrewInUA/solana-validator-resources" target="_blank" rel="noopener">Ресурси для валідаторів Solana</a> – посібники та матеріали</li>
     <li><a href="https://andrewinua.com/" target="_blank" rel="noopener">andrewinua.com</a> – сторінка валідатора та делегування</li>

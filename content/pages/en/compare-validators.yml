@@ -1,7 +1,7 @@
 title: How to pick and assess Solana validators
 lead: >-
   Delegating SOL is a trust decision. This guide explains how to pick a Solana validator – what to
-  look at beyond a headline APY, and how the [Validator Transparency Dashboard](./compare/) helps
+  look at beyond a headline APY, and how the [Validator Transparency](./compare/) helps
   you assess any mainnet validator with open data.
 page_image: ""
 page_image_alt: ""
@@ -21,13 +21,13 @@ body: |
     <h2>Metrics that matter for transparency</h2>
     <ul>
     <li><strong>Commission</strong> – current fee and whether it changed in the past. A jump to 100% can wipe out your rewards.</li>
-    <li><strong>Stability score</strong> – long-term consistency from daily full-network snapshots tracked in the dashboard.</li>
+    <li><strong>Stability score</strong> – long-term consistency from daily full-network snapshots tracked in Validator Transparency.</li>
     <li><strong>Live voting status</strong> – is the validator healthy right now or delinquent?</li>
     <li><strong>Stake pool split</strong> – how much stake arrives via known pools versus direct wallet delegations (Trillium data).</li>
     <li><strong>APY context</strong> – useful when read next to commission and stability, not as the only filter.</li>
     </ul>
   
-    <h2>Three ways to use the dashboard</h2>
+    <h2>Three ways to use Validator Transparency</h2>
     <ol>
     <li><strong>Browse the directory</strong> – search by name or vote key, sort by stake, open any validator profile.</li>
     <li><strong>Deep dive on one validator</strong> – read stability, commission history, epoch voting, and pool badges on a single page.</li>
@@ -57,11 +57,11 @@ body: |
     </p>
     <h3>Can I compare two Solana validators side by side?</h3>
     <p>
-    Yes. On the <a href="./compare/">Validator Transparency Dashboard</a> you can open any validator and use
+    Yes. In <a href="./compare/">Validator Transparency</a> you can open any validator and use
     the on-page compare tool to put a second validator next to it on the same metrics.
     </p>
   
     <blockquote>
-    The Hub’s learning pages explain <em>why</em> staking exists; the dashboard shows <em>open data</em> so you can assess before you act.
+    The Hub’s learning pages explain <em>why</em> staking exists; Validator Transparency shows <em>open data</em> so you can assess before you act.
     For a wider map of pools and rewards, see the <a href="./ecosystem.html">staking &amp; ecosystem overview</a>.
     </blockquote>

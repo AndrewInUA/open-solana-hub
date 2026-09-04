@@ -396,7 +396,7 @@ ${articleTagMetas(post)}
       </div>
     </div>
     <div class="footer-links">
-      <a href="../compare/">Validator Transparency Dashboard</a>
+      <a href="../compare/">Validator Transparency</a>
       <a href="./index.html">Solana news</a>
       <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
       <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
@@ -522,7 +522,7 @@ ${articleTagMetas(post)}
       </div>
     </div>
     <div class="footer-links">
-      <a href="../../compare/">Validator Transparency Dashboard</a>
+      <a href="../../compare/">Validator Transparency</a>
       <a href="./index.html">Новини Solana</a>
       <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
       <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>

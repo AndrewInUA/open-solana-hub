@@ -25,7 +25,7 @@ body: |
     <strong>Оцініть валідаторів до стейкінгу</strong><br />
     Стейкінг – це делегування валідатору, який голосує в мережі. Тут важить комісія, безперебійність і вся історія.
     Спершу гляньте, <a href="./compare-validators.html">як оцінювати валідаторів</a>, потім відкрийте
-    <a href="../compare/index.html#directory-section">Validator Transparency Dashboard</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span>,
+    <a href="../compare/index.html#directory-section">Validator Transparency</a> <span style="color:var(--text3);font-size:0.9em">(інтерфейс англійською)</span>,
     знайдіть валідатора за назвою чи vote key і подивіться стабільність, комісію та зведення відносно всієї мережі.
     Спробуйте поставити два валідатори поруч.
     </li>
@@ -40,7 +40,7 @@ body: |
     <div class="callout">
     <strong>Спробуйте просто зараз</strong><br />
     <span style="color:var(--text2);font-size:14px">
-    Відкрийте панель на готовому прикладі, а потім оберіть будь-якого валідатора з каталогу:
+    Відкрийте Validator Transparency на готовому прикладі, а потім оберіть будь-якого валідатора з каталогу:
     </span>
     <div class="path-row" style="margin-top:12px">
     <a class="btn btn-primary" href="../compare/index.html?vote=3QPGLackJy5LKctYYoPGmA4P8ncyE197jdxr1zP2ho8K">Приклад валідатора</a>
@@ -48,7 +48,7 @@ body: |
     </div>
     </div>
   
-    <h2>На що дивитися на панелі</h2>
+    <h2>На що дивитися в Validator Transparency</h2>
     <ul>
     <li><strong>Комісія</strong> – частка валідатора з ваших винагород; зазвичай менша краща для вас (комісія пулу може додаватися окремо).</li>
     <li><strong>Оцінка стабільності</strong> – довгострокова надійність на основі збережених снепшотів.</li>

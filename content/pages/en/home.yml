@@ -2,7 +2,7 @@ hero_title: Solana in simple words and clear language
 hero_lead: >
   We write about Solana without heavy jargon – what the network is, how wallets
   work, and when staking comes into the picture. If you already delegate, open
-  the [Validator Transparency Dashboard](./compare/) for stability, commission,
+  [Validator Transparency](./compare/) for stability, commission,
   and voting history on every mainnet validator – and follow [Solana
   news](./news/) for protocol upgrades, governance, and client releases.
 hero_image: ""
@@ -24,7 +24,7 @@ learn_intro: Six plain-English guides that build on each other – from your fir
   wallet to an informed delegation decision. Take your time; there is no rush
   and no quiz at the end.
 dashboard_kicker: Open data tool
-dashboard_title: Validator Transparency Dashboard
+dashboard_title: Validator Transparency
 dashboard_body: "A standalone, open tool for anyone who already delegates or is
   about to: stability scores, commission history, voting consistency, and pool
   stake splits for every Solana mainnet validator – side by side, no marketing."

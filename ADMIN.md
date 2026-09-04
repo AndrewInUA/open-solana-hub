@@ -33,7 +33,7 @@ Collections mirror the site navigation (EN + UK).
 
 | Area | Why |
 |------|-----|
-| **Validator Transparency Dashboard** (`/compare/`) | Live data app (API, charts, directory). Edit code/backend, not Decap. |
+| **Validator Transparency** (`/compare/`) | Live data app (API, charts, directory). Edit code/backend, not Decap. |
 | **Nav, footer, SEO shell** (canonical, FAQ JSON-LD, language switch) | Layout chrome — kept in HTML templates so design stays consistent. |
 | **Homepage guide cards / suggested path** | Structural links to pages; titles of those pages are edited under each Pages entry. |
 | **Brand-new site sections** (new nav items) | File list is fixed to the current nav. Ask a developer to add a page file + HTML shell if you need a new section. |

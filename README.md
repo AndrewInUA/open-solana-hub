@@ -1,6 +1,6 @@
 # Open Solana Hub
 
-One place to **learn Solana** and **assess validators** – plain-English education for newcomers plus the open Validator Transparency Dashboard for delegators, researchers, and operators.
+One place to **learn Solana** and **assess validators** – plain-English education for newcomers plus the open Validator Transparency for delegators, researchers, and operators.
 
 > Solana in simple terms.
 
@@ -14,7 +14,7 @@ One place to **learn Solana** and **assess validators** – plain-English educat
 | `/first-steps.html` | Wallet → test transaction → compare → optional staking |
 | `/ecosystem.html` | Validators, staking, apps – light overview |
 | `/about.html` | Who built this and how the parts fit together |
-| `/compare/` | **Validator Transparency Dashboard** – stability history, commission risk, voting consistency, APY context, pool splits, A-vs-B compare |
+| `/compare/` | **Validator Transparency** – stability history, commission risk, voting consistency, APY context, pool splits, A-vs-B compare |
 
 ## How data works
 
