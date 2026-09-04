@@ -1,11 +1,10 @@
 ---
-title: 'Мій Solana Summit у Белграді 2026: найцікавіше відбувалося поза сценою'
-seo_title: 'Solana Summit Serbia 2026 у Белграді: що відбувалося'
-date: '2026-09-01'
+title: "Мій Solana Summit у Белграді 2026: найцікавіше відбувалося поза сценою"
+seo_title: "Solana Summit Serbia 2026 у Белграді: що там відбувалося"
+date: 2026-09-01
 tag: Ecosystem
-description: >-
-  Solana Summit Serbia 2026 у Белграді під час Belgrade Blockchain Week, 24–30 серпня: що відбувалося
-  в Sava Congress Center.
+description: "Solana Summit Serbia 2026 у Белграді під час Belgrade Blockchain
+  Week, 24–30 серпня: що відбувалося в Sava Congress Center."
 keywords:
   - Solana Summit Serbia 2026
   - Belgrade Blockchain Week
@@ -14,19 +13,18 @@ keywords:
   - Sava Centar
   - Superteam Balkan
 event:
-  name: Solana Summit Serbia 2026
-  start: '2026-08-26'
-  end: '2026-08-27'
-  venue: Sava Congress Center
+  start: 2026-08-26
   city: Белград
-  country: RS
+  name: Solana Summit Serbia 2026
+  venue: Sava Congress Center
   organizer: Superteam Balkan
   super_event: Belgrade Blockchain Week
-  super_start: '2026-08-24'
-  super_end: '2026-08-30'
-teaser: >-
-  Два дні в Белграді, мій перший Solana-саміт. Я їхав переважно задля нетворкінгу – і не думав, що
-  це буде настільки легко.
+  country: RS
+  super_end: 2026-08-30
+  end: 2026-08-27
+  super_start: 2026-08-24
+teaser: Два дні в Белграді, мій перший Solana-саміт. Я їхав переважно задля
+  нетворкінгу – і не думав, що це буде настільки легко.
 image: /content/media/summit-serbia-2026-card.jpg
 ---
 
