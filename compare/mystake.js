@@ -17,7 +17,11 @@ const STAKE_PROGRAM = "Stake11111111111111111111111111111111111111";
 const PUBKEY_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const U64_MAX = 18446744073709551615n;
 const LAMPORTS_PER_SOL = 1e9;
-const PUBLIC_RPCS = ["https://api.mainnet-beta.solana.com"];
+const PUBLIC_RPCS = [
+  "https://api.mainnet-beta.solana.com",
+  "https://solana.drpc.org",
+  "https://1rpc.io/solana"
+];
 
 function apiBase() {
   const h = window.location.hostname;
@@ -168,6 +172,12 @@ function stakeLifecycle({ vote, activationEpoch, deactivationEpoch, currentEpoch
   return "active";
 }
 
+function rpcUnavailableError() {
+  return new Error(
+    "Public Solana RPC blocked this browser lookup. Paste the wallet that owns the stake – the dashboard stake API is the reliable path."
+  );
+}
+
 async function rpcCall(method, params) {
   let lastErr = null;
   for (const url of PUBLIC_RPCS) {
@@ -179,7 +189,7 @@ async function rpcCall(method, params) {
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) {
-        lastErr = new Error(`RPC HTTP ${res.status}`);
+        lastErr = rpcUnavailableError();
         continue;
       }
       if (json.error) {
@@ -191,7 +201,7 @@ async function rpcCall(method, params) {
       lastErr = err;
     }
   }
-  throw lastErr || new Error("Public Solana RPC is unavailable.");
+  throw lastErr || rpcUnavailableError();
 }
 
 function parseStakeAccount(pubkey, account, currentEpoch) {
@@ -341,9 +351,18 @@ async function fetchMyStake(wallet) {
 
 async function resolvePositions({ wallet, stake }) {
   if (stake && !wallet) {
-    const asStake = await resolveStakeAccount(stake);
-    if (asStake) return asStake;
-    throw new Error("That does not look like a native stake account.");
+    try {
+      const asStake = await resolveStakeAccount(stake);
+      if (asStake) return asStake;
+    } catch (err) {
+      throw new Error(
+        err.message ||
+          "Could not read that stake account. Paste the wallet that owns it instead."
+      );
+    }
+    throw new Error(
+      "That does not look like a native stake account. If you have the wallet that created it, paste that too."
+    );
   }
 
   if (stake && wallet) {
@@ -392,8 +411,12 @@ async function resolvePositions({ wallet, stake }) {
     if (maybeStake) return maybeStake;
     try {
       return await resolveWalletViaRpc(wallet);
-    } catch {
-      throw err;
+    } catch (fallbackErr) {
+      const msg = String(fallbackErr?.message || "");
+      if (/blocked this browser|RPC HTTP|unavailable/i.test(msg)) {
+        throw err;
+      }
+      throw fallbackErr;
     }
   }
 }
@@ -704,10 +727,18 @@ function scoreOverall(rows, pack) {
     };
   }
 
-  const worst = rows.reduce((w, r) => worseTone(w, r.health.tone), "ok");
-  const riskN = rows.filter(r => r.health.tone === "risk").length;
-  const watchN = rows.filter(r => r.health.tone === "watch").length;
-  const okN = rows.filter(r => r.health.tone === "ok").length;
+  const scored = delegated;
+  const idleN = rows.length - delegated.length;
+  const worst = scored.reduce((w, r) => worseTone(w, r.health.tone), "ok");
+  const riskN = scored.filter(r => r.health.tone === "risk").length;
+  const watchN = scored.filter(r => r.health.tone === "watch").length;
+  const okN = scored.filter(r => r.health.tone === "ok").length;
+  const idleNote =
+    idleN > 0
+      ? ` ${idleN} other account${idleN === 1 ? "" : "s"} on this wallet ${
+          idleN === 1 ? "is" : "are"
+        } not delegated and do not change this verdict.`
+      : "";
   const names = [
     ...new Set(delegated.map(r => r.health.name).filter(Boolean))
   ];
@@ -724,7 +755,7 @@ function scoreOverall(rows, pack) {
         riskN === 1
           ? "One stake needs attention"
           : `${riskN} stakes need attention`,
-      body: `${nameBit} – at least one validator looks delinquent, keeps most rewards, or has a weak history. Your SOL stays in your stake account; this is about rewards and operator health, not a drained wallet.`,
+      body: `${nameBit} – at least one validator looks delinquent, keeps most rewards, or has a weak history. Your SOL stays in your stake account; this is about rewards and operator health, not a drained wallet.${idleNote}`,
       next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake."
     };
   }
@@ -733,7 +764,7 @@ function scoreOverall(rows, pack) {
       tone: "watch",
       kicker: "Watch",
       headline: "Looks mostly fine – a few things to read",
-      body: `${nameBit}. ${okN ? `${okN} stake${okN === 1 ? "" : "s"} look fine. ` : ""}${watchN} need a closer look (fee, cooldown, or a softer history). Nothing here is a command to move stake.`,
+      body: `${nameBit}. ${okN ? `${okN} stake${okN === 1 ? "" : "s"} look fine. ` : ""}${watchN} need a closer look (fee, cooldown, or a softer history). Nothing here is a command to move stake.${idleNote}`,
       next: "Skim the cards below. Come back after the next epoch if you like a routine."
     };
   }
@@ -749,7 +780,7 @@ function scoreOverall(rows, pack) {
       lastSum !== null
         ? `Last finished epoch: +${fmtSol(lastSum)} SOL`
         : `${nameBit} look healthy`,
-    body: `${nameBit} look fine in the live read and the snapshots we store. You do not need to do anything.`,
+    body: `${nameBit} look${names.length === 1 ? "s" : ""} fine in the live read and the snapshots we store. You do not need to do anything.${idleNote}`,
     next:
       pack?.currentEpoch != null
         ? `Epoch ${pack.currentEpoch} is in progress. Save this page and check again after it ends if you want.`
@@ -784,20 +815,8 @@ function renderOverall(v) {
   $("verdict-next").textContent = v.next || "";
 }
 
-function renderStakes(rows, pack) {
-  const list = $("stakes-list");
-  const card = $("stakes-card");
-  const note = $("stakes-note");
-  if (!list || !card) return;
-  list.innerHTML = "";
-  if (!rows.length) {
-    card.classList.add("hidden");
-    return;
-  }
-  card.classList.remove("hidden");
-
-  for (const row of rows) {
-    const { acc, health, overlay } = row;
+function renderStakeCard(row) {
+  const { acc, health, overlay } = row;
     const article = el("article", `stake-card ${health.tone}`);
     const top = el("div", "stake-card-top");
     const left = el("div", "stake-card-who");
@@ -824,18 +843,20 @@ function renderStakes(rows, pack) {
     article.append(top);
 
     const signals = el("div", "signals");
-    const liveStatus = overlay?.status || acc.validator?.status || "unknown";
-    signals.append(
-      signalChip(
-        "Status",
-        liveStatus === "healthy"
-          ? "Healthy"
-          : liveStatus === "delinquent"
-            ? "Delinquent"
-            : liveStatus,
-        liveStatus === "delinquent" ? "risk" : liveStatus === "healthy" ? "ok" : ""
-      )
-    );
+    const liveStatus = overlay?.status || acc.validator?.status || "";
+    if (liveStatus) {
+      signals.append(
+        signalChip(
+          "Status",
+          liveStatus === "healthy"
+            ? "Healthy"
+            : liveStatus === "delinquent"
+              ? "Delinquent"
+              : liveStatus,
+          liveStatus === "delinquent" ? "risk" : liveStatus === "healthy" ? "ok" : ""
+        )
+      );
+    }
     if (Number.isFinite(health.commission)) {
       signals.append(
         signalChip(
@@ -866,7 +887,7 @@ function renderStakes(rows, pack) {
     if (Number.isFinite(overlay?.apyMedian)) {
       signals.append(signalChip("APY context", fmtPct(overlay.apyMedian, 2)));
     }
-    article.append(signals);
+    if (signals.childNodes.length) article.append(signals);
 
     const body = el("p", "stake-body", health.body);
     article.append(body);
@@ -897,7 +918,35 @@ function renderStakes(rows, pack) {
       meta.append(voteLink);
     }
     article.append(meta);
-    list.append(article);
+  return article;
+}
+
+function renderStakes(rows, pack) {
+  const list = $("stakes-list");
+  const card = $("stakes-card");
+  const note = $("stakes-note");
+  if (!list || !card) return;
+  list.innerHTML = "";
+  if (!rows.length) {
+    card.classList.add("hidden");
+    return;
+  }
+  card.classList.remove("hidden");
+
+  const delegated = rows.filter(r => r.acc.vote);
+  const idle = rows.filter(r => !r.acc.vote);
+  for (const row of delegated) list.append(renderStakeCard(row));
+  if (idle.length) {
+    list.append(
+      el(
+        "p",
+        "muted",
+        idle.length === 1
+          ? "One stake account is not delegated:"
+          : `${idle.length} stake accounts are not delegated:`
+      )
+    );
+    for (const row of idle) list.append(renderStakeCard(row));
   }
 
   const parts = [];

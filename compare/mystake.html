@@ -392,6 +392,7 @@
         <li><strong>OK</strong> – live status, fee, and stored history look ordinary. You do not need to act.</li>
         <li><strong>Watch</strong> – something is off (a higher fee, a cooldown, thinner history). Read it; it is not an alarm.</li>
         <li><strong>Risk</strong> – delinquent, very high commission, or a weak record. Open the validator profile before you decide anything.</li>
+        <li>Idle stake accounts with no validator do not change an otherwise OK verdict.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
@@ -400,7 +401,7 @@
     </div>
 
     <div class="footer">
-      <div><strong>Sources.</strong> Stake accounts come from the Validator Transparency <code>/api/my-stake</code> endpoint, with a public Solana RPC fallback. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint. A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Existing <code>?vote=</code> links are unchanged.</div>
       <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>
