@@ -4,8 +4,32 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="See how your native Solana stake is doing in plain language: last epoch rewards, commission, and whether your validator stayed online." />
-  <title>Stake health – Validator Transparency</title>
+  <meta name="description" content="Check the health of your native Solana stake in plain English: validator status, commission, voting consistency, and stability from Validator Transparency." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/compare/mystake.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Stake health – Validator Transparency" />
+  <meta property="og:description" content="Paste a wallet or stake account. See whether the validators you already delegated to look healthy – not financial advice." />
+  <meta property="og:url" content="https://www.opensolanahub.com/compare/mystake.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/compare/assets/logo-transparent.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Stake health – Validator Transparency" />
+  <meta name="twitter:description" content="Plain-English checkup for people who already staked SOL. Paste a wallet, see validator health." />
+  <meta name="twitter:image" content="https://www.opensolanahub.com/compare/assets/logo-transparent.png" />
+  <title>Stake health – Validator Transparency | Open Solana Hub</title>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Stake health",
+    "url": "https://www.opensolanahub.com/compare/mystake.html",
+    "description": "Plain-English checkup for native Solana stake using Validator Transparency signals.",
+    "applicationCategory": "FinanceApplication",
+    "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" }
+  }
+  </script>
   <link rel="icon" href="./assets/logo-transparent.png" type="image/png" />
   <script>
     (function () {
@@ -32,6 +56,7 @@
       --border: #E3E8EF;
       --border2: #D6DCE5;
       --accent: #c9ff15;
+      --accent-dark: #060314;
       --warn: #f36b6b;
       --text: #101319;
       --text2: #8b93a6;
@@ -40,6 +65,9 @@
       --btn-primary-bg: #060314;
       --btn-primary-fg: #ffffff;
       --stat-green: #3a7d00;
+      --pill-ok-fg: #3a6600;
+      --pill-watch-fg: #9a5b00;
+      --pill-risk-fg: #b03030;
       --font: "Inter", system-ui, sans-serif;
       --card-radius: 24px;
       --shadow-card: 0 6px 24px rgba(10, 12, 20, 0.06);
@@ -58,6 +86,9 @@
       --btn-primary-bg: #c9ff15;
       --btn-primary-fg: #060314;
       --stat-green: #9fe000;
+      --pill-ok-fg: #c8f070;
+      --pill-watch-fg: #ffc56a;
+      --pill-risk-fg: #ff9a9a;
       color-scheme: dark;
     }
     * { box-sizing: border-box; }
@@ -67,6 +98,7 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; }
     .wrap { max-width: 920px; margin: 0 auto; padding: 20px 18px 48px; }
@@ -76,10 +108,15 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 22px;
+      flex-wrap: wrap;
     }
-    .product-brand { display: flex; align-items: center; gap: 12px; }
+    .product-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .product-logo { border-radius: 12px; }
+    .product-brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .product-name { font-weight: 700; color: var(--heading); }
+    .product-brand-sub { font-size: 12px; color: var(--text2); }
+    .product-brand-sub a { text-decoration: none; font-weight: 600; }
+    .product-brand-sub a:hover { text-decoration: underline; }
     .header-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
     .nav-link {
       display: inline-flex;
@@ -127,10 +164,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
       transition: transform 0.22s ease;
     }
-    html[data-theme="dark"] .theme-toggle-thumb {
-      transform: translateX(20px);
-    }
-    .theme-toggle-label { white-space: nowrap; }
+    html[data-theme="dark"] .theme-toggle-thumb { transform: translateX(20px); }
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -140,8 +174,18 @@
       margin-bottom: 16px;
     }
     h1 { margin: 0 0 8px; font-size: clamp(26px, 4vw, 36px); color: var(--heading); letter-spacing: -0.03em; }
-    .lead { color: var(--text2); margin: 0 0 18px; max-width: 640px; }
+    .lead { color: var(--text2); margin: 0 0 18px; max-width: 680px; }
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 6px;
+    }
     .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .field { flex: 1; min-width: 220px; }
     .copy-btn {
       border: 0;
       background: var(--btn-primary-bg);
@@ -153,14 +197,14 @@
       font-size: 14px;
       cursor: pointer;
     }
+    .copy-btn:disabled { opacity: 0.55; cursor: wait; }
     .copy-btn.secondary {
       background: var(--surface2);
       color: var(--text);
       border: 1px solid var(--border);
     }
     .share-input {
-      flex: 1;
-      min-width: 200px;
+      width: 100%;
       border: 1px solid var(--border);
       background: var(--surface2);
       color: var(--text);
@@ -173,7 +217,8 @@
     .error { color: var(--warn); font-size: 14px; }
     .verdict { border-width: 2px; }
     .verdict.ok { border-color: rgba(185, 240, 0, 0.5); }
-    .verdict.caution { border-color: rgba(230, 126, 34, 0.65); }
+    .verdict.watch { border-color: rgba(230, 126, 34, 0.65); }
+    .verdict.risk { border-color: rgba(243, 107, 107, 0.7); }
     .verdict.wait { border-color: var(--border2); }
     .verdict-kicker {
       font-size: 11px;
@@ -184,24 +229,96 @@
       margin-bottom: 6px;
     }
     .verdict.ok .verdict-kicker { color: var(--stat-green); }
-    .verdict.caution .verdict-kicker { color: #e67e22; }
+    .verdict.watch .verdict-kicker { color: #e67e22; }
+    .verdict.risk .verdict-kicker { color: var(--warn); }
     .verdict h2 { margin: 0 0 10px; font-size: 22px; color: var(--heading); }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    th { color: var(--text3); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
-    .mono { font-variant-numeric: tabular-nums; word-break: break-all; }
-    .pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-    }
-    .pill.down { color: var(--warn); border-color: rgba(243, 107, 107, 0.4); }
     .hidden { display: none; }
     .wallet-line { font-size: 13px; color: var(--text2); margin: 8px 0 0; word-break: break-all; }
+    .health-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .health-pill.ok { color: var(--pill-ok-fg); border-color: rgba(185, 240, 0, 0.45); }
+    .health-pill.watch { color: var(--pill-watch-fg); border-color: rgba(230, 126, 34, 0.45); }
+    .health-pill.risk { color: var(--pill-risk-fg); border-color: rgba(243, 107, 107, 0.45); }
+    .stake-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
+      background: var(--surface2);
+      margin-bottom: 12px;
+    }
+    .stake-card.ok { border-color: rgba(185, 240, 0, 0.35); }
+    .stake-card.watch { border-color: rgba(230, 126, 34, 0.4); }
+    .stake-card.risk { border-color: rgba(243, 107, 107, 0.45); }
+    .stake-card:last-child { margin-bottom: 0; }
+    .stake-card-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(180px, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .stake-card h3 { margin: 8px 0 6px; font-size: 18px; color: var(--heading); letter-spacing: -0.02em; }
+    .validator-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--heading);
+    }
+    .stake-amounts { display: grid; gap: 8px; }
+    .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+    .kv span { color: var(--text3); }
+    .kv strong { font-variant-numeric: tabular-nums; }
+    .signals { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+    .signal {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 1px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .signal em {
+      font-style: normal;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+    .signal.ok { color: var(--pill-ok-fg); }
+    .signal.watch { color: var(--pill-watch-fg); }
+    .signal.risk { color: var(--pill-risk-fg); }
+    .stake-body { margin: 0 0 8px; color: var(--text); }
+    .stake-notes { margin: 0; padding-left: 18px; color: var(--text2); font-size: 13px; }
+    .stake-meta { margin: 12px 0 0; font-size: 12px; color: var(--text3); }
+    .stake-meta a { font-weight: 600; text-decoration: none; }
+    .stake-meta a:hover { text-decoration: underline; }
+    .how-list { margin: 0; padding-left: 18px; color: var(--text2); }
+    .how-list li { margin: 6px 0; }
+    .footer {
+      margin-top: 8px;
+      padding: 4px 2px 0;
+      font-size: 13px;
+      color: var(--text2);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer strong { color: var(--text); }
+    @media (max-width: 680px) {
+      .stake-card-top { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -209,10 +326,14 @@
     <div class="top-bar">
       <div class="product-brand">
         <img src="./assets/logo-transparent.png" alt="" class="product-logo" width="40" height="40" />
-        <div class="product-name">Stake health</div>
+        <div class="product-brand-text">
+          <div class="product-name">Stake health</div>
+          <span class="product-brand-sub"><a href="../index.html">Open Solana Hub</a></span>
+        </div>
       </div>
       <div class="header-actions">
         <a class="nav-link" href="./index.html">Validators</a>
+        <a class="nav-link" href="../index.html">Learn</a>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" title="Switch theme">
           <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>
           <span class="theme-toggle-label" id="theme-toggle-label">Dark</span>
@@ -223,22 +344,33 @@
     <div class="card">
       <h1>How is my stake doing?</h1>
       <p class="lead">
-        Same voice as Validator Transparency – a verdict on <em>your</em> native stake, not a chart.
-        Connect the wallet that owns the stake, or paste its address. Nothing is signed except the wallet’s own connect prompt. We do not move SOL.
+        For people who already delegated. Paste the wallet that owns the stake – or a single stake account –
+        and we overlay the same transparency signals as <a href="./index.html">Validator Transparency</a>:
+        live status, commission, recent voting, and stored stability. A checkup in plain English, not a yield promise.
       </p>
+      <div class="row" style="margin-bottom:12px">
+        <div class="field">
+          <label class="field-label" for="wallet-input">Wallet address</label>
+          <input class="share-input" id="wallet-input" type="text" placeholder="Solana wallet that owns the stake" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="stake-input">Stake account (optional)</label>
+          <input class="share-input" id="stake-input" type="text" placeholder="One stake account, if you have it" autocomplete="off" spellcheck="false" />
+        </div>
+      </div>
       <div class="row">
-        <button type="button" class="copy-btn" id="btn-phantom">Connect Phantom</button>
+        <button type="button" class="copy-btn" id="btn-lookup">Look up</button>
+        <button type="button" class="copy-btn secondary" id="btn-phantom">Connect Phantom</button>
         <button type="button" class="copy-btn secondary" id="btn-solflare">Connect Solflare</button>
         <button type="button" class="copy-btn secondary hidden" id="btn-disconnect">Disconnect</button>
       </div>
       <p class="wallet-line" id="connected-wallet"></p>
-      <p class="muted" style="margin:16px 0 8px">Or paste the wallet that owns the stake</p>
-      <div class="row">
-        <input class="share-input" id="wallet-input" type="text" placeholder="Solana wallet address" autocomplete="off" spellcheck="false" />
-        <button type="button" class="copy-btn secondary" id="btn-lookup">Look up</button>
-      </div>
       <p class="muted" id="status-line" style="margin-top:12px"></p>
       <p class="error hidden" id="error-line"></p>
+      <div class="row" style="margin-top:14px">
+        <input class="share-input" id="share-url" type="text" readonly value="" aria-label="Shareable link for this lookup" placeholder="A shareable link appears after lookup" />
+        <button type="button" class="copy-btn secondary" id="copy-share">Copy link</button>
+      </div>
     </div>
 
     <div class="card verdict hidden" id="verdict-card">
@@ -248,24 +380,29 @@
       <p class="muted" id="verdict-next"></p>
     </div>
 
-    <div class="card hidden" id="accounts-card">
-      <div class="verdict-kicker">Positions</div>
-      <div style="overflow-x:auto">
-        <table>
-          <thead>
-            <tr>
-              <th>Stake account</th>
-              <th>Validator</th>
-              <th>Status</th>
-              <th>Active SOL</th>
-              <th>Last epoch</th>
-              <th>Spare SOL</th>
-            </tr>
-          </thead>
-          <tbody id="accounts-body"></tbody>
-        </table>
-      </div>
-      <p class="muted" id="accounts-note" style="margin-top:12px"></p>
+    <div class="card hidden" id="stakes-card">
+      <div class="verdict-kicker">Your stakes</div>
+      <div id="stakes-list"></div>
+      <p class="muted" id="stakes-note" style="margin-top:12px"></p>
+    </div>
+
+    <div class="card">
+      <div class="verdict-kicker">How to read this</div>
+      <ul class="how-list">
+        <li><strong>OK</strong> – live status, fee, and stored history look ordinary. You do not need to act.</li>
+        <li><strong>Watch</strong> – something is off (a higher fee, a cooldown, thinner history). Read it; it is not an alarm.</li>
+        <li><strong>Risk</strong> – delinquent, very high commission, or a weak record. Open the validator profile before you decide anything.</li>
+      </ul>
+      <p class="muted" style="margin:12px 0 0">
+        Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
+        nothing is signed except the wallet’s own connect prompt, and we never move SOL.
+      </p>
+    </div>
+
+    <div class="footer">
+      <div><strong>Sources.</strong> Stake accounts come from the Validator Transparency <code>/api/my-stake</code> endpoint, with a public Solana RPC fallback. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
+      <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>
   </div>
   <script src="./mystake.js"></script>

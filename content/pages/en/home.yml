@@ -27,4 +27,5 @@ dashboard_kicker: Open data tool
 dashboard_title: Validator Transparency
 dashboard_body: "A standalone, open tool for anyone who already delegates or is
   about to: stability scores, commission history, voting consistency, and pool
-  stake splits for every Solana mainnet validator – side by side, no marketing."
+  stake splits for every Solana mainnet validator – side by side, no marketing.
+  Already staked? Use Stake health for a plain-English checkup on your validators."

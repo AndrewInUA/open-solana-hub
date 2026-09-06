@@ -15,13 +15,14 @@ One place to **learn Solana** and **assess validators** – plain-English educat
 | `/ecosystem.html` | Validators, staking, apps – light overview |
 | `/about.html` | Who built this and how the parts fit together |
 | `/compare/` | **Validator Transparency** – stability history, commission risk, voting consistency, APY context, pool splits, A-vs-B compare |
+| `/compare/mystake.html` | **Stake health** – paste a wallet (or stake account) to see the validators you already delegated to, with a plain-English OK / Watch / Risk overlay |
 
 ## How data works
 
 The Hub front-end is fully static. The Compare section reads live data from the
 production dashboard backend at
 [`validator-transparency-dashboard.vercel.app`](https://validator-transparency-dashboard.vercel.app)
-(`/api/snapshots`, `/api/ratings`, `/api/network-stats`, `/api/rpc`, …), which owns
+(`/api/snapshots`, `/api/ratings`, `/api/network-stats`, `/api/rpc`, `/api/my-stake`, …), which owns
 the Supabase snapshot history and the daily full-network collection cron.
 
 That deployment keeps working independently – existing `?vote=` links and the
