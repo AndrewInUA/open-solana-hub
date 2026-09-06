@@ -273,9 +273,49 @@
       color: var(--heading);
     }
     .stake-amounts { display: grid; gap: 8px; }
-    .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+    .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; align-items: baseline; }
     .kv span { color: var(--text3); }
     .kv strong { font-variant-numeric: tabular-nums; }
+    .kv-val { text-align: right; }
+    .kv-val strong { display: block; }
+    .fiat-approx {
+      display: block;
+      margin-top: 2px;
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text3);
+    }
+    .stakes-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .stakes-head .verdict-kicker { margin-bottom: 4px; }
+    #stakes-total { margin: 0; font-size: 13px; }
+    .fiat-picker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text3);
+      flex-shrink: 0;
+    }
+    .fiat-picker select {
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+    #fiat-hint { margin: 6px 0 0; font-size: 11px; }
+    #verdict-fiat { margin: 0 0 10px; }
     .signals { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
     .signal {
       display: inline-flex;
@@ -376,12 +416,23 @@
     <div class="card verdict hidden" id="verdict-card">
       <div class="verdict-kicker" id="verdict-kicker">Verdict</div>
       <h2 id="verdict-headline"></h2>
+      <p class="muted hidden" id="verdict-fiat"></p>
       <p id="verdict-body"></p>
       <p class="muted" id="verdict-next"></p>
     </div>
 
     <div class="card hidden" id="stakes-card">
-      <div class="verdict-kicker">Your stakes</div>
+      <div class="stakes-head">
+        <div>
+          <div class="verdict-kicker">Your stakes</div>
+          <p class="muted" id="stakes-total"></p>
+          <p class="muted" id="fiat-hint"></p>
+        </div>
+        <label class="fiat-picker">
+          <span>Approx.</span>
+          <select id="fiat-select" aria-label="Approximate local currency"></select>
+        </label>
+      </div>
       <div id="stakes-list"></div>
       <p class="muted" id="stakes-note" style="margin-top:12px"></p>
     </div>
@@ -393,6 +444,7 @@
         <li><strong>Watch</strong> – something is off (a higher fee, a cooldown, thinner history). Read it; it is not an alarm.</li>
         <li><strong>Risk</strong> – delinquent, very high commission, or a weak record. Open the validator profile before you decide anything.</li>
         <li>Idle stake accounts with no validator do not change an otherwise OK verdict.</li>
+        <li>Fiat under SOL is a rough converter only. It is not part of OK / Watch / Risk.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
@@ -401,7 +453,7 @@
     </div>
 
     <div class="footer">
-      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint. A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint. A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes. Existing <code>?vote=</code> links are unchanged.</div>
       <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>

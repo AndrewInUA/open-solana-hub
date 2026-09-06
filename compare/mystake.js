@@ -12,6 +12,9 @@
  */
 
 const THEME_KEY = "vtd-theme";
+const FIAT_KEY = "vtd-fiat";
+const RATE_CACHE_KEY = "vtd-sol-fiat";
+const RATE_TTL_MS = 15 * 60 * 1000;
 const DASHBOARD_API = "https://validator-transparency-dashboard.vercel.app";
 const STAKE_PROGRAM = "Stake11111111111111111111111111111111111111";
 const PUBKEY_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
@@ -53,6 +56,216 @@ function fmtSol(n) {
 function fmtPct(v, digits = 1) {
   const n = Number(v);
   return Number.isFinite(n) ? `${n.toFixed(digits)}%` : "–";
+}
+
+const FIATS = [
+  { code: "USD", symbol: "$", locales: ["en-US"] },
+  { code: "EUR", symbol: "€", locales: ["de", "fr", "it", "es", "nl", "pt-PT", "fi", "ie", "at", "be", "el"] },
+  { code: "UAH", symbol: "₴", locales: ["uk", "uk-UA"] },
+  { code: "GBP", symbol: "£", locales: ["en-GB", "en-IE"] },
+  { code: "PLN", symbol: "zł", locales: ["pl"] },
+  { code: "CAD", symbol: "CA$", locales: ["en-CA", "fr-CA"] },
+  { code: "BRL", symbol: "R$", locales: ["pt-BR"] }
+];
+
+const STATIC_USD_FX = {
+  USD: 1,
+  EUR: 0.86,
+  UAH: 41.5,
+  GBP: 0.74,
+  PLN: 3.71,
+  CAD: 1.38,
+  BRL: 5.11
+};
+
+let fiatRates = null;
+let lastView = null;
+
+function fiatByCode(code) {
+  return FIATS.find(f => f.code === code) || FIATS[0];
+}
+
+function localeDefaultFiat() {
+  let lang = "";
+  try {
+    lang = String(navigator.language || "").toLowerCase();
+  } catch {
+    lang = "";
+  }
+  for (const f of FIATS) {
+    if (f.locales.some(loc => lang === loc.toLowerCase() || lang.startsWith(`${loc.toLowerCase()}-`))) {
+      return f.code;
+    }
+  }
+  if (lang.startsWith("uk")) return "UAH";
+  if (lang.startsWith("pl")) return "PLN";
+  if (lang.startsWith("pt")) return "BRL";
+  if (lang.startsWith("en-gb")) return "GBP";
+  if (lang.startsWith("en-ca") || lang.startsWith("fr-ca")) return "CAD";
+  const euro = ["de", "fr", "it", "es", "nl", "fi", "el", "sk", "sl", "et", "lv", "lt"];
+  if (euro.some(p => lang === p || lang.startsWith(`${p}-`))) return "EUR";
+  return "USD";
+}
+
+function currentFiat() {
+  try {
+    const saved = localStorage.getItem(FIAT_KEY);
+    if (saved && FIATS.some(f => f.code === saved)) return saved;
+  } catch {
+    /* ignore */
+  }
+  return localeDefaultFiat();
+}
+
+function setFiat(code) {
+  const next = FIATS.some(f => f.code === code) ? code : "USD";
+  try {
+    localStorage.setItem(FIAT_KEY, next);
+  } catch {
+    /* ignore */
+  }
+  syncFiatSelect();
+  if (lastView) {
+    renderOverall(lastView.overall);
+    renderStakes(lastView.rows, lastView.pack);
+  }
+}
+
+function syncFiatSelect() {
+  const sel = $("fiat-select");
+  if (sel && sel.value !== currentFiat()) sel.value = currentFiat();
+}
+
+function readRateCache() {
+  try {
+    const raw = localStorage.getItem(RATE_CACHE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (!parsed || !parsed.at || !parsed.perSol) return null;
+    if (Date.now() - Number(parsed.at) > RATE_TTL_MS) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeRateCache(pack) {
+  try {
+    localStorage.setItem(RATE_CACHE_KEY, JSON.stringify(pack));
+  } catch {
+    /* ignore */
+  }
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function fetchSolFiatRates() {
+  const cached = readRateCache();
+  if (cached) {
+    fiatRates = cached;
+    return cached;
+  }
+  try {
+    const codes = FIATS.map(f => f.code.toLowerCase()).join(",");
+    const gecko = await fetchJson(
+      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=${codes}`
+    );
+    const row = gecko?.solana || {};
+    const perSol = {};
+    for (const f of FIATS) {
+      const n = Number(row[f.code.toLowerCase()]);
+      if (Number.isFinite(n) && n > 0) perSol[f.code] = n;
+    }
+    if (Number.isFinite(perSol.USD)) {
+      const pack = {
+        at: Date.now(),
+        perSol,
+        source: "CoinGecko",
+        stale: false
+      };
+      fiatRates = pack;
+      writeRateCache(pack);
+      return pack;
+    }
+  } catch {
+    /* try USD + FX */
+  }
+  try {
+    const geckoUsd = await fetchJson(
+      "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+    );
+    const usd = Number(geckoUsd?.solana?.usd);
+    if (!Number.isFinite(usd) || usd <= 0) throw new Error("no usd");
+    let fx = { ...STATIC_USD_FX };
+    let stale = true;
+    let source = "CoinGecko + static FX";
+    try {
+      const live = await fetchJson("https://open.er-api.com/v6/latest/USD");
+      if (live?.result === "success" && live.rates) {
+        for (const f of FIATS) {
+          const n = Number(live.rates[f.code]);
+          if (Number.isFinite(n) && n > 0) fx[f.code] = n;
+        }
+        stale = false;
+        source = "CoinGecko + exchangerate-api";
+      }
+    } catch {
+      /* keep static FX */
+    }
+    const perSol = {};
+    for (const f of FIATS) {
+      const n = usd * Number(fx[f.code] || 0);
+      if (Number.isFinite(n) && n > 0) perSol[f.code] = n;
+    }
+    const pack = { at: Date.now(), perSol, source, stale };
+    fiatRates = pack;
+    writeRateCache(pack);
+    return pack;
+  } catch {
+    fiatRates = null;
+    return null;
+  }
+}
+
+function solToFiat(sol) {
+  const n = Number(sol);
+  const code = currentFiat();
+  const rate = Number(fiatRates?.perSol?.[code]);
+  if (!Number.isFinite(n) || !Number.isFinite(rate) || rate <= 0) return null;
+  return { amount: n * rate, code, fiat: fiatByCode(code) };
+}
+
+function fmtFiat(sol) {
+  const conv = solToFiat(sol);
+  if (!conv) return "";
+  const abs = Math.abs(conv.amount);
+  let formatted;
+  try {
+    formatted = new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: conv.code,
+      currencyDisplay: "narrowSymbol",
+      maximumFractionDigits: abs >= 1000 ? 0 : abs >= 1 ? 0 : abs >= 0.01 ? 2 : 4
+    }).format(abs);
+  } catch {
+    formatted = `${conv.fiat.symbol}${abs >= 1 ? abs.toFixed(0) : abs.toFixed(2)}`;
+  }
+  const sign = conv.amount < 0 ? "−" : "";
+  return `≈ ${sign}${formatted}`;
+}
+
+function solWithFiat(sol, { signed = false } = {}) {
+  const n = Number(sol);
+  if (!Number.isFinite(n)) return { sol: "–", fiat: "" };
+  const prefix = signed && n > 0 ? "+" : "";
+  const fiat = fmtFiat(n);
+  return {
+    sol: `${prefix}${fmtSol(n)} SOL`,
+    fiat
+  };
 }
 
 function applyTheme(theme) {
@@ -700,11 +913,20 @@ function scoreStake(acc, overlay) {
   };
 }
 
+function lastSumFrom(active) {
+  const last = (active || [])
+    .map(r => Number(r.acc.rewards?.[0]?.amountSol))
+    .filter(n => Number.isFinite(n));
+  return last.length ? last.reduce((s, n) => s + n, 0) : null;
+}
+
 function scoreOverall(rows, pack) {
   const delegated = rows.filter(r => r.acc.vote);
   const active = rows.filter(
     r => r.acc.vote && (r.acc.status === "active" || r.acc.status === "activating")
   );
+
+  const totalActiveSol = rows.reduce((s, r) => s + (Number(r.acc.delegatedSol) || 0), 0);
 
   if (!rows.length) {
     return {
@@ -713,7 +935,9 @@ function scoreOverall(rows, pack) {
       headline: "No native stake on this address",
       body:
         "We did not find a stake account this address controls. Liquid staking tokens (JitoSOL, mSOL, and similar) will not show here – this page is for native stake only.",
-      next: "If you expected a position, check you pasted the wallet that actually created the stake – or paste the stake account itself."
+      next: "If you expected a position, check you pasted the wallet that actually created the stake – or paste the stake account itself.",
+      lastEpochSol: null,
+      totalActiveSol: 0
     };
   }
 
@@ -723,7 +947,9 @@ function scoreOverall(rows, pack) {
       kicker: "Watch",
       headline: "Stake accounts, but no active delegation",
       body: "There are stake accounts here, yet none are pointed at a validator. They are not earning.",
-      next: "If you unstaked, wait for the cooldown. If you meant to be delegated, do that in your wallet."
+      next: "If you unstaked, wait for the cooldown. If you meant to be delegated, do that in your wallet.",
+      lastEpochSol: null,
+      totalActiveSol
     };
   }
 
@@ -756,7 +982,9 @@ function scoreOverall(rows, pack) {
           ? "One stake needs attention"
           : `${riskN} stakes need attention`,
       body: `${nameBit} – at least one validator looks delinquent, keeps most rewards, or has a weak history. Your SOL stays in your stake account; this is about rewards and operator health, not a drained wallet.${idleNote}`,
-      next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake."
+      next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake.",
+      lastEpochSol: lastSumFrom(active),
+      totalActiveSol
     };
   }
   if (worst === "watch") {
@@ -765,14 +993,13 @@ function scoreOverall(rows, pack) {
       kicker: "Watch",
       headline: "Looks mostly fine – a few things to read",
       body: `${nameBit}. ${okN ? `${okN} stake${okN === 1 ? "" : "s"} look fine. ` : ""}${watchN} need a closer look (fee, cooldown, or a softer history). Nothing here is a command to move stake.${idleNote}`,
-      next: "Skim the cards below. Come back after the next epoch if you like a routine."
+      next: "Skim the cards below. Come back after the next epoch if you like a routine.",
+      lastEpochSol: lastSumFrom(active),
+      totalActiveSol
     };
   }
 
-  const last = active
-    .map(r => Number(r.acc.rewards?.[0]?.amountSol))
-    .filter(n => Number.isFinite(n));
-  const lastSum = last.length ? last.reduce((s, n) => s + n, 0) : null;
+  const lastSum = lastSumFrom(active);
   return {
     tone: "ok",
     kicker: "OK",
@@ -784,7 +1011,9 @@ function scoreOverall(rows, pack) {
     next:
       pack?.currentEpoch != null
         ? `Epoch ${pack.currentEpoch} is in progress. Save this page and check again after it ends if you want.`
-        : "Save this page and check again after the next epoch if you want."
+        : "Save this page and check again after the next epoch if you want.",
+    lastEpochSol: lastSum,
+    totalActiveSol
   };
 }
 
@@ -812,6 +1041,21 @@ function renderOverall(v) {
   $("verdict-kicker").textContent = v.kicker || "Verdict";
   $("verdict-headline").textContent = v.headline || "";
   $("verdict-body").textContent = v.body || "";
+  const fiatLine = $("verdict-fiat");
+  if (fiatLine) {
+    const parts = [];
+    if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
+      const line = solWithFiat(v.totalActiveSol);
+      parts.push(line.fiat ? `${line.sol} · ${line.fiat}` : "");
+    }
+    if (Number.isFinite(Number(v.lastEpochSol)) && Math.abs(v.lastEpochSol) > 0) {
+      const line = solWithFiat(v.lastEpochSol, { signed: true });
+      parts.push(line.fiat ? `Last epoch ${line.sol} · ${line.fiat}` : "");
+    }
+    const text = parts.filter(Boolean).join(" · ");
+    fiatLine.textContent = text;
+    fiatLine.classList.toggle("hidden", !text);
+  }
   $("verdict-next").textContent = v.next || "";
 }
 
@@ -835,8 +1079,10 @@ function renderStakeCard(row) {
 
     const amounts = el("div", "stake-amounts");
     amounts.append(
-      kv("Active SOL", fmtSol(acc.delegatedSol)),
-      kv("Last epoch", acc.rewards?.[0] ? `+${fmtSol(acc.rewards[0].amountSol)}` : "–"),
+      kvMoney("Active", acc.delegatedSol),
+      acc.rewards?.[0]
+        ? kvMoney("Last epoch", acc.rewards[0].amountSol, { signed: true })
+        : kv("Last epoch", "–"),
       kv("Stake status", acc.status || "–")
     );
     top.append(amounts);
@@ -960,6 +1206,24 @@ function renderStakes(rows, pack) {
     parts.push("Lookup used public Solana RPC (dashboard stake API was unavailable or this is a single stake account).");
   }
   if (note) note.textContent = parts.join(" ");
+  const totalEl = $("stakes-total");
+  if (totalEl) {
+    const total = rows.reduce((s, r) => s + (Number(r.acc.delegatedSol) || 0), 0);
+    const line = solWithFiat(total);
+    totalEl.textContent = line.fiat ? `${line.sol} · ${line.fiat}` : line.sol;
+  }
+  const hint = $("fiat-hint");
+  if (hint) {
+    if (!fiatRates) {
+      hint.textContent = "";
+    } else {
+      const ageMin = Math.max(0, Math.round((Date.now() - Number(fiatRates.at || 0)) / 60000));
+      const age = ageMin <= 1 ? "just now" : `${ageMin} min ago`;
+      hint.textContent = fiatRates.stale
+        ? `Approx. ${fiatRates.source} · may be stale`
+        : `Approx. ${fiatRates.source} · ${age}`;
+    }
+  }
 }
 
 function kv(label, value) {
@@ -968,9 +1232,36 @@ function kv(label, value) {
   return wrap;
 }
 
+function kvMoney(label, sol, opts) {
+  const line = solWithFiat(sol, opts);
+  const wrap = el("div", "kv kv-money");
+  wrap.append(el("span", "", label));
+  const val = el("div", "kv-val");
+  val.append(el("strong", "", line.sol));
+  if (line.fiat) val.append(el("em", "fiat-approx", line.fiat));
+  wrap.append(val);
+  return wrap;
+}
+
 function hideResults() {
+  lastView = null;
   $("verdict-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
+  $("verdict-fiat")?.classList.add("hidden");
+}
+
+function fillFiatSelect() {
+  const sel = $("fiat-select");
+  if (!sel) return;
+  sel.innerHTML = "";
+  for (const f of FIATS) {
+    const opt = document.createElement("option");
+    opt.value = f.code;
+    opt.textContent = `${f.code} · ${f.symbol}`;
+    sel.appendChild(opt);
+  }
+  sel.value = currentFiat();
+  sel.addEventListener("change", () => setFiat(sel.value));
 }
 
 function shareUrl(wallet, stake) {
@@ -1006,7 +1297,10 @@ async function loadLookup({ wallet, stake }) {
       if (t) return t;
       return Number(b.acc.delegatedSol || 0) - Number(a.acc.delegatedSol || 0);
     });
-    renderOverall(scoreOverall(rows, pack));
+    await fetchSolFiatRates().catch(() => null);
+    const overall = scoreOverall(rows, pack);
+    lastView = { rows, pack, overall };
+    renderOverall(overall);
     renderStakes(rows, pack);
     setStatus(
       accounts.length
@@ -1136,6 +1430,9 @@ function boot() {
   $("stake-input")?.addEventListener("keydown", e => {
     if (e.key === "Enter") submit();
   });
+  fillFiatSelect();
+  fetchSolFiatRates().catch(() => null);
+
   $("copy-share")?.addEventListener("click", async () => {
     const share = $("share-url");
     if (!share?.value) return;
