@@ -311,6 +311,14 @@ function setStatus(text) {
   if (el) el.textContent = text || "";
 }
 
+function setBusy(busy) {
+  for (const id of ["btn-lookup", "btn-phantom", "btn-solflare"]) {
+    const el = $(id);
+    if (el) el.disabled = !!busy;
+  }
+  $("status-line")?.classList.toggle("busy", !!busy);
+}
+
 function profileHref(vote) {
   const u = new URL("./index.html", window.location.href);
   u.searchParams.set("vote", vote);
@@ -1275,10 +1283,8 @@ function shareUrl(wallet, stake) {
 
 async function loadLookup({ wallet, stake }) {
   setError("");
-  hideResults();
-  setStatus("Looking up native stake…");
-  const btn = $("btn-lookup");
-  if (btn) btn.disabled = true;
+  setBusy(true);
+  setStatus("Looking up your stake on-chain…");
   try {
     const pack = await resolvePositions({ wallet, stake });
     const accounts = pack.accounts || [];
@@ -1315,7 +1321,7 @@ async function loadLookup({ wallet, stake }) {
     setStatus("");
     setError(err.message || "Could not load this address.");
   } finally {
-    if (btn) btn.disabled = false;
+    setBusy(false);
   }
 }
 
