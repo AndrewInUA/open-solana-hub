@@ -240,7 +240,7 @@ function solToFiat(sol) {
 
 function fmtFiat(sol) {
   const conv = solToFiat(sol);
-  if (!conv) return "";
+  if (!conv || Math.abs(Number(sol)) < 1e-4) return "";
   const abs = Math.abs(conv.amount);
   let formatted;
   try {
@@ -1048,7 +1048,7 @@ function renderOverall(v) {
       const line = solWithFiat(v.totalActiveSol);
       parts.push(line.fiat ? `${line.sol} · ${line.fiat}` : "");
     }
-    if (Number.isFinite(Number(v.lastEpochSol)) && Math.abs(v.lastEpochSol) > 0) {
+    if (Number.isFinite(Number(v.lastEpochSol)) && Math.abs(v.lastEpochSol) >= 1e-4) {
       const line = solWithFiat(v.lastEpochSol, { signed: true });
       parts.push(line.fiat ? `Last epoch ${line.sol} · ${line.fiat}` : "");
     }
