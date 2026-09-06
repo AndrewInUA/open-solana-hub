@@ -32,6 +32,7 @@ body: |
     <li><strong>Browse the directory</strong> – search by name or vote key, sort by stake, open any validator profile.</li>
     <li><strong>Deep dive on one validator</strong> – read stability, commission history, epoch voting, and pool badges on a single page.</li>
     <li><strong>Compare two validators</strong> – use the on-page A vs B tool when you have narrowed your shortlist.</li>
+    <li><strong>Already staked?</strong> – paste your wallet on <a href="./compare/mystake.html">Stake health</a> for a plain-English OK / Watch / Risk read on the validators you already use.</li>
     </ol>
   
     <h2>A simple workflow</h2>
