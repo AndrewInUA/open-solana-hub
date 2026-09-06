@@ -193,6 +193,7 @@ a:hover { color: var(--link-hover); }
 .header-actions .btn {
   padding: 8px 14px;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .lang-switch {
