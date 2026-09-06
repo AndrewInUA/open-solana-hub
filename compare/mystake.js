@@ -15,6 +15,8 @@ const THEME_KEY = "vtd-theme";
 const FIAT_KEY = "vtd-fiat";
 const RATE_CACHE_KEY = "vtd-sol-fiat";
 const RATE_TTL_MS = 15 * 60 * 1000;
+const OVERLAY_CACHE_KEY = "vtd-overlay-cache";
+const OVERLAY_TTL_MS = 10 * 60 * 1000;
 const DASHBOARD_API = "https://validator-transparency-dashboard.vercel.app";
 const STAKE_PROGRAM = "Stake11111111111111111111111111111111111111";
 const PUBKEY_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
@@ -659,8 +661,10 @@ async function fetchLiveRpc(vote) {
 }
 
 async function fetchSnapshots(vote) {
+  // limit=1 is enough: include_all_stats returns all-time stability counts.
+  // A 40-row window was ~7s; one row + all-time meta is the same history, faster.
   const res = await fetch(
-    `${DASHBOARD_API}/api/snapshots?vote=${encodeURIComponent(vote)}&limit=40&include_all_stats=1`
+    `${DASHBOARD_API}/api/snapshots?vote=${encodeURIComponent(vote)}&limit=1&include_all_stats=1`
   );
   if (!res.ok) return { snapshots: [], meta: null };
   const json = await res.json();
@@ -726,7 +730,46 @@ function stabilityFromHistory(snaps, meta, liveStatus, commission) {
   };
 }
 
+function compactOverlay(o) {
+  if (!o) return null;
+  return {
+    vote: o.vote,
+    name: o.name || null,
+    status: o.status || null,
+    commission: o.commission,
+    votingPct: o.votingPct,
+    apyMedian: o.apyMedian,
+    stability: o.stability || { score: null }
+  };
+}
+
+function readOverlayCache(vote) {
+  try {
+    const raw = sessionStorage.getItem(`${OVERLAY_CACHE_KEY}:${vote}`);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (!parsed || !parsed.at || Date.now() - Number(parsed.at) > OVERLAY_TTL_MS) {
+      return null;
+    }
+    return parsed.data || null;
+  } catch {
+    return null;
+  }
+}
+
+function writeOverlayCache(vote, data) {
+  try {
+    sessionStorage.setItem(
+      `${OVERLAY_CACHE_KEY}:${vote}`,
+      JSON.stringify({ at: Date.now(), data: compactOverlay(data) })
+    );
+  } catch {
+    /* ignore quota */
+  }
+}
+
 async function loadOverlay(vote) {
+  const cached = readOverlayCache(vote);
+  if (cached) return cached;
   const [livePack, ratings, snapPack] = await Promise.all([
     fetchLiveRpc(vote).catch(() => null),
     fetchRatings(vote).catch(() => null),
@@ -738,7 +781,7 @@ async function loadOverlay(vote) {
     ? Number(me.commission)
     : null;
   const votingPct = votingFromCredits(me?.epochCredits);
-  return {
+  const out = compactOverlay({
     vote,
     name: pickName(ratings, null),
     status,
@@ -747,15 +790,15 @@ async function loadOverlay(vote) {
     apyMedian: Number.isFinite(Number(ratings?.derived?.apy_median))
       ? Number(ratings.derived.apy_median)
       : null,
-    ratings,
-    livePack,
     stability: stabilityFromHistory(
       snapPack.snapshots,
       snapPack.meta,
       status,
       commission
     )
-  };
+  });
+  writeOverlayCache(vote, out);
+  return out;
 }
 
 async function loadOverlays(votes) {
@@ -1281,42 +1324,53 @@ function shareUrl(wallet, stake) {
   return u.toString();
 }
 
+function paintLookup(accounts, pack, overlays) {
+  const rows = (accounts || []).map(acc => {
+    const overlay = acc.vote && overlays ? overlays.get(acc.vote) : null;
+    return { acc, overlay, health: scoreStake(acc, overlay) };
+  });
+  rows.sort((a, b) => {
+    const t = toneRank(b.health.tone) - toneRank(a.health.tone);
+    if (t) return t;
+    return Number(b.acc.delegatedSol || 0) - Number(a.acc.delegatedSol || 0);
+  });
+  const overall = scoreOverall(rows, pack);
+  lastView = { rows, pack, overall };
+  renderOverall(overall);
+  renderStakes(rows, pack);
+  return rows;
+}
+
 async function loadLookup({ wallet, stake }) {
   setError("");
   setBusy(true);
   setStatus("Looking up your stake on-chain…");
+  const fiatP = fetchSolFiatRates().catch(() => null);
   try {
     const pack = await resolvePositions({ wallet, stake });
     const accounts = pack.accounts || [];
+    let overlays = null;
+    paintLookup(accounts, pack, overlays);
+    fiatP.then(() => {
+      if (lastView?.pack === pack) paintLookup(accounts, pack, overlays);
+    });
     setStatus(
       accounts.length
         ? `Found ${accounts.length} stake account${accounts.length === 1 ? "" : "s"}. Reading transparency signals…`
-        : "Lookup finished."
-    );
-    const overlays = await loadOverlays(accounts.map(a => a.vote));
-    const rows = accounts.map(acc => {
-      const overlay = acc.vote ? overlays.get(acc.vote) : null;
-      return { acc, overlay, health: scoreStake(acc, overlay) };
-    });
-    rows.sort((a, b) => {
-      const t = toneRank(b.health.tone) - toneRank(a.health.tone);
-      if (t) return t;
-      return Number(b.acc.delegatedSol || 0) - Number(a.acc.delegatedSol || 0);
-    });
-    await fetchSolFiatRates().catch(() => null);
-    const overall = scoreOverall(rows, pack);
-    lastView = { rows, pack, overall };
-    renderOverall(overall);
-    renderStakes(rows, pack);
-    setStatus(
-      accounts.length
-        ? `Found ${pack.accountCount || accounts.length} stake account${
-            (pack.accountCount || accounts.length) === 1 ? "" : "s"
-          }.`
         : "No native stake on this address."
     );
     const share = $("share-url");
     if (share) share.value = shareUrl(wallet || pack.wallet, stake);
+    if (!accounts.some(a => a.vote)) {
+      return;
+    }
+    overlays = await loadOverlays(accounts.map(a => a.vote));
+    paintLookup(accounts, pack, overlays);
+    setStatus(
+      `Found ${pack.accountCount || accounts.length} stake account${
+        (pack.accountCount || accounts.length) === 1 ? "" : "s"
+      }.`
+    );
   } catch (err) {
     setStatus("");
     setError(err.message || "Could not load this address.");
