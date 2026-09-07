@@ -242,18 +242,20 @@ function solToFiat(sol) {
 
 function fmtFiat(sol) {
   const conv = solToFiat(sol);
-  if (!conv || Math.abs(Number(sol)) < 1e-4) return "";
+  if (!conv) return "";
   const abs = Math.abs(conv.amount);
+  const digits = abs >= 1 ? 0 : abs >= 0.01 ? 2 : abs >= 0.0001 ? 4 : 6;
   let formatted;
   try {
     formatted = new Intl.NumberFormat(undefined, {
       style: "currency",
       currency: conv.code,
       currencyDisplay: "narrowSymbol",
-      maximumFractionDigits: abs >= 1000 ? 0 : abs >= 1 ? 0 : abs >= 0.01 ? 2 : 4
+      maximumFractionDigits: digits,
+      minimumFractionDigits: abs >= 0.01 || abs === 0 ? Math.min(2, digits) : digits
     }).format(abs);
   } catch {
-    formatted = `${conv.fiat.symbol}${abs >= 1 ? abs.toFixed(0) : abs.toFixed(2)}`;
+    formatted = `${conv.fiat.symbol}${abs.toFixed(digits)}`;
   }
   const sign = conv.amount < 0 ? "−" : "";
   return `≈ ${sign}${formatted}`;
@@ -971,6 +973,38 @@ function lastSumFrom(active) {
   return last.length ? last.reduce((s, n) => s + n, 0) : null;
 }
 
+function situationHeadline(rows, names, nameBit) {
+  const active = rows.filter(r => r.acc.status === "active");
+  const activating = rows.filter(r => r.acc.status === "activating");
+  const deactivating = rows.filter(r => r.acc.status === "deactivating");
+  if (names.length === 1) {
+    const name = names[0];
+    if (activating.length && !active.length && !deactivating.length) {
+      return `Your stake on ${name} is still activating.`;
+    }
+    if (deactivating.length && !active.length && !activating.length) {
+      return `Your stake on ${name} is cooling down.`;
+    }
+    if (active.length) return `Your stake is active on ${name}.`;
+    return `Your stake is on ${name}.`;
+  }
+  if (names.length > 1 || (nameBit && String(nameBit).includes("validator"))) {
+    return `Your stake is split across ${nameBit}.`;
+  }
+  return `Your stake is on ${nameBit}.`;
+}
+
+function overallCommLine(scored) {
+  const comms = scored
+    .map(r => r.health.commission)
+    .filter(n => Number.isFinite(n));
+  if (!comms.length) return "We do not have a recent commission reading.";
+  const same = comms.every(c => c === comms[0]);
+  return same
+    ? `Commission ${comms[0]}%.`
+    : `Commission differs (${[...new Set(comms)].join("% / ")}%).`;
+}
+
 function scoreOverall(rows, pack) {
   const delegated = rows.filter(r => r.acc.vote);
   const active = rows.filter(
@@ -996,7 +1030,7 @@ function scoreOverall(rows, pack) {
     return {
       tone: "watch",
       kicker: "Watch",
-      headline: "Stake accounts, but no active delegation",
+      headline: "These stake accounts have no validator – they are not earning.",
       body: "There are stake accounts here, yet none are pointed at a validator. They are not earning.",
       next: "If you unstaked, wait for the cooldown. If you meant to be delegated, do that in your wallet.",
       lastEpochSol: null,
@@ -1007,9 +1041,7 @@ function scoreOverall(rows, pack) {
   const scored = delegated;
   const idleN = rows.length - delegated.length;
   const worst = scored.reduce((w, r) => worseTone(w, r.health.tone), "ok");
-  const riskN = scored.filter(r => r.health.tone === "risk").length;
   const watchN = scored.filter(r => r.health.tone === "watch").length;
-  const okN = scored.filter(r => r.health.tone === "ok").length;
   const idleNote =
     idleN > 0
       ? ` ${idleN} other account${idleN === 1 ? "" : "s"} on this wallet ${
@@ -1024,17 +1056,21 @@ function scoreOverall(rows, pack) {
       ? names[0]
       : `${names.length || delegated.length} validators`;
 
+  const lastSum = lastSumFrom(active);
+  const commLine = overallCommLine(scored);
+  const headline = situationHeadline(delegated, names, nameBit);
+
   if (worst === "risk") {
     return {
       tone: "risk",
       kicker: "Risk",
-      headline:
-        riskN === 1
-          ? "One stake needs attention"
-          : `${riskN} stakes need attention`,
-      body: `${nameBit} – at least one validator looks delinquent, keeps most rewards, or has a weak history. Your SOL stays in your stake account; this is about rewards and operator health, not a drained wallet.${idleNote}`,
+      headline,
+      body: `${commLine} At least one validator is missing votes, keeps most rewards, or has a weak record.${idleNote}`.replace(
+        /\s+/g,
+        " "
+      ).trim(),
       next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake.",
-      lastEpochSol: lastSumFrom(active),
+      lastEpochSol: lastSum,
       totalActiveSol
     };
   }
@@ -1042,23 +1078,22 @@ function scoreOverall(rows, pack) {
     return {
       tone: "watch",
       kicker: "Watch",
-      headline: "Looks mostly fine – a few things to read",
-      body: `${nameBit}. ${okN ? `${okN} stake${okN === 1 ? "" : "s"} look fine. ` : ""}${watchN} need a closer look (fee, cooldown, or a softer history). Nothing here is a command to move stake.${idleNote}`,
+      headline,
+      body: `${commLine} ${watchN} thing${watchN === 1 ? "" : "s"} to read (fee, cooldown, or a softer history). It is not an alarm.${idleNote}`.replace(
+        /\s+/g,
+        " "
+      ).trim(),
       next: "Skim the cards below. Come back after the next epoch if you like a routine.",
-      lastEpochSol: lastSumFrom(active),
+      lastEpochSol: lastSum,
       totalActiveSol
     };
   }
 
-  const lastSum = lastSumFrom(active);
   return {
     tone: "ok",
     kicker: "OK",
-    headline:
-      lastSum !== null
-        ? `Last finished epoch: +${fmtSol(lastSum)} SOL`
-        : `${nameBit} look healthy`,
-    body: `${nameBit} look${names.length === 1 ? "s" : ""} fine in the live read and the snapshots we store. You do not need to do anything.${idleNote}`,
+    headline,
+    body: `${commLine} You do not need to act.${idleNote}`.replace(/\s+/g, " ").trim(),
     next:
       pack?.currentEpoch != null
         ? `Epoch ${pack.currentEpoch} is in progress. Save this page and check again after it ends if you want.`
@@ -1091,28 +1126,26 @@ function renderOverall(v) {
   card.classList.add(v.tone);
   $("verdict-kicker").textContent = v.kicker || "Verdict";
   $("verdict-headline").textContent = v.headline || "";
-  $("verdict-body").textContent = v.body || "";
-  const fiatLine = $("verdict-fiat");
-  if (fiatLine) {
-    const parts = [];
+  const amounts = $("verdict-amounts");
+  if (amounts) {
+    amounts.innerHTML = "";
     if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
-      const line = solWithFiat(v.totalActiveSol);
-      parts.push(line.fiat ? `${line.sol} · ${line.fiat}` : "");
+      amounts.appendChild(kvMoney("Active stake", v.totalActiveSol));
     }
-    if (Number.isFinite(Number(v.lastEpochSol)) && Math.abs(v.lastEpochSol) >= 1e-4) {
-      const line = solWithFiat(v.lastEpochSol, { signed: true });
-      parts.push(line.fiat ? `Last epoch ${line.sol} · ${line.fiat}` : "");
+    if (Number.isFinite(Number(v.lastEpochSol))) {
+      amounts.appendChild(kvMoney("Last epoch", v.lastEpochSol, { signed: true }));
     }
-    const text = parts.filter(Boolean).join(" · ");
-    fiatLine.textContent = text;
-    fiatLine.classList.toggle("hidden", !text);
+    amounts.classList.toggle("hidden", !amounts.childElementCount);
   }
+  $("verdict-body").textContent = v.body || "";
   $("verdict-next").textContent = v.next || "";
 }
 
-function renderStakeCard(row) {
+function renderStakeCard(row, { compact = false } = {}) {
   const { acc, health, overlay } = row;
-    const article = el("article", `stake-card ${health.tone}`);
+  const article = el("article", `stake-card ${health.tone}`);
+
+  if (!compact) {
     const top = el("div", "stake-card-top");
     const left = el("div", "stake-card-who");
     const pill = el("span", `health-pill ${health.tone}`, health.label);
@@ -1138,8 +1171,15 @@ function renderStakeCard(row) {
     );
     top.append(amounts);
     article.append(top);
+  } else if (acc.vote) {
+    const a = document.createElement("a");
+    a.className = "validator-link";
+    a.href = profileHref(acc.vote);
+    a.textContent = `Open ${health.name || shortKey(acc.vote)} on Validator Transparency`;
+    article.append(a);
+  }
 
-    const signals = el("div", "signals");
+  const signals = el("div", "signals");
     const liveStatus = overlay?.status || acc.validator?.status || "";
     if (liveStatus) {
       signals.append(
@@ -1186,13 +1226,20 @@ function renderStakeCard(row) {
     }
     if (signals.childNodes.length) article.append(signals);
 
-    const body = el("p", "stake-body", health.body);
-    article.append(body);
-
-    const bits = [...health.reasons, ...health.goods.slice(0, 2)];
-    if (bits.length) {
+    if (!compact) {
+      const body = el("p", "stake-body", health.body);
+      article.append(body);
+      const bits = [...health.reasons, ...health.goods.slice(0, 2)];
+      if (bits.length) {
+        const ul = el("ul", "stake-notes");
+        for (const bit of bits.slice(0, 4)) {
+          ul.append(el("li", "", bit));
+        }
+        article.append(ul);
+      }
+    } else if (health.reasons.length) {
       const ul = el("ul", "stake-notes");
-      for (const bit of bits.slice(0, 4)) {
+      for (const bit of health.reasons.slice(0, 4)) {
         ul.append(el("li", "", bit));
       }
       article.append(ul);
@@ -1232,7 +1279,11 @@ function renderStakes(rows, pack) {
 
   const delegated = rows.filter(r => r.acc.vote);
   const idle = rows.filter(r => !r.acc.vote);
-  for (const row of delegated) list.append(renderStakeCard(row));
+  const compact = delegated.length === 1 && idle.length === 0;
+  card.classList.toggle("single-stake", compact);
+  const kicker = $("stakes-kicker");
+  if (kicker) kicker.textContent = compact ? "Signals" : "Your stakes";
+  for (const row of delegated) list.append(renderStakeCard(row, { compact }));
   if (idle.length) {
     list.append(
       el(
@@ -1247,7 +1298,7 @@ function renderStakes(rows, pack) {
   }
 
   const parts = [];
-  if (Number.isFinite(Number(pack?.currentEpoch))) {
+  if (!compact && Number.isFinite(Number(pack?.currentEpoch))) {
     parts.push(`Epoch ${pack.currentEpoch} is in progress.`);
   }
   if (pack?.truncated) {
@@ -1259,9 +1310,13 @@ function renderStakes(rows, pack) {
   if (note) note.textContent = parts.join(" ");
   const totalEl = $("stakes-total");
   if (totalEl) {
-    const total = rows.reduce((s, r) => s + (Number(r.acc.delegatedSol) || 0), 0);
-    const line = solWithFiat(total);
-    totalEl.textContent = line.fiat ? `${line.sol} · ${line.fiat}` : line.sol;
+    if (compact) {
+      totalEl.textContent = "";
+    } else {
+      const total = rows.reduce((s, r) => s + (Number(r.acc.delegatedSol) || 0), 0);
+      const line = solWithFiat(total);
+      totalEl.textContent = line.fiat ? `${line.sol} · ${line.fiat}` : line.sol;
+    }
   }
   const hint = $("fiat-hint");
   if (hint) {
@@ -1298,7 +1353,7 @@ function hideResults() {
   lastView = null;
   $("verdict-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
-  $("verdict-fiat")?.classList.add("hidden");
+  $("verdict-amounts")?.classList.add("hidden");
 }
 
 function fillFiatSelect() {
