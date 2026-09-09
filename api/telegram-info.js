@@ -2,7 +2,8 @@
  * Public Telegram bot link for the Stake health page.
  *
  * GET /api/telegram-info
- * Env: TELEGRAM_BOT_USERNAME (no @). Never returns the bot token.
+ * Optional env TELEGRAM_BOT_USERNAME (no @) overrides the public default
+ * stake_health_bot. Never returns the bot token.
  */
 const core = require("../compare/stake-health-core");
 
@@ -24,8 +25,8 @@ module.exports = async function telegramInfo(req, res) {
   const url = core.telegramBotUrl(username);
   json(res, 200, {
     ok: true,
-    username: url ? username : null,
-    url: url || null,
+    username,
+    url,
     fallback: core.TELEGRAM_CTA.fallback
   });
 };

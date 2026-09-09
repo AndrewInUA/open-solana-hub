@@ -78,12 +78,17 @@
     { label: "Risk", text: TONE_COPY.risk.body }
   ];
 
+  const DEFAULT_TELEGRAM_BOT_USERNAME = "stake_health_bot";
+  const TELEGRAM_BOT_URL = `https://t.me/${DEFAULT_TELEGRAM_BOT_USERNAME}`;
+
   const TELEGRAM_CTA = {
     kicker: "Telegram",
     headline: "Get epoch checkups in Telegram",
     body:
       "Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only — we never move SOL.",
     steps: "/start → /wallet → /status",
+    username: DEFAULT_TELEGRAM_BOT_USERNAME,
+    url: TELEGRAM_BOT_URL,
     fallback: "Telegram bot coming — ask for the link."
   };
 
@@ -684,15 +689,15 @@
   }
 
   function telegramBotUsername(raw) {
-    return String(raw || "")
+    const username = String(raw || "")
       .trim()
       .replace(/^@/, "");
+    if (/^[A-Za-z0-9_]{5,32}$/.test(username)) return username;
+    return DEFAULT_TELEGRAM_BOT_USERNAME;
   }
 
   function telegramBotUrl(raw) {
-    const username = telegramBotUsername(raw);
-    if (!/^[A-Za-z0-9_]{5,32}$/.test(username)) return null;
-    return `https://t.me/${username}`;
+    return `https://t.me/${telegramBotUsername(raw)}`;
   }
 
   function rangePct(min, max) {
@@ -885,6 +890,8 @@
     TONE_COPY,
     HOW_TO_READ,
     TELEGRAM_CTA,
+    DEFAULT_TELEGRAM_BOT_USERNAME,
+    TELEGRAM_BOT_URL,
     shortKey,
     fmtSol,
     fmtPct,

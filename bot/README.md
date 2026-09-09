@@ -1,6 +1,6 @@
 # Stake health Telegram bot
 
-Plain-English **OK / Watch / Risk** notes for people who already staked SOL. Same data and verdicts as [Stake health](https://www.opensolanahub.com/compare/mystake.html). Education only – not financial advice.
+Plain-English **OK / Watch / Risk** notes for people who already staked SOL. Same data and verdicts as [Stake health](https://www.opensolanahub.com/compare/mystake.html). Bot: [@stake_health_bot](https://t.me/stake_health_bot). Education only – not financial advice.
 
 The bot **never** asks for a seed or private key and **never** moves SOL. It stores `chat_id` ↔ public wallet only.
 
@@ -62,7 +62,7 @@ Set these on the Hub Vercel project (Production). Never commit secrets.
 | Name | Required | Purpose |
 |------|----------|---------|
 | `TELEGRAM_BOT_TOKEN` | yes | From BotFather |
-| `TELEGRAM_BOT_USERNAME` | recommended | Bot username **without** `@` (e.g. `OpenSolanaHubBot`). Used by `/api/telegram-info` so [Stake health](https://www.opensolanahub.com/compare/mystake.html) can link to `https://t.me/<username>`. If unset, the page shows “Telegram bot coming — ask for the link.” |
+| `TELEGRAM_BOT_USERNAME` | optional | Public username **without** `@`. Defaults to `stake_health_bot` (`https://t.me/stake_health_bot`), which is also hardcoded on [Stake health](https://www.opensolanahub.com/compare/mystake.html). Set this only to override. |
 | `TELEGRAM_WEBHOOK_SECRET` | strongly recommended | Random string; Telegram sends it as `X-Telegram-Bot-Api-Secret-Token` |
 | `KV_REST_API_URL` | yes (to save wallets) | Vercel KV |
 | `KV_REST_API_TOKEN` | yes | Vercel KV |

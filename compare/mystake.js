@@ -38,7 +38,8 @@ const {
   loadSolFiatRates,
   solWithFiat: solWithFiatCore,
   summarizeRecentPicture,
-  telegramBotUrl
+  telegramBotUrl,
+  telegramBotUsername
 } = window.StakeHealth;
 
 const THEME_KEY = "vtd-theme";
@@ -1010,6 +1011,8 @@ function applyTelegramLink(url) {
     if (open) {
       open.href = url;
       open.classList.remove("hidden");
+      const name = telegramBotUsername(url.replace(/^https:\/\/t\.me\//, ""));
+      open.textContent = `Open @${name}`;
     }
     if (nav) {
       nav.href = url;
@@ -1039,15 +1042,15 @@ function fillTelegramCta() {
     steps.append(strong, document.createTextNode(" — public key only. We never move SOL."));
   }
   if (fallback) fallback.textContent = TELEGRAM_CTA.fallback;
-  applyTelegramLink(null);
+  applyTelegramLink(telegramBotUrl());
   fetch("/api/telegram-info", { cache: "no-store" })
     .then(res => (res.ok ? res.json() : null))
     .then(json => {
       const url = json?.url || telegramBotUrl(json?.username);
-      applyTelegramLink(url || null);
+      if (url) applyTelegramLink(url);
     })
     .catch(() => {
-      applyTelegramLink(null);
+      /* keep the hardcoded public t.me/stake_health_bot link */
     });
 }
 
