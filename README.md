@@ -16,6 +16,7 @@ One place to **learn Solana** and **assess validators** – plain-English educat
 | `/about.html` | Who built this and how the parts fit together |
 | `/compare/` | **Validator Transparency** – stability history, commission risk, voting consistency, APY context, pool splits, A-vs-B compare |
 | `/compare/mystake.html` | **Stake health** – paste a wallet (or stake account) to see the validators you already delegated to, with a plain-English OK / Watch / Risk overlay |
+| `/api/telegram` | **Stake health Telegram bot** – webhook; epoch digest via `/api/telegram-cron`. Setup: [bot/README.md](./bot/README.md) |
 
 ## How data works
 
@@ -40,6 +41,8 @@ npx serve .
 Import the repo on [Vercel](https://vercel.com). Build command is `npm run build` (CMS news Markdown + page YAML → live HTML). Serverless routes under `/api` handle Decap GitHub OAuth.
 
 Content admin: [/admin/](https://www.opensolanahub.com/admin/) — see [ADMIN.md](./ADMIN.md).
+
+Stake health Telegram bot (same scoring as `/compare/mystake.html`): [bot/README.md](./bot/README.md). Needs `TELEGRAM_BOT_TOKEN` plus Vercel KV.
 
 ## Origins
 
