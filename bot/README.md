@@ -14,6 +14,8 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
 
+A persistent keyboard (Status, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/`. The Telegram **Menu** (`/`) lists the same commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start).
+
 A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat gets one short digest (tone, notable change if the previous tone differed, stake total ≈ fiat, 1–2 history lines from recent voting/snapshots, one-line next step, link back to mystake with `?wallet=`).
 
 ## How website sync is maintained
@@ -87,7 +89,7 @@ After the first deploy with env vars set:
 curl -sS "https://www.opensolanahub.com/api/telegram-setup?secret=YOUR_TELEGRAM_WEBHOOK_SECRET"
 ```
 
-That calls Telegram `setWebhook` for `https://<host>/api/telegram`. Confirm `info.url` in the JSON.
+That calls Telegram `setWebhook` for `https://<host>/api/telegram` and `setMyCommands` for the Menu. Confirm `info.url` in the JSON.
 
 Manual epoch run (does not wait for a new epoch if `force=1`):
 
