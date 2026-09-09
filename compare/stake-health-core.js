@@ -682,6 +682,21 @@
     return line.fiat ? `${line.sol} · ${line.fiat}` : line.sol;
   }
 
+  /**
+   * Plain-English FX freshness. Keep this next to Approx. / ≈ amounts,
+   * never next to validator SIGNALS.
+   */
+  function fiatFreshnessCopy(rates, code, now = Date.now()) {
+    if (!rates || !rates.source) return "";
+    const fiat = normalizeFiat(code);
+    const at = Number(rates.at || 0);
+    const ageMin = Number.isFinite(at) && at > 0 ? Math.max(0, Math.round((now - at) / 60000)) : null;
+    if (rates.stale) return `Approximate ${fiat} from ${rates.source} – may be stale`;
+    if (ageMin == null) return `Approximate ${fiat} from ${rates.source}`;
+    const age = ageMin <= 1 ? "just now" : `${ageMin} min ago`;
+    return `Approximate ${fiat} from ${rates.source} – ${age}`;
+  }
+
   function mystakeUrl(wallet, stake) {
     const u = new URL(MYSTAKE_PAGE);
     if (wallet) u.searchParams.set("wallet", wallet);
@@ -938,6 +953,7 @@
     fmtFiat,
     solWithFiat,
     moneyLine,
+    fiatFreshnessCopy,
     mystakeUrl,
     telegramBotUsername,
     telegramBotUrl,

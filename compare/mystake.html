@@ -328,6 +328,14 @@
     .stakes-head .verdict-kicker { margin-bottom: 4px; }
     #stakes-total { margin: 0; font-size: 13px; }
     #stakes-total:empty { display: none; }
+    .fiat-control {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+      max-width: min(280px, 100%);
+    }
     .fiat-picker {
       display: inline-flex;
       align-items: center;
@@ -347,14 +355,33 @@
       border-radius: 999px;
       padding: 6px 10px;
     }
-    #fiat-hint { margin: 6px 0 0; font-size: 11px; }
+    #fiat-hint {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.4;
+      text-align: right;
+      color: var(--text3);
+    }
+    #fiat-hint:empty { display: none; }
     .verdict-amounts {
       display: grid;
       gap: 8px;
       max-width: 320px;
       margin: 0 0 12px;
     }
-    #verdict-fiat { margin: 0 0 10px; }
+    #verdict-fiat {
+      margin: 0 0 12px;
+      max-width: 320px;
+    }
+    #verdict-fiat:not(.hidden) .fiat-control {
+      align-items: flex-end;
+    }
+    #verdict-fiat:not(.hidden) #fiat-hint {
+      text-align: right;
+    }
+    #stakes-card.single-stake .stakes-head {
+      margin-bottom: 10px;
+    }
     .signals { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
     .signal {
       display: inline-flex;
@@ -445,6 +472,12 @@
     .footer strong { color: var(--text); }
     @media (max-width: 680px) {
       .stake-card-top { grid-template-columns: 1fr; }
+      .stakes-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .fiat-control { align-items: flex-start; max-width: none; }
+      #fiat-hint { text-align: left; }
     }
   </style>
 </head>
@@ -520,6 +553,7 @@
       <div class="verdict-kicker" id="verdict-kicker">Verdict</div>
       <h2 id="verdict-headline"></h2>
       <div class="verdict-amounts hidden" id="verdict-amounts"></div>
+      <div id="verdict-fiat" class="hidden"></div>
       <p id="verdict-body"></p>
       <p class="muted" id="verdict-next"></p>
     </div>
@@ -537,15 +571,17 @@
 
     <div class="card hidden" id="stakes-card">
       <div class="stakes-head">
-        <div>
+        <div class="stakes-head-main">
           <div class="verdict-kicker" id="stakes-kicker">Your stakes</div>
           <p class="muted" id="stakes-total"></p>
-          <p class="muted" id="fiat-hint"></p>
         </div>
-        <label class="fiat-picker">
-          <span>Approx.</span>
-          <select id="fiat-select" aria-label="Approximate local currency"></select>
-        </label>
+        <div class="fiat-control" id="fiat-control">
+          <label class="fiat-picker">
+            <span>Approx.</span>
+            <select id="fiat-select" aria-label="Approximate local currency" aria-describedby="fiat-hint"></select>
+          </label>
+          <p class="muted" id="fiat-hint" aria-live="polite"></p>
+        </div>
       </div>
       <div id="stakes-list"></div>
       <p class="muted" id="stakes-note" style="margin-top:12px"></p>

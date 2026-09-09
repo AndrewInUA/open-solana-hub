@@ -38,6 +38,7 @@ const {
   buildHealthView,
   loadSolFiatRates,
   solWithFiat: solWithFiatCore,
+  fiatFreshnessCopy,
   summarizeRecentPicture,
   telegramBotUrl,
   telegramBotUsername,
@@ -766,6 +767,7 @@ function renderStakes(rows, pack) {
   list.innerHTML = "";
   if (!rows.length) {
     card.classList.add("hidden");
+    homeFiatControl();
     return;
   }
   card.classList.remove("hidden");
@@ -811,18 +813,37 @@ function renderStakes(rows, pack) {
       totalEl.textContent = line.fiat ? `${line.sol} · ${line.fiat}` : line.sol;
     }
   }
+  renderFiatHint();
+  placeFiatControl(compact);
+}
+
+function renderFiatHint() {
   const hint = $("fiat-hint");
-  if (hint) {
-    if (!fiatRates) {
-      hint.textContent = "";
-    } else {
-      const ageMin = Math.max(0, Math.round((Date.now() - Number(fiatRates.at || 0)) / 60000));
-      const age = ageMin <= 1 ? "just now" : `${ageMin} min ago`;
-      hint.textContent = fiatRates.stale
-        ? `Approx. ${fiatRates.source} · may be stale`
-        : `Approx. ${fiatRates.source} · ${age}`;
-    }
+  if (hint) hint.textContent = fiatFreshnessCopy(fiatRates, currentFiat());
+}
+
+function homeFiatControl() {
+  const control = $("fiat-control");
+  const head = document.querySelector(".stakes-head");
+  const host = $("verdict-fiat");
+  if (control && head && control.parentElement !== head) head.appendChild(control);
+  host?.classList.add("hidden");
+}
+
+function placeFiatControl(compact) {
+  const control = $("fiat-control");
+  const host = $("verdict-fiat");
+  const head = document.querySelector(".stakes-head");
+  const amounts = $("verdict-amounts");
+  if (!control) return;
+  const underAmounts = Boolean(compact && host && amounts && !amounts.classList.contains("hidden"));
+  if (underAmounts) {
+    if (control.parentElement !== host) host.appendChild(control);
+    host.classList.remove("hidden");
+    return;
   }
+  if (head && control.parentElement !== head) head.appendChild(control);
+  host?.classList.add("hidden");
 }
 
 function kv(label, value) {
@@ -844,6 +865,7 @@ function kvMoney(label, sol, opts) {
 
 function hideResults() {
   lastView = null;
+  homeFiatControl();
   $("verdict-card")?.classList.add("hidden");
   $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
