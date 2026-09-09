@@ -14,7 +14,7 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat gets one short digest (tone, notable change if the previous tone differed, stake total ≈ fiat, one-line next step, link back to mystake with `?wallet=`).
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat gets one short digest (tone, notable change if the previous tone differed, stake total ≈ fiat, 1–2 history lines from recent voting/snapshots, one-line next step, link back to mystake with `?wallet=`).
 
 ## How website sync is maintained
 
@@ -22,7 +22,7 @@ Do not add a parallel scoring model in the bot.
 
 | Piece | Shared path |
 |-------|-------------|
-| Verdicts & copy | [`compare/stake-health-core.js`](../compare/stake-health-core.js) — `scoreStake` / `scoreOverall` / fiat helpers. The page loads this file first; the bot `require`s it. |
+| Verdicts & copy | [`compare/stake-health-core.js`](../compare/stake-health-core.js) — `scoreStake` / `scoreOverall` / `TONE_COPY` / `summarizeRecentPicture` / fiat helpers. The page loads this file first; the bot `require`s it. |
 | Stake resolution | Dashboard [`/api/my-stake`](https://validator-transparency-dashboard.vercel.app/api/my-stake) (same production API as the site). Public RPC fallback if that fails. |
 | Overlays | `/api/rpc`, `/api/ratings`, `/api/snapshots?limit=1&include_all_stats=1`, joined by vote pubkey — same as `compare/mystake.js`. |
 | Fiat | CoinGecko SOL price, then CoinGecko USD + exchangerate-api / static FX — `loadSolFiatRates` in the core. Marked ≈. |
@@ -62,6 +62,7 @@ Set these on the Hub Vercel project (Production). Never commit secrets.
 | Name | Required | Purpose |
 |------|----------|---------|
 | `TELEGRAM_BOT_TOKEN` | yes | From BotFather |
+| `TELEGRAM_BOT_USERNAME` | recommended | Bot username **without** `@` (e.g. `OpenSolanaHubBot`). Used by `/api/telegram-info` so [Stake health](https://www.opensolanahub.com/compare/mystake.html) can link to `https://t.me/<username>`. If unset, the page shows “Telegram bot coming — ask for the link.” |
 | `TELEGRAM_WEBHOOK_SECRET` | strongly recommended | Random string; Telegram sends it as `X-Telegram-Bot-Api-Secret-Token` |
 | `KV_REST_API_URL` | yes (to save wallets) | Vercel KV |
 | `KV_REST_API_TOKEN` | yes | Vercel KV |

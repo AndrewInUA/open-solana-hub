@@ -130,6 +130,11 @@
       font-weight: 600;
       text-decoration: none;
     }
+    .nav-link.nav-telegram {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border-color: transparent;
+    }
     .theme-toggle {
       display: inline-flex;
       align-items: center;
@@ -369,6 +374,44 @@
     .stake-meta a:hover { text-decoration: underline; }
     .how-list { margin: 0; padding-left: 18px; color: var(--text2); }
     .how-list li { margin: 6px 0; }
+    .history-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
+    .history-lead { margin: 0 0 12px; }
+    .history-lines { margin: 0; padding-left: 18px; color: var(--text); }
+    .history-lines li { margin: 6px 0; }
+    .epoch-spark {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 36px;
+      margin: 12px 0 4px;
+    }
+    .epoch-spark i {
+      display: block;
+      flex: 1;
+      max-width: 14px;
+      min-width: 6px;
+      border-radius: 3px 3px 1px 1px;
+      min-height: 3px;
+      background: var(--stat-green);
+    }
+    .epoch-spark i.watch { background: #e67e22; }
+    .epoch-spark i.risk { background: var(--warn); }
+    .epoch-spark-row {
+      display: grid;
+      grid-template-columns: minmax(80px, 140px) 1fr;
+      gap: 10px;
+      align-items: end;
+      margin-top: 8px;
+    }
+    .epoch-spark-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      padding-bottom: 4px;
+    }
+    .telegram-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
+    .telegram-card .lead { margin-bottom: 10px; }
+    .telegram-card .copy-btn { text-decoration: none; display: inline-flex; align-items: center; }
     .footer {
       margin-top: 8px;
       padding: 4px 2px 0;
@@ -397,6 +440,7 @@
       <div class="header-actions">
         <a class="nav-link" href="./index.html">Validators</a>
         <a class="nav-link" href="../index.html">Learn</a>
+        <a class="nav-link nav-telegram hidden" id="nav-telegram" href="#" target="_blank" rel="noopener">Telegram</a>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" title="Switch theme">
           <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>
           <span class="theme-toggle-label" id="theme-toggle-label">Dark</span>
@@ -444,6 +488,17 @@
       <p class="muted" id="verdict-next"></p>
     </div>
 
+    <div class="card history-card hidden" id="history-card">
+      <div class="verdict-kicker">Recent picture</div>
+      <h2>More than last epoch</h2>
+      <p class="muted history-lead">
+        Last-epoch rewards are one slice. Here is a short scan of finished voting epochs and stored snapshots — the same transparency feeds as Validator Transparency.
+      </p>
+      <ul class="history-lines" id="history-lines"></ul>
+      <div id="history-spark"></div>
+      <p class="muted" id="history-note" style="margin:12px 0 0"></p>
+    </div>
+
     <div class="card hidden" id="stakes-card">
       <div class="stakes-head">
         <div>
@@ -462,16 +517,31 @@
 
     <div class="card">
       <div class="verdict-kicker">How to read this</div>
-      <ul class="how-list">
-        <li><strong>OK</strong> – live status, fee, and stored history look ordinary. You do not need to act.</li>
-        <li><strong>Watch</strong> – something is off (a higher fee, a cooldown, thinner history). Read it; it is not an alarm.</li>
-        <li><strong>Risk</strong> – delinquent, very high commission, or a weak record. Open the validator profile before you decide anything.</li>
+      <ul class="how-list" id="how-list">
+        <li><strong>OK</strong> – Everything looks fine. You don’t need to do anything right now.</li>
+        <li><strong>Watch</strong> – Something’s a bit off — worth a look, not an emergency.</li>
+        <li><strong>Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
         nothing is signed except the wallet’s own connect prompt, and we never move SOL.
       </p>
+    </div>
+
+    <div class="card telegram-card" id="telegram-card">
+      <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
+      <h2 id="telegram-headline">Get epoch checkups in Telegram</h2>
+      <p class="lead" id="telegram-body">
+        Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only — we never move SOL.
+      </p>
+      <p class="muted" id="telegram-steps" style="margin:0 0 14px">
+        <strong>/start → /wallet → /status</strong> — public key only. We never move SOL.
+      </p>
+      <div class="row">
+        <a class="copy-btn hidden" id="telegram-open" href="#" target="_blank" rel="noopener">Open the Telegram bot</a>
+        <p class="muted" id="telegram-fallback" style="margin:0">Telegram bot coming — ask for the link.</p>
+      </div>
     </div>
 
     <div class="footer">

@@ -21,11 +21,14 @@ const {
   FIATS,
   RATE_TTL_MS,
   OVERLAY_TTL_MS,
+  HOW_TO_READ,
+  TELEGRAM_CTA,
   shortKey,
   fmtPct,
   localeDefaultFiat: localeDefaultFiatFromLang,
   isPubkey,
   votingFromCredits,
+  votingHistoryFromCredits,
   parseStakeAccount,
   ownerOf,
   pickName,
@@ -33,13 +36,15 @@ const {
   compactOverlay,
   buildHealthView,
   loadSolFiatRates,
-  solWithFiat: solWithFiatCore
+  solWithFiat: solWithFiatCore,
+  summarizeRecentPicture,
+  telegramBotUrl
 } = window.StakeHealth;
 
 const THEME_KEY = "vtd-theme";
 const FIAT_KEY = "vtd-fiat";
 const RATE_CACHE_KEY = "vtd-sol-fiat";
-const OVERLAY_CACHE_KEY = "vtd-overlay-cache";
+const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v2";
 
 function apiBase() {
   const h = window.location.hostname;
@@ -481,13 +486,15 @@ async function loadOverlay(vote) {
   const commission = Number.isFinite(Number(me?.commission))
     ? Number(me.commission)
     : null;
-  const votingPct = votingFromCredits(me?.epochCredits);
+  const votingHistory = votingHistoryFromCredits(me?.epochCredits);
+  const votingPct = votingHistory.avg5 ?? votingFromCredits(me?.epochCredits);
   const out = compactOverlay({
     vote,
     name: pickName(ratings, null),
     status,
     commission,
     votingPct,
+    votingHistory: votingHistory.count ? votingHistory : null,
     apyMedian: Number.isFinite(Number(ratings?.derived?.apy_median))
       ? Number(ratings.derived.apy_median)
       : null,
@@ -553,6 +560,74 @@ function renderOverall(v) {
   }
   $("verdict-body").textContent = v.body || "";
   $("verdict-next").textContent = v.next || "";
+}
+
+function epochSpark(epochs) {
+  const wrap = el("div", "epoch-spark");
+  wrap.setAttribute("role", "img");
+  const vals = (epochs || []).map(e => Number(e.pct)).filter(Number.isFinite);
+  wrap.setAttribute(
+    "aria-label",
+    vals.length
+      ? `Finished-epoch voting, ${vals.length} epochs: ${vals.map(v => `${Math.round(v)}%`).join(", ")}`
+      : "No finished-epoch voting bars"
+  );
+  for (const point of epochs || []) {
+    const pct = Number(point.pct);
+    const bar = document.createElement("i");
+    const h = Number.isFinite(pct) ? Math.max(8, Math.min(100, pct)) : 8;
+    bar.style.height = `${h}%`;
+    bar.title = Number.isFinite(point.epoch)
+      ? `Epoch ${point.epoch}: ${fmtPct(pct)}`
+      : fmtPct(pct);
+    if (pct < 80) bar.className = "risk";
+    else if (pct < 95) bar.className = "watch";
+    else bar.className = "ok";
+    wrap.append(bar);
+  }
+  return wrap;
+}
+
+function renderHistory(rows, pack) {
+  const card = $("history-card");
+  const list = $("history-lines");
+  const sparkHost = $("history-spark");
+  const note = $("history-note");
+  if (!card || !list) return;
+  const picture = summarizeRecentPicture(rows);
+  list.innerHTML = "";
+  if (sparkHost) sparkHost.innerHTML = "";
+  if (!picture.lines.length && !picture.sparks.length) {
+    card.classList.add("hidden");
+    return;
+  }
+  card.classList.remove("hidden");
+  for (const line of picture.lines) {
+    list.append(el("li", "", line));
+  }
+  if (sparkHost && picture.sparks.length === 1) {
+    const spark = picture.sparks[0];
+    sparkHost.append(epochSpark(spark.epochs));
+    const caption = el(
+      "p",
+      "muted",
+      "Each bar is one finished epoch (current epoch is still filling in)."
+    );
+    sparkHost.append(caption);
+  } else if (sparkHost && picture.sparks.length > 1) {
+    for (const spark of picture.sparks) {
+      const row = el("div", "epoch-spark-row");
+      row.append(el("span", "epoch-spark-name", spark.name), epochSpark(spark.epochs));
+      sparkHost.append(row);
+    }
+  }
+  if (note) {
+    const bits = ["This is more than last epoch — recent voting plus stored snapshots."];
+    if (Number.isFinite(Number(pack?.currentEpoch))) {
+      bits.push(`Epoch ${pack.currentEpoch} is still in progress.`);
+    }
+    note.textContent = bits.join(" ");
+  }
 }
 
 function renderStakeCard(row, { compact = false } = {}) {
@@ -766,6 +841,7 @@ function kvMoney(label, sol, opts) {
 function hideResults() {
   lastView = null;
   $("verdict-card")?.classList.add("hidden");
+  $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
 }
@@ -797,6 +873,7 @@ function paintLookup(accounts, pack, overlays) {
   const view = buildHealthView(accounts, overlays, pack);
   lastView = view;
   renderOverall(view.overall);
+  renderHistory(view.rows, pack);
   renderStakes(view.rows, pack);
   return view.rows;
 }
@@ -908,6 +985,72 @@ async function onConnect(name) {
   }
 }
 
+function fillHowToRead() {
+  const ul = $("how-list");
+  if (!ul || !HOW_TO_READ?.length) return;
+  ul.innerHTML = "";
+  for (const item of HOW_TO_READ) {
+    const li = document.createElement("li");
+    const strong = document.createElement("strong");
+    strong.textContent = item.label;
+    li.append(strong, document.createTextNode(` – ${item.text}`));
+    ul.append(li);
+  }
+  const leftover = document.createElement("li");
+  leftover.textContent =
+    "Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.";
+  ul.append(leftover);
+}
+
+function applyTelegramLink(url) {
+  const open = $("telegram-open");
+  const fallback = $("telegram-fallback");
+  const nav = $("nav-telegram");
+  if (url) {
+    if (open) {
+      open.href = url;
+      open.classList.remove("hidden");
+    }
+    if (nav) {
+      nav.href = url;
+      nav.classList.remove("hidden");
+    }
+    fallback?.classList.add("hidden");
+  } else {
+    open?.classList.add("hidden");
+    nav?.classList.add("hidden");
+    fallback?.classList.remove("hidden");
+  }
+}
+
+function fillTelegramCta() {
+  const kicker = $("telegram-kicker");
+  const headline = $("telegram-headline");
+  const body = $("telegram-body");
+  const steps = $("telegram-steps");
+  const fallback = $("telegram-fallback");
+  if (kicker) kicker.textContent = TELEGRAM_CTA.kicker;
+  if (headline) headline.textContent = TELEGRAM_CTA.headline;
+  if (body) body.textContent = TELEGRAM_CTA.body;
+  if (steps) {
+    steps.innerHTML = "";
+    const strong = document.createElement("strong");
+    strong.textContent = TELEGRAM_CTA.steps;
+    steps.append(strong, document.createTextNode(" — public key only. We never move SOL."));
+  }
+  if (fallback) fallback.textContent = TELEGRAM_CTA.fallback;
+  applyTelegramLink(null);
+  fetch("/api/telegram-info", { cache: "no-store" })
+    .then(res => (res.ok ? res.json() : null))
+    .then(json => {
+      const url = json?.url || telegramBotUrl(json?.username);
+      applyTelegramLink(url || null);
+    })
+    .catch(() => {
+      applyTelegramLink(null);
+    });
+}
+
 function boot() {
   applyTheme(
     (() => {
@@ -951,6 +1094,8 @@ function boot() {
     if (e.key === "Enter") submit();
   });
   fillFiatSelect();
+  fillHowToRead();
+  fillTelegramCta();
   fetchSolFiatRates().catch(() => null);
 
   $("copy-share")?.addEventListener("click", async () => {

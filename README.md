@@ -42,7 +42,7 @@ Import the repo on [Vercel](https://vercel.com). Build command is `npm run build
 
 Content admin: [/admin/](https://www.opensolanahub.com/admin/) — see [ADMIN.md](./ADMIN.md).
 
-Stake health Telegram bot (same scoring as `/compare/mystake.html`): [bot/README.md](./bot/README.md). Needs `TELEGRAM_BOT_TOKEN` plus Vercel KV.
+Stake health Telegram bot (same scoring as `/compare/mystake.html`): [bot/README.md](./bot/README.md). Needs `TELEGRAM_BOT_TOKEN` plus Vercel KV. Set `TELEGRAM_BOT_USERNAME` (no `@`) so the Stake health page can show a `https://t.me/<username>` button.
 
 ## Origins
 
