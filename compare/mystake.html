@@ -382,6 +382,10 @@
     #stakes-card.single-stake .stakes-head {
       margin-bottom: 10px;
     }
+    .signals-block { margin: 14px 0 10px; }
+    .signals-block .verdict-kicker { margin-bottom: 8px; }
+    .signals-block .validator-link { display: inline-block; margin-bottom: 8px; }
+    .signals-block .signals { margin: 0; }
     .signals { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
     .signal {
       display: inline-flex;
@@ -553,7 +557,15 @@
       <div class="verdict-kicker" id="verdict-kicker">Verdict</div>
       <h2 id="verdict-headline"></h2>
       <div class="verdict-amounts hidden" id="verdict-amounts"></div>
-      <div id="verdict-fiat" class="hidden"></div>
+      <div id="verdict-fiat" class="hidden">
+        <div class="fiat-control" id="fiat-control">
+          <label class="fiat-picker">
+            <span>Approx.</span>
+            <select id="fiat-select" aria-label="Approximate local currency" aria-describedby="fiat-hint"></select>
+          </label>
+          <p class="muted" id="fiat-hint" aria-live="polite"></p>
+        </div>
+      </div>
       <p id="verdict-body"></p>
       <p class="muted" id="verdict-next"></p>
     </div>
@@ -574,13 +586,6 @@
         <div class="stakes-head-main">
           <div class="verdict-kicker" id="stakes-kicker">Your stakes</div>
           <p class="muted" id="stakes-total"></p>
-        </div>
-        <div class="fiat-control" id="fiat-control">
-          <label class="fiat-picker">
-            <span>Approx.</span>
-            <select id="fiat-select" aria-label="Approximate local currency" aria-describedby="fiat-hint"></select>
-          </label>
-          <p class="muted" id="fiat-hint" aria-live="polite"></p>
         </div>
       </div>
       <div id="stakes-list"></div>
