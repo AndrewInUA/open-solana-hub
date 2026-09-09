@@ -553,7 +553,7 @@ function renderOverall(v) {
     if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
       amounts.appendChild(kvMoney("Active stake", v.totalActiveSol));
     }
-    if (Number.isFinite(Number(v.lastEpochSol))) {
+    if (v.lastEpochSol != null && Number.isFinite(Number(v.lastEpochSol))) {
       amounts.appendChild(kvMoney("Last epoch", v.lastEpochSol, { signed: true }));
     }
     amounts.classList.toggle("hidden", !amounts.childElementCount);
