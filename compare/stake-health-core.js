@@ -53,6 +53,46 @@
 
   const FIAT_CODES = FIATS.map(f => f.code);
 
+  /**
+   * Shared OK / Watch / Risk voice for the page, How to read this, and Telegram.
+   * Education only – not financial advice.
+   */
+  const TONE_COPY = {
+    ok: {
+      label: "OK",
+      body: "Everything looks fine. You don’t need to do anything right now."
+    },
+    watch: {
+      label: "Watch",
+      body: "Something’s a bit off – worth a look, not an emergency."
+    },
+    risk: {
+      label: "Risk",
+      body: "This needs attention before you decide anything. Open the validator profile."
+    }
+  };
+
+  const HOW_TO_READ = [
+    { label: "OK", text: TONE_COPY.ok.body },
+    { label: "Watch", text: TONE_COPY.watch.body },
+    { label: "Risk", text: TONE_COPY.risk.body }
+  ];
+
+  const DEFAULT_TELEGRAM_BOT_USERNAME = "stake_health_bot";
+  const TELEGRAM_BOT_URL = `https://t.me/${DEFAULT_TELEGRAM_BOT_USERNAME}`;
+  const TELEGRAM_BOT_URL_RE = /^https:\/\/t\.me\/[A-Za-z0-9_]{5,32}$/;
+
+  const TELEGRAM_CTA = {
+    kicker: "Telegram",
+    headline: "Get epoch checkups in Telegram",
+    body:
+      "Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
+    steps: "/start → /wallet → /status",
+    username: DEFAULT_TELEGRAM_BOT_USERNAME,
+    url: TELEGRAM_BOT_URL,
+    fallback: "Telegram bot coming – ask for the link."
+  };
+
   function shortKey(k) {
     if (!k) return "–";
     return k.length > 12 ? `${k.slice(0, 4)}…${k.slice(-4)}` : k;
@@ -135,20 +175,36 @@
     return Number.isFinite(credits) ? Math.max(0, credits) : null;
   }
 
-  function votingFromCredits(credits) {
+  function votingHistoryFromCredits(credits) {
     const recentRows = Array.isArray(credits) ? credits.slice(-30) : [];
     const deltas = recentRows.map(epochEarnedCredits).filter(v => Number.isFinite(v));
     const maxD = deltas.length ? Math.max(...deltas, 1) : 1;
     const finishedRows = recentRows.length > 1 ? recentRows.slice(0, -1) : [];
-    const series = finishedRows
+    const epochs = finishedRows
       .map(row => {
+        const epoch = Number(row[0]);
         const d = epochEarnedCredits(row);
-        return Number.isFinite(d) ? Math.round((d / maxD) * 10000) / 100 : null;
+        const pct = Number.isFinite(d) ? Math.round((d / maxD) * 10000) / 100 : null;
+        return Number.isFinite(epoch) && Number.isFinite(pct) ? { epoch, pct } : null;
       })
-      .filter(v => Number.isFinite(v));
-    const last5 = series.slice(-5);
-    if (!last5.length) return null;
-    return Math.round((last5.reduce((s, x) => s + x, 0) / last5.length) * 100) / 100;
+      .filter(Boolean);
+    const last5 = epochs.slice(-5);
+    const avg5 = last5.length
+      ? Math.round((last5.reduce((s, x) => s + x.pct, 0) / last5.length) * 100) / 100
+      : null;
+    const pcts = epochs.map(e => e.pct);
+    return {
+      epochs: epochs.slice(-8),
+      count: epochs.length,
+      avg5,
+      min: pcts.length ? Math.min(...pcts) : null,
+      max: pcts.length ? Math.max(...pcts) : null
+    };
+  }
+
+  function votingFromCredits(credits) {
+    const history = votingHistoryFromCredits(credits);
+    return history.avg5;
   }
 
   function deactivationIsOpen(epoch) {
@@ -246,7 +302,13 @@
     const signalChanges = useAll && Number.isFinite(allChanges) ? allChanges : commissionChanges;
 
     if (!signalSample) {
-      return { score: null, label: "No history yet", sample: 0, delinquent: 0 };
+      return {
+        score: null,
+        label: "No history yet",
+        sample: 0,
+        delinquent: 0,
+        commissionChanges: 0
+      };
     }
 
     let score = 100;
@@ -265,7 +327,8 @@
       score,
       label,
       sample: signalSample,
-      delinquent: signalDelinquent
+      delinquent: signalDelinquent,
+      commissionChanges: signalChanges
     };
   }
 
@@ -277,6 +340,7 @@
       status: o.status || null,
       commission: o.commission,
       votingPct: o.votingPct,
+      votingHistory: o.votingHistory || null,
       apyMedian: o.apyMedian,
       stability: o.stability || { score: null }
     };
@@ -407,19 +471,12 @@
       watch: name ? `${name} needs a look` : "This stake needs a look",
       risk: name ? `${name} has a risk signal` : "This stake has a risk signal"
     };
-    const bodies = {
-      ok: "Nothing in the live status, fee, or stored history says you need to act right now.",
-      watch:
-        "Not an emergency – one or more transparency signals are off. Open the validator profile if you want the full picture.",
-      risk:
-        "Something here is unhealthy or keeps most of the rewards. Read the notes, then decide in your wallet. We do not move SOL."
-    };
 
     return {
       tone,
       label: tone === "ok" ? "OK" : tone === "risk" ? "Risk" : "Watch",
       headline: headlines[tone],
-      body: bodies[tone],
+      body: TONE_COPY[tone].body,
       reasons,
       goods,
       name,
@@ -505,7 +562,6 @@
     const scored = delegated;
     const idleN = rows.length - delegated.length;
     const worst = scored.reduce((w, r) => worseTone(w, r.health.tone), "ok");
-    const watchN = scored.filter(r => r.health.tone === "watch").length;
     const idleNote =
       idleN > 0
         ? ` ${idleN} other account${idleN === 1 ? "" : "s"} on this wallet ${
@@ -529,10 +585,7 @@
         tone: "risk",
         kicker: "Risk",
         headline,
-        body: `${commLine} At least one validator is missing votes, keeps most rewards, or has a weak record.${idleNote}`.replace(
-          /\s+/g,
-          " "
-        ).trim(),
+        body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
         next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake.",
         lastEpochSol: lastSum,
         totalActiveSol
@@ -543,10 +596,7 @@
         tone: "watch",
         kicker: "Watch",
         headline,
-        body: `${commLine} ${watchN} thing${watchN === 1 ? "" : "s"} to read (fee, cooldown, or a softer history). It is not an alarm.${idleNote}`.replace(
-          /\s+/g,
-          " "
-        ).trim(),
+        body: `${commLine} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
         next: "Skim the cards below. Come back after the next epoch if you like a routine.",
         lastEpochSol: lastSum,
         totalActiveSol
@@ -557,7 +607,7 @@
       tone: "ok",
       kicker: "OK",
       headline,
-      body: `${commLine} You do not need to act.${idleNote}`.replace(/\s+/g, " ").trim(),
+      body: `${commLine} ${TONE_COPY.ok.body}${idleNote}`.replace(/\s+/g, " ").trim(),
       next:
         pack?.currentEpoch != null
           ? `Epoch ${pack.currentEpoch} is in progress. Save this page and check again after it ends if you want.`
@@ -639,6 +689,149 @@
     return u.toString();
   }
 
+  function isTelegramBotUrl(value) {
+    return TELEGRAM_BOT_URL_RE.test(String(value || "").trim());
+  }
+
+  /** Only a real https://t.me/<username> link; never #, relative, or mystake URLs. */
+  function safeTelegramBotUrl(value) {
+    const trimmed = String(value || "").trim();
+    return isTelegramBotUrl(trimmed) ? trimmed : TELEGRAM_BOT_URL;
+  }
+
+  function telegramBotUsername(raw) {
+    const trimmed = String(raw || "").trim();
+    if (isTelegramBotUrl(trimmed)) {
+      return trimmed.slice("https://t.me/".length);
+    }
+    const username = trimmed.replace(/^@/, "");
+    if (/^[A-Za-z0-9_]{5,32}$/.test(username)) return username;
+    return DEFAULT_TELEGRAM_BOT_USERNAME;
+  }
+
+  function telegramBotUrl(raw) {
+    const trimmed = String(raw || "").trim();
+    if (isTelegramBotUrl(trimmed)) return trimmed;
+    return `https://t.me/${telegramBotUsername(raw)}`;
+  }
+
+  function rangePct(min, max) {
+    if (!Number.isFinite(min) || !Number.isFinite(max)) return "";
+    const digits = Number.isInteger(min) && Number.isInteger(max) ? 0 : 1;
+    if (min === max) return fmtPct(min, digits);
+    return `${fmtPct(min, digits).replace("%", "")}–${fmtPct(max, digits)}`;
+  }
+
+  function votingLineFromHistory(history) {
+    if (!history || !Number.isFinite(history.avg5) || !history.count) return null;
+    const n = Math.min(5, history.count);
+    const range = rangePct(history.min, history.max);
+    const rangeBit = range ? ` (range ${range})` : "";
+    return `Recent voting over the last ${n} finished epoch${
+      n === 1 ? "" : "s"
+    }: ${fmtPct(history.avg5)}${rangeBit}.`;
+  }
+
+  function stabilityLineFromHistory(stability, { pluralValidators = false } = {}) {
+    if (!stability || !stability.sample) return null;
+    const who = pluralValidators ? "Your validators" : "This validator";
+    const del = Number(stability.delinquent) || 0;
+    const unhealthy =
+      del === 0
+        ? "no unhealthy days in stored snapshots"
+        : `${del} unhealthy day${del === 1 ? "" : "s"} in stored snapshots`;
+    const ch = Number(stability.commissionChanges);
+    const fee = Number.isFinite(ch)
+      ? ch === 0
+        ? "; commission stayed put"
+        : `; commission changed ${ch} time${ch === 1 ? "" : "s"}`
+      : "";
+    const n = stability.sample;
+    return `${who}: ${unhealthy}${fee} (${n} snapshot${n === 1 ? "" : "s"}).`;
+  }
+
+  /**
+   * Newcomer-scannable history (finished voting epochs + snapshot meta).
+   * Shared by mystake.html and Telegram so neither is “last epoch only”.
+   */
+  function summarizeRecentPicture(rows) {
+    const delegated = (rows || []).filter(r => r.acc?.vote);
+    const byVote = [];
+    const seen = new Set();
+    for (const row of delegated) {
+      const vote = row.acc.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      byVote.push(row);
+    }
+    if (!byVote.length) {
+      return { lines: [], sparks: [], count: 0 };
+    }
+
+    const histories = byVote
+      .map(r => r.overlay?.votingHistory)
+      .filter(h => h && Number.isFinite(h.avg5) && h.count);
+    const stabilities = byVote
+      .map(r => r.health?.stability || r.overlay?.stability)
+      .filter(s => s && s.sample);
+
+    const lines = [];
+
+    if (histories.length === 1) {
+      const line = votingLineFromHistory(histories[0]);
+      if (line) lines.push(line);
+    } else if (histories.length > 1) {
+      const avgs = histories.map(h => h.avg5).filter(Number.isFinite);
+      const mins = histories.map(h => h.min).filter(Number.isFinite);
+      const maxs = histories.map(h => h.max).filter(Number.isFinite);
+      if (avgs.length) {
+        const lo = Math.min(...avgs);
+        const hi = Math.max(...avgs);
+        const span = mins.length && maxs.length ? rangePct(Math.min(...mins), Math.max(...maxs)) : "";
+        const avgBit =
+          lo === hi ? fmtPct(lo) : `${fmtPct(lo).replace("%", "")}–${fmtPct(hi)}`;
+        lines.push(
+          `Recent voting across ${histories.length} validators over the last few epochs: about ${avgBit}${
+            span ? ` (range ${span})` : ""
+          }.`
+        );
+      }
+    }
+
+    if (stabilities.length === 1) {
+      const line = stabilityLineFromHistory(stabilities[0], { pluralValidators: false });
+      if (line) lines.push(line);
+    } else if (stabilities.length > 1) {
+      const sample = Math.max(...stabilities.map(s => Number(s.sample) || 0));
+      const delinquent = Math.max(...stabilities.map(s => Number(s.delinquent) || 0));
+      const changes = stabilities
+        .map(s => Number(s.commissionChanges))
+        .filter(Number.isFinite);
+      const combined = {
+        sample,
+        delinquent,
+        commissionChanges: changes.length ? Math.max(...changes) : undefined
+      };
+      const line = stabilityLineFromHistory(combined, { pluralValidators: true });
+      if (line) lines.push(line);
+    }
+
+    const sparks = byVote
+      .filter(r => (r.overlay?.votingHistory?.epochs || []).length)
+      .slice(0, 3)
+      .map(r => ({
+        name: r.health?.name || shortKey(r.acc.vote),
+        tone: r.health?.tone || "ok",
+        epochs: r.overlay.votingHistory.epochs
+      }));
+
+    return { lines, sparks, count: byVote.length };
+  }
+
+  function howToReadLines() {
+    return HOW_TO_READ.map(item => `${item.label} – ${item.text}`);
+  }
+
   async function loadSolFiatRates(fetchJsonImpl) {
     const fetchJson = fetchJsonImpl;
     try {
@@ -709,6 +902,11 @@
     FIATS,
     FIAT_CODES,
     STATIC_USD_FX,
+    TONE_COPY,
+    HOW_TO_READ,
+    TELEGRAM_CTA,
+    DEFAULT_TELEGRAM_BOT_USERNAME,
+    TELEGRAM_BOT_URL,
     shortKey,
     fmtSol,
     fmtPct,
@@ -722,6 +920,7 @@
     worseTone,
     epochEarnedCredits,
     votingFromCredits,
+    votingHistoryFromCredits,
     deactivationIsOpen,
     stakeLifecycle,
     ownerOf,
@@ -740,6 +939,12 @@
     solWithFiat,
     moneyLine,
     mystakeUrl,
+    telegramBotUsername,
+    telegramBotUrl,
+    isTelegramBotUrl,
+    safeTelegramBotUrl,
+    summarizeRecentPicture,
+    howToReadLines,
     loadSolFiatRates
   };
 });

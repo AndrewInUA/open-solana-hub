@@ -47,8 +47,9 @@ module.exports = async function telegramSetup(req, res) {
 
   try {
     const set = await bot.setWebhook(hookUrl, secret);
+    const commands = await bot.setMyCommands();
     const info = await bot.getWebhookInfo();
-    json(res, 200, { ok: true, hookUrl, set, info });
+    json(res, 200, { ok: true, hookUrl, set, commands, info });
   } catch (err) {
     json(res, 502, { ok: false, error: err.message });
   }
