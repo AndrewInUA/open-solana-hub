@@ -623,7 +623,7 @@ function renderHistory(rows, pack) {
     }
   }
   if (note) {
-    const bits = ["This is more than last epoch — recent voting plus stored snapshots."];
+    const bits = ["This is more than last epoch – recent voting plus stored snapshots."];
     if (Number.isFinite(Number(pack?.currentEpoch))) {
       bits.push(`Epoch ${pack.currentEpoch} is still in progress.`);
     }
@@ -1039,7 +1039,7 @@ function fillTelegramCta() {
     steps.innerHTML = "";
     const strong = document.createElement("strong");
     strong.textContent = TELEGRAM_CTA.steps;
-    steps.append(strong, document.createTextNode(" — public key only. We never move SOL."));
+    steps.append(strong, document.createTextNode(" – public key only. We never move SOL."));
   }
   if (fallback) fallback.textContent = TELEGRAM_CTA.fallback;
   applyTelegramLink(telegramBotUrl());

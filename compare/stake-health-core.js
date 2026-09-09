@@ -55,7 +55,7 @@
 
   /**
    * Shared OK / Watch / Risk voice for the page, How to read this, and Telegram.
-   * Education only — not financial advice.
+   * Education only – not financial advice.
    */
   const TONE_COPY = {
     ok: {
@@ -64,7 +64,7 @@
     },
     watch: {
       label: "Watch",
-      body: "Something’s a bit off — worth a look, not an emergency."
+      body: "Something’s a bit off – worth a look, not an emergency."
     },
     risk: {
       label: "Risk",
@@ -85,11 +85,11 @@
     kicker: "Telegram",
     headline: "Get epoch checkups in Telegram",
     body:
-      "Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only — we never move SOL.",
+      "Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
     steps: "/start → /wallet → /status",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
-    fallback: "Telegram bot coming — ask for the link."
+    fallback: "Telegram bot coming – ask for the link."
   };
 
   function shortKey(k) {
