@@ -736,14 +736,22 @@
    */
   function summarizeRecentPicture(rows) {
     const delegated = (rows || []).filter(r => r.acc?.vote);
-    if (!delegated.length) {
+    const byVote = [];
+    const seen = new Set();
+    for (const row of delegated) {
+      const vote = row.acc.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      byVote.push(row);
+    }
+    if (!byVote.length) {
       return { lines: [], sparks: [], count: 0 };
     }
 
-    const histories = delegated
+    const histories = byVote
       .map(r => r.overlay?.votingHistory)
       .filter(h => h && Number.isFinite(h.avg5) && h.count);
-    const stabilities = delegated
+    const stabilities = byVote
       .map(r => r.health?.stability || r.overlay?.stability)
       .filter(s => s && s.sample);
 
@@ -788,7 +796,7 @@
       if (line) lines.push(line);
     }
 
-    const sparks = delegated
+    const sparks = byVote
       .filter(r => (r.overlay?.votingHistory?.epochs || []).length)
       .slice(0, 3)
       .map(r => ({
@@ -797,7 +805,7 @@
         epochs: r.overlay.votingHistory.epochs
       }));
 
-    return { lines, sparks, count: delegated.length };
+    return { lines, sparks, count: byVote.length };
   }
 
   function howToReadLines() {
