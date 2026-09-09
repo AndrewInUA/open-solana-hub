@@ -139,7 +139,9 @@
       font-weight: 600;
       text-decoration: none;
     }
-    .nav-link.nav-telegram {
+    .nav-link.nav-telegram,
+    .nav-link.nav-telegram.hidden {
+      display: inline-flex;
       background: var(--accent);
       color: var(--accent-dark);
       border-color: transparent;
@@ -418,15 +420,19 @@
       color: var(--text2);
       padding-bottom: 4px;
     }
+    .telegram-card,
+    #telegram-card.hidden {
+      display: block;
+      border-color: rgba(201, 255, 21, 0.7);
+    }
     .telegram-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
     .telegram-card .lead { margin-bottom: 10px; }
-    .telegram-card a.copy-btn {
+    .telegram-card a.copy-btn,
+    .telegram-card a.copy-btn.hidden {
       text-decoration: none;
       display: inline-flex;
       align-items: center;
     }
-    .telegram-card a.copy-btn.hidden,
-    .nav-link.hidden { display: none; }
     .footer {
       margin-top: 8px;
       padding: 4px 2px 0;
@@ -455,7 +461,7 @@
       <div class="header-actions">
         <a class="nav-link" href="./index.html">Validators</a>
         <a class="nav-link" href="../index.html">Learn</a>
-        <a class="nav-link nav-telegram" id="nav-telegram" href="https://t.me/stake_health_bot" target="_blank" rel="noopener">Telegram</a>
+        <a class="nav-link nav-telegram" id="nav-telegram" href="https://t.me/stake_health_bot" target="_blank" rel="noopener noreferrer">Telegram</a>
         <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" title="Switch theme">
           <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>
           <span class="theme-toggle-label" id="theme-toggle-label">Dark</span>
@@ -492,6 +498,21 @@
       <div class="row" style="margin-top:14px">
         <input class="share-input" id="share-url" type="text" readonly value="" aria-label="Shareable link for this lookup" placeholder="A shareable link appears after lookup" />
         <button type="button" class="copy-btn secondary" id="copy-share">Copy link</button>
+      </div>
+    </div>
+
+    <div class="card telegram-card" id="telegram-card">
+      <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
+      <h2 id="telegram-headline">Get epoch checkups in Telegram</h2>
+      <p class="lead" id="telegram-body">
+        Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.
+      </p>
+      <p class="muted" id="telegram-steps" style="margin:0 0 14px">
+        <strong>/start → /wallet → /status</strong> – public key only. We never move SOL.
+      </p>
+      <div class="row">
+        <a class="copy-btn" id="telegram-open" href="https://t.me/stake_health_bot" target="_blank" rel="noopener noreferrer">Open @stake_health_bot</a>
+        <p class="muted hidden" id="telegram-fallback" style="margin:0">Telegram bot coming – ask for the link.</p>
       </div>
     </div>
 
@@ -542,21 +563,6 @@
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
         nothing is signed except the wallet’s own connect prompt, and we never move SOL.
       </p>
-    </div>
-
-    <div class="card telegram-card" id="telegram-card">
-      <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
-      <h2 id="telegram-headline">Get epoch checkups in Telegram</h2>
-      <p class="lead" id="telegram-body">
-        Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.
-      </p>
-      <p class="muted" id="telegram-steps" style="margin:0 0 14px">
-        <strong>/start → /wallet → /status</strong> – public key only. We never move SOL.
-      </p>
-      <div class="row">
-        <a class="copy-btn" id="telegram-open" href="https://t.me/stake_health_bot" target="_blank" rel="noopener">Open @stake_health_bot</a>
-        <p class="muted hidden" id="telegram-fallback" style="margin:0">Telegram bot coming – ask for the link.</p>
-      </div>
     </div>
 
     <div class="footer">

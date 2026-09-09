@@ -22,10 +22,10 @@ module.exports = async function telegramInfo(req, res) {
   }
 
   const username = core.telegramBotUsername(process.env.TELEGRAM_BOT_USERNAME);
-  const url = core.telegramBotUrl(username);
+  const url = core.safeTelegramBotUrl(core.telegramBotUrl(username));
   json(res, 200, {
     ok: true,
-    username,
+    username: core.telegramBotUsername(url),
     url,
     fallback: core.TELEGRAM_CTA.fallback
   });

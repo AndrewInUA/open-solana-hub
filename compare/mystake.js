@@ -23,6 +23,7 @@ const {
   OVERLAY_TTL_MS,
   HOW_TO_READ,
   TELEGRAM_CTA,
+  TELEGRAM_BOT_URL,
   shortKey,
   fmtPct,
   localeDefaultFiat: localeDefaultFiatFromLang,
@@ -39,7 +40,9 @@ const {
   solWithFiat: solWithFiatCore,
   summarizeRecentPicture,
   telegramBotUrl,
-  telegramBotUsername
+  telegramBotUsername,
+  isTelegramBotUrl,
+  safeTelegramBotUrl
 } = window.StakeHealth;
 
 const THEME_KEY = "vtd-theme";
@@ -1004,26 +1007,28 @@ function fillHowToRead() {
 }
 
 function applyTelegramLink(url) {
+  const safe = safeTelegramBotUrl(url);
   const open = $("telegram-open");
   const fallback = $("telegram-fallback");
   const nav = $("nav-telegram");
-  if (url) {
-    if (open) {
-      open.href = url;
-      open.classList.remove("hidden");
-      const name = telegramBotUsername(url.replace(/^https:\/\/t\.me\//, ""));
-      open.textContent = `Open @${name}`;
-    }
-    if (nav) {
-      nav.href = url;
-      nav.classList.remove("hidden");
-    }
-    fallback?.classList.add("hidden");
-  } else {
-    open?.classList.add("hidden");
-    nav?.classList.add("hidden");
-    fallback?.classList.remove("hidden");
+  const card = $("telegram-card");
+  card?.classList.remove("hidden");
+  if (open) {
+    open.href = safe;
+    open.target = "_blank";
+    open.rel = "noopener noreferrer";
+    open.removeAttribute("hidden");
+    open.classList.remove("hidden");
+    open.textContent = `Open @${telegramBotUsername(safe)}`;
   }
+  if (nav) {
+    nav.href = safe;
+    nav.target = "_blank";
+    nav.rel = "noopener noreferrer";
+    nav.removeAttribute("hidden");
+    nav.classList.remove("hidden");
+  }
+  fallback?.classList.add("hidden");
 }
 
 function fillTelegramCta() {
@@ -1042,15 +1047,15 @@ function fillTelegramCta() {
     steps.append(strong, document.createTextNode(" – public key only. We never move SOL."));
   }
   if (fallback) fallback.textContent = TELEGRAM_CTA.fallback;
-  applyTelegramLink(telegramBotUrl());
+  applyTelegramLink(TELEGRAM_BOT_URL);
   fetch("/api/telegram-info", { cache: "no-store" })
     .then(res => (res.ok ? res.json() : null))
     .then(json => {
-      const url = json?.url || telegramBotUrl(json?.username);
-      if (url) applyTelegramLink(url);
+      const candidate = json?.url || telegramBotUrl(json?.username);
+      applyTelegramLink(isTelegramBotUrl(candidate) ? candidate : TELEGRAM_BOT_URL);
     })
     .catch(() => {
-      /* keep the hardcoded public t.me/stake_health_bot link */
+      applyTelegramLink(TELEGRAM_BOT_URL);
     });
 }
 
