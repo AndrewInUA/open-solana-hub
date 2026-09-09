@@ -553,6 +553,7 @@ function renderOverall(v) {
   $("verdict-kicker").textContent = v.kicker || "Verdict";
   $("verdict-headline").textContent = v.headline || "";
   const amounts = $("verdict-amounts");
+  const fiatHost = $("verdict-fiat");
   if (amounts) {
     amounts.innerHTML = "";
     if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
@@ -561,7 +562,10 @@ function renderOverall(v) {
     if (v.lastEpochSol != null && Number.isFinite(Number(v.lastEpochSol))) {
       amounts.appendChild(kvMoney("Last epoch", v.lastEpochSol, { signed: true }));
     }
-    amounts.classList.toggle("hidden", !amounts.childElementCount);
+    const showMoney = Boolean(amounts.childElementCount);
+    amounts.classList.toggle("hidden", !showMoney);
+    fiatHost?.classList.toggle("hidden", !showMoney);
+    if (showMoney) renderFiatHint();
   }
   $("verdict-body").textContent = v.body || "";
   $("verdict-next").textContent = v.next || "";
@@ -645,14 +649,6 @@ function renderStakeCard(row, { compact = false } = {}) {
     const pill = el("span", `health-pill ${health.tone}`, health.label);
     const title = el("h3", "", health.headline);
     left.append(pill, title);
-
-    if (acc.vote) {
-      const a = document.createElement("a");
-      a.className = "validator-link";
-      a.href = profileHref(acc.vote);
-      a.textContent = `Open ${health.name || shortKey(acc.vote)} on Validator Transparency`;
-      left.append(a);
-    }
     top.append(left);
 
     const amounts = el("div", "stake-amounts");
@@ -665,60 +661,64 @@ function renderStakeCard(row, { compact = false } = {}) {
     );
     top.append(amounts);
     article.append(top);
-  } else if (acc.vote) {
+  }
+
+  const signalsBlock = el("div", "signals-block");
+  signalsBlock.append(el("div", "verdict-kicker", "Signals"));
+  if (acc.vote) {
     const a = document.createElement("a");
     a.className = "validator-link";
     a.href = profileHref(acc.vote);
     a.textContent = `Open ${health.name || shortKey(acc.vote)} on Validator Transparency`;
-    article.append(a);
+    signalsBlock.append(a);
   }
-
   const signals = el("div", "signals");
-    const liveStatus = overlay?.status || acc.validator?.status || "";
-    if (liveStatus) {
-      signals.append(
-        signalChip(
-          "Status",
-          liveStatus === "healthy"
-            ? "Healthy"
-            : liveStatus === "delinquent"
-              ? "Delinquent"
-              : liveStatus,
-          liveStatus === "delinquent" ? "risk" : liveStatus === "healthy" ? "ok" : ""
-        )
-      );
-    }
-    if (Number.isFinite(health.commission)) {
-      signals.append(
-        signalChip(
-          "Commission",
-          `${health.commission}%`,
-          health.commission >= 50 ? "risk" : health.commission > 10 ? "watch" : "ok"
-        )
-      );
-    }
-    if (Number.isFinite(health.voting)) {
-      signals.append(
-        signalChip(
-          "Recent voting",
-          fmtPct(health.voting),
-          health.voting < 80 ? "risk" : health.voting < 95 ? "watch" : "ok"
-        )
-      );
-    }
-    if (Number.isFinite(health.stability?.score)) {
-      signals.append(
-        signalChip(
-          "Stability",
-          `${health.stability.score}/100 · ${health.stability.label}`,
-          health.stability.score < 50 ? "risk" : health.stability.score < 70 ? "watch" : "ok"
-        )
-      );
-    }
-    if (Number.isFinite(overlay?.apyMedian)) {
-      signals.append(signalChip("APY context", fmtPct(overlay.apyMedian, 2)));
-    }
-    if (signals.childNodes.length) article.append(signals);
+  const liveStatus = overlay?.status || acc.validator?.status || "";
+  if (liveStatus) {
+    signals.append(
+      signalChip(
+        "Status",
+        liveStatus === "healthy"
+          ? "Healthy"
+          : liveStatus === "delinquent"
+            ? "Delinquent"
+            : liveStatus,
+        liveStatus === "delinquent" ? "risk" : liveStatus === "healthy" ? "ok" : ""
+      )
+    );
+  }
+  if (Number.isFinite(health.commission)) {
+    signals.append(
+      signalChip(
+        "Commission",
+        `${health.commission}%`,
+        health.commission >= 50 ? "risk" : health.commission > 10 ? "watch" : "ok"
+      )
+    );
+  }
+  if (Number.isFinite(health.voting)) {
+    signals.append(
+      signalChip(
+        "Recent voting",
+        fmtPct(health.voting),
+        health.voting < 80 ? "risk" : health.voting < 95 ? "watch" : "ok"
+      )
+    );
+  }
+  if (Number.isFinite(health.stability?.score)) {
+    signals.append(
+      signalChip(
+        "Stability",
+        `${health.stability.score}/100 · ${health.stability.label}`,
+        health.stability.score < 50 ? "risk" : health.stability.score < 70 ? "watch" : "ok"
+      )
+    );
+  }
+  if (Number.isFinite(overlay?.apyMedian)) {
+    signals.append(signalChip("APY context", fmtPct(overlay.apyMedian, 2)));
+  }
+  if (signals.childNodes.length) signalsBlock.append(signals);
+  if (signalsBlock.childNodes.length > 1) article.append(signalsBlock);
 
     if (!compact) {
       const body = el("p", "stake-body", health.body);
@@ -767,7 +767,6 @@ function renderStakes(rows, pack) {
   list.innerHTML = "";
   if (!rows.length) {
     card.classList.add("hidden");
-    homeFiatControl();
     return;
   }
   card.classList.remove("hidden");
@@ -777,7 +776,7 @@ function renderStakes(rows, pack) {
   const compact = delegated.length === 1 && idle.length === 0;
   card.classList.toggle("single-stake", compact);
   const kicker = $("stakes-kicker");
-  if (kicker) kicker.textContent = compact ? "Signals" : "Your stakes";
+  if (kicker) kicker.textContent = compact ? "This stake" : "Your stakes";
   for (const row of delegated) list.append(renderStakeCard(row, { compact }));
   if (idle.length) {
     list.append(
@@ -814,36 +813,11 @@ function renderStakes(rows, pack) {
     }
   }
   renderFiatHint();
-  placeFiatControl(compact);
 }
 
 function renderFiatHint() {
   const hint = $("fiat-hint");
   if (hint) hint.textContent = fiatFreshnessCopy(fiatRates, currentFiat());
-}
-
-function homeFiatControl() {
-  const control = $("fiat-control");
-  const head = document.querySelector(".stakes-head");
-  const host = $("verdict-fiat");
-  if (control && head && control.parentElement !== head) head.appendChild(control);
-  host?.classList.add("hidden");
-}
-
-function placeFiatControl(compact) {
-  const control = $("fiat-control");
-  const host = $("verdict-fiat");
-  const head = document.querySelector(".stakes-head");
-  const amounts = $("verdict-amounts");
-  if (!control) return;
-  const underAmounts = Boolean(compact && host && amounts && !amounts.classList.contains("hidden"));
-  if (underAmounts) {
-    if (control.parentElement !== host) host.appendChild(control);
-    host.classList.remove("hidden");
-    return;
-  }
-  if (head && control.parentElement !== head) head.appendChild(control);
-  host?.classList.add("hidden");
 }
 
 function kv(label, value) {
@@ -865,11 +839,11 @@ function kvMoney(label, sol, opts) {
 
 function hideResults() {
   lastView = null;
-  homeFiatControl();
   $("verdict-card")?.classList.add("hidden");
   $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
+  $("verdict-fiat")?.classList.add("hidden");
 }
 
 function fillFiatSelect() {
