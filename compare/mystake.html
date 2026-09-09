@@ -12,11 +12,11 @@
   <meta property="og:description" content="Paste a wallet or stake account. See whether the validators you already delegated to look healthy – not financial advice." />
   <meta property="og:url" content="https://www.opensolanahub.com/compare/mystake.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
-  <meta property="og:image" content="https://www.opensolanahub.com/compare/assets/logo-transparent.png" />
+  <meta property="og:image" content="https://www.opensolanahub.com/compare/assets/stake-health-logo.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Stake health – Validator Transparency" />
   <meta name="twitter:description" content="Plain-English checkup for people who already staked SOL. Paste a wallet, see validator health." />
-  <meta name="twitter:image" content="https://www.opensolanahub.com/compare/assets/logo-transparent.png" />
+  <meta name="twitter:image" content="https://www.opensolanahub.com/compare/assets/stake-health-logo.png" />
   <title>Stake health – Validator Transparency | Open Solana Hub</title>
   <script type="application/ld+json">
   {
@@ -27,10 +27,12 @@
     "description": "Plain-English checkup for native Solana stake using Validator Transparency signals.",
     "applicationCategory": "FinanceApplication",
     "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
-    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" }
+    "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
+    "image": "https://www.opensolanahub.com/compare/assets/stake-health-logo.png"
   }
   </script>
-  <link rel="icon" href="./assets/logo-transparent.png" type="image/png" />
+  <link rel="icon" href="./assets/stake-health-logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="./assets/stake-health-logo.png" />
   <script>
     (function () {
       try {
@@ -111,7 +113,14 @@
       flex-wrap: wrap;
     }
     .product-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .product-logo { border-radius: 12px; }
+    .product-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: block;
+      flex-shrink: 0;
+      background: #060314;
+    }
     .product-brand-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .product-name { font-weight: 700; color: var(--heading); }
     .product-brand-sub { font-size: 12px; color: var(--text2); }
@@ -437,7 +446,7 @@
   <div class="wrap">
     <div class="top-bar">
       <div class="product-brand">
-        <img src="./assets/logo-transparent.png" alt="" class="product-logo" width="40" height="40" />
+        <img src="./assets/stake-health-logo.svg" alt="Stake health" class="product-logo" width="40" height="40" />
         <div class="product-brand-text">
           <div class="product-name">Stake health</div>
           <span class="product-brand-sub"><a href="../index.html">Open Solana Hub</a></span>
