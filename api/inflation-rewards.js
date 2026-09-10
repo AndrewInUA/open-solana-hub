@@ -4,10 +4,10 @@
  * POST /api/inflation-rewards
  * Body: { currentEpoch, accounts: [{ pubkey, activationEpoch }] }
  *
- * Uses the same public Solana RPC path as the Telegram bot. Caps at 16
- * finished epochs (from activation when that span fits). Failures and nulls
- * skip an amount – never filled with 0. The page lists those epochs as
- * “No reward recorded”.
+ * Uses the same public Solana RPC path as the Telegram bot. May request
+ * several finished epochs (from activation when that span fits). Failures
+ * and nulls skip an amount – never filled with 0. The page only lists
+ * payouts we actually received.
  */
 const core = require("../compare/stake-health-core");
 const lookup = require("../lib/stake-lookup");

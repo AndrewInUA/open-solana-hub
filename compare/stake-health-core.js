@@ -26,11 +26,10 @@
   const LAMPORTS_PER_SOL = 1e9;
   const RATE_TTL_MS = 15 * 60 * 1000;
   const OVERLAY_TTL_MS = 10 * 60 * 1000;
-  /** Finished epochs to request for cumulative inflation rewards (MVP cap). */
+  /** Finished epochs to request in the background. The page only lists payouts we actually got. */
   const MAX_REWARD_HISTORY_EPOCHS = 16;
   /** One wave of getInflationReward calls – extra rounds on public RPC are slower and rate-limit more. */
   const REWARD_RPC_CONCURRENCY = 16;
-  const NO_REWARD_RECORDED = "No reward recorded";
   const PUBLIC_RPCS = [
     "https://api.mainnet-beta.solana.com",
     "https://solana.drpc.org",
@@ -78,10 +77,20 @@
     }
   };
 
+  const TONE_BADGE = {
+    ok: "✅ OK",
+    watch: "👀 Watch",
+    risk: "⚠️ Risk"
+  };
+
+  function toneBadge(tone) {
+    return TONE_BADGE[tone] || TONE_COPY[tone]?.label || "";
+  }
+
   const HOW_TO_READ = [
-    { label: "OK", text: TONE_COPY.ok.body },
-    { label: "Watch", text: TONE_COPY.watch.body },
-    { label: "Risk", text: TONE_COPY.risk.body }
+    { tone: "ok", label: TONE_BADGE.ok, text: TONE_COPY.ok.body },
+    { tone: "watch", label: TONE_BADGE.watch, text: TONE_COPY.watch.body },
+    { tone: "risk", label: TONE_BADGE.risk, text: TONE_COPY.risk.body }
   ];
 
   const DEFAULT_TELEGRAM_BOT_USERNAME = "stake_health_bot";
@@ -92,7 +101,7 @@
     kicker: "Telegram",
     headline: "Get epoch checkups in Telegram",
     body:
-      "Same money picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
+      "Same last-epoch picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
     steps: "/start → /wallet → /status",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
@@ -411,19 +420,25 @@
     if (Number.isFinite(commission)) {
       if (commission >= 100) {
         tone = worseTone(tone, "risk");
-        reasons.push("Commission is 100%. The validator keeps every staking reward.");
+        reasons.push(
+          "Validator's cut is 100%. You earn nothing from inflation rewards."
+        );
       } else if (commission >= 50) {
         tone = worseTone(tone, "risk");
         reasons.push(
-          `Commission is ${commission}%. Most rewards go to the validator, not to you.`
+          `Validator's cut is ${commission}%. Most inflation rewards go to the validator, not to you.`
         );
       } else if (commission > 10) {
         tone = worseTone(tone, "watch");
         reasons.push(
-          `Commission is ${commission}%, which is higher than typical low-fee validators.`
+          `Validator's cut is ${commission}%, higher than typical – you keep ${Math.max(0, 100 - commission)}% of inflation rewards.`
         );
+      } else if (commission <= 0) {
+        goods.push("Validator's cut is 0% – you keep all inflation rewards.");
       } else {
-        goods.push(`Commission is ${commission}% – a modest fee on rewards.`);
+        goods.push(
+          `Validator's cut is ${commission}% – you keep ${Math.max(0, 100 - commission)}% of inflation rewards.`
+        );
       }
     }
 
@@ -480,7 +495,7 @@
 
     return {
       tone,
-      label: tone === "ok" ? "OK" : tone === "risk" ? "Risk" : "Watch",
+      label: toneBadge(tone) || "Watch",
       headline: headlines[tone],
       body: TONE_COPY[tone].body,
       reasons,
@@ -568,9 +583,7 @@
   function formatRewardEpochLine(row) {
     const epoch = Number(row?.epoch);
     const prefix = Number.isFinite(epoch) ? `Epoch ${epoch}` : "Epoch –";
-    if (!row?.recorded || !Number.isFinite(Number(row.amountSol))) {
-      return `${prefix}  ${NO_REWARD_RECORDED}`;
-    }
+    if (!row?.recorded || !Number.isFinite(Number(row.amountSol))) return null;
     const amount = Number(row.amountSol);
     const signed = amount > 0 ? "+" : "";
     return `${prefix}  ${signed}${fmtSol(amount)} SOL`;
@@ -629,8 +642,7 @@
   /**
    * Extra getInflationReward epochs on top of last-epoch data from /api/my-stake.
    * Per-epoch RPC failures and nulls are omitted from `rewards` – amounts are
-   * never filled with 0. The consecutive display window fills those gaps with
-   * “No reward recorded”, not 0.
+   * never filled with 0. The page only lists payouts we actually received.
    */
   async function fetchRewardHistory(rpcCallImpl, accounts, currentEpoch, options = {}) {
     const list = Array.isArray(accounts) ? accounts : [];
@@ -721,30 +733,29 @@
     const coverage = acc?.rewardCoverage;
     const fromActivation = Boolean(
       coverage
-        ? coverage.fromActivationWindow || coverage.fromActivation
-        : window.fromActivation
+        ? coverage.fromActivation && recorded.length === window.windowSize
+        : window.fromActivation && recorded.length === window.windowSize
     );
-    const showCumulative =
-      Number.isFinite(cumulativeRaw) && (window.windowSize > 1 || fromActivation);
+    const showCumulative = recorded.length > 1 && Number.isFinite(cumulativeRaw);
     return {
       activeSol: Number(acc?.delegatedSol) || 0,
       lastEpochSol,
       lastEpoch: lastReward?.epoch ?? null,
       cumulativeSol: showCumulative ? cumulativeRaw : null,
-      epochCount: window.windowSize,
-      windowSize: window.windowSize,
-      recordedCount: window.recordedCount,
-      firstEpoch: window.start,
+      epochCount: recorded.length,
+      windowSize: recorded.length,
+      recordedCount: recorded.length,
+      firstEpoch: recorded.length ? recorded[recorded.length - 1].epoch : window.start,
       fromActivation,
       showCumulative,
       windowLabel: rewardsWindowLabel({
         showCumulative,
-        fromActivation,
-        epochCount: window.windowSize,
-        windowSize: window.windowSize
+        recordedCount: recorded.length,
+        epochCount: recorded.length,
+        windowSize: recorded.length
       }),
       incomplete: Boolean(showCumulative && !fromActivation),
-      rewardRows: window.rows
+      rewardRows: recorded
     };
   }
 
@@ -762,11 +773,10 @@
     const lastBits = parts.map(p => p.lastEpochSol).filter(n => Number.isFinite(n));
     const lastEpochSol = lastBits.length ? lastBits.reduce((s, n) => s + n, 0) : null;
     const cumParts = parts.filter(p => p.showCumulative && Number.isFinite(p.cumulativeSol));
-    const windowSize = parts.reduce((m, p) => Math.max(m, p.windowSize || p.epochCount || 0), 0);
     const recordedCount = parts.reduce((s, p) => s + (Number(p.recordedCount) || 0), 0);
     const fromActivation =
       parts.length > 0 && parts.every(p => p.fromActivation) && cumParts.length === parts.length;
-    const showCumulative = cumParts.length > 0 && (windowSize > 1 || fromActivation);
+    const showCumulative = cumParts.length > 0 && recordedCount > 1;
     const cumulativeSol = showCumulative
       ? cumParts.reduce((s, p) => s + Number(p.cumulativeSol), 0)
       : null;
@@ -774,17 +784,17 @@
       activeSol: totalActiveSol,
       lastEpochSol,
       cumulativeSol,
-      epochCount: windowSize,
-      windowSize,
+      epochCount: recordedCount,
+      windowSize: recordedCount,
       recordedCount,
       fromActivation,
       showCumulative,
       stakeCount: target.length,
       windowLabel: rewardsWindowLabel({
         showCumulative,
-        fromActivation,
-        epochCount: windowSize,
-        windowSize
+        recordedCount,
+        epochCount: recordedCount,
+        windowSize: recordedCount
       }),
       incomplete: Boolean(showCumulative && !fromActivation)
     };
@@ -808,21 +818,14 @@
       money.cumulativeSol != null &&
       Number.isFinite(Number(money.cumulativeSol))
     ) {
-      const n = Number(money.windowSize || money.epochCount);
-      const cap = MAX_REWARD_HISTORY_EPOCHS;
-      const windowBit = Number.isFinite(n) && n > 0
-        ? `the last ${n} finished epochs (we look back up to ${cap}`
-        : `a recent window (we look back up to ${cap}`;
+      const n = Number(money.recordedCount || money.windowSize || money.epochCount);
+      const nBit = Number.isFinite(n) && n > 1 ? `${n} payouts` : "recent payouts";
       if (money.fromActivation) {
         const who =
           Number(money.stakeCount) > 1 ? "these stakes activated" : "this stake activated";
-        parts.push(
-          `About ${moneyLine(money.cumulativeSol, rates, code)} from recorded rewards since ${who} – ${windowBit}; missing epochs are not 0).`
-        );
+        parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} from ${nBit} since ${who}.`);
       } else {
-        parts.push(
-          `About ${moneyLine(money.cumulativeSol, rates, code)} from recorded rewards in ${windowBit}; missing epochs are not 0). Not the full time since you delegated.`
-        );
+        parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} from ${nBit}.`);
       }
     }
     return parts.join(" ");
@@ -844,7 +847,7 @@
       money.cumulativeSol != null &&
       Number.isFinite(Number(money.cumulativeSol))
     ) {
-      const label = rewardsWindowLabel(money) || "Recent rewards";
+      const label = rewardsWindowLabel(money) || "Recent payouts";
       lines.push(`${label}: ${moneyLine(money.cumulativeSol, rates, code)}`);
     }
     return lines;
@@ -871,15 +874,28 @@
     return `Your stake is on ${nameBit}.`;
   }
 
+  function stakerKeepLine(commission) {
+    const c = Number(commission);
+    if (!Number.isFinite(c)) return "";
+    if (c >= 100) return "you earn nothing from inflation";
+    if (c <= 0) return "you keep all inflation rewards";
+    return `you keep ${Math.max(0, 100 - c)}% of inflation rewards`;
+  }
+
   function overallCommLine(scored) {
     const comms = scored
       .map(r => r.health.commission)
       .filter(n => Number.isFinite(n));
-    if (!comms.length) return "We do not have a recent commission reading.";
-    const same = comms.every(c => c === comms[0]);
-    return same
-      ? `Commission ${comms[0]}%.`
-      : `Commission differs (${[...new Set(comms)].join("% / ")}%).`;
+    if (!comms.length) return "We do not have a recent validator-cut reading.";
+    const unique = [...new Set(comms)];
+    if (unique.length > 1) {
+      return `Validator's cut differs (${unique.join("% / ")}%).`;
+    }
+    const c = unique[0];
+    const keep = stakerKeepLine(c);
+    return keep
+      ? `Validator's cut ${c}%. ${keep.charAt(0).toUpperCase()}${keep.slice(1)}.`
+      : `Validator's cut ${c}%.`;
   }
 
   function scoreOverall(rows, pack) {
@@ -907,7 +923,7 @@
     if (!delegated.length) {
       return {
         tone: "watch",
-        kicker: "Watch",
+        kicker: TONE_BADGE.watch,
         headline: "These stake accounts have no validator – they are not earning.",
         body: "There are stake accounts here, yet none are pointed at a validator. They are not earning.",
         next: "If you unstaked, wait for the cooldown. If you meant to be delegated, do that in your wallet.",
@@ -942,10 +958,10 @@
     if (worst === "risk") {
       return {
         tone: "risk",
-        kicker: "Risk",
+        kicker: TONE_BADGE.risk,
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open Stake story for the stake money picture. This is a checkup, not an instruction to unstake.",
+        next: "Open Stake story for the last-epoch payout.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -955,7 +971,7 @@
     if (worst === "watch") {
       return {
         tone: "watch",
-        kicker: "Watch",
+        kicker: TONE_BADGE.watch,
         headline,
         body: `${commLine} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
         next: "Skim the cards below. Come back after the next epoch if you like a routine.",
@@ -968,7 +984,7 @@
 
     return {
       tone: "ok",
-      kicker: "OK",
+      kicker: TONE_BADGE.ok,
       headline,
       body: `${commLine} ${TONE_COPY.ok.body}${idleNote}`.replace(/\s+/g, " ").trim(),
       next:
@@ -1068,14 +1084,9 @@
   }
 
   function rewardsWindowLabel(money) {
-    const cap = MAX_REWARD_HISTORY_EPOCHS;
-    const n = Number(money?.windowSize ?? money?.epochCount);
-    if (Number.isFinite(n) && n > 0) {
-      return `Recent rewards – last ${n} finished epochs (we look back up to ${cap})`;
-    }
-    if (money?.showCumulative) {
-      return `Recent rewards (we look back up to ${cap} finished epochs)`;
-    }
+    const n = Number(money?.recordedCount ?? money?.windowSize ?? money?.epochCount);
+    if (Number.isFinite(n) && n > 1) return `Recent payouts (${n})`;
+    if (money?.showCumulative) return "Recent payouts";
     return null;
   }
 
@@ -1328,12 +1339,13 @@
     OVERLAY_TTL_MS,
     MAX_REWARD_HISTORY_EPOCHS,
     REWARD_RPC_CONCURRENCY,
-    NO_REWARD_RECORDED,
     PUBLIC_RPCS,
     FIATS,
     FIAT_CODES,
     STATIC_USD_FX,
     TONE_COPY,
+    TONE_BADGE,
+    toneBadge,
     HOW_TO_READ,
     TELEGRAM_CTA,
     DEFAULT_TELEGRAM_BOT_USERNAME,

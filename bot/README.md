@@ -10,16 +10,16 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 |---------|--------|
 | `/start` | Intro + how to link a wallet |
 | `/wallet <address>` | Save the public key for this chat |
-| `/status` | On-demand checkup (stake money picture + OK / Watch / Risk) |
-| **Stake story** (keyboard) | Deep-link to Stake health money / rewards (`?wallet=` / `?stake=` + `#full-stake-story`). Does not re-fetch rewards. This is the recent-rewards money picture, not a lifetime history, and not the validator page. `/fullstory` still works as an alias. |
-| **Your validator** (keyboard) | Validator Transparency compare profile (`?vote=`) when a single vote is known. Separate from Stake story. |
+| `/status` | On-demand checkup (last-epoch payout + OK / Watch / Risk) |
+| **Stake story** (keyboard) | Deep-link to last epoch on Stake health (`?wallet=` / `?stake=` + `#full-stake-story`). `/fullstory` still works as an alias. |
+| **Your validator** (keyboard) | This operator’s voting, stability, and fee history on Validator Transparency (`?vote=`), when a single vote is known. |
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
 | **Notify: On / Off** (keyboard) | Turn epoch notes on or off without unlinking. Default On after `/wallet`. `/status` still works. |
 
-A persistent keyboard (Status, Stake story, Your validator, Notify: On/Off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (`Notify: On` / `Notify: Off` toggle epoch notes; **Stake story** opens the stake money page; **Your validator** opens Validator Transparency). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start). After a deploy, send `/start` to refresh the keyboard.
+A persistent keyboard (Status, Stake story, Your validator, Notify: On/Off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (`Notify: On` / `Notify: Off` toggle epoch notes; **Stake story** opens last epoch on Stake health; **Your validator** opens this operator’s profile). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start). After a deploy, send `/start` to refresh the keyboard.
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with **Notify: On** gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch / recent rewards ≈ fiat, health one-liner, **Stake story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats with Notify: Off are skipped. The bot does not dump lifetime reward history into Telegram.
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with **Notify: On** gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch payout ≈ fiat, health one-liner, **Stake story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats with Notify: Off are skipped.
 
 ## How website sync is maintained
 
@@ -29,7 +29,7 @@ Do not add a parallel scoring model in the bot.
 |-------|-------------|
 | Verdicts & copy | [`compare/stake-health-core.js`](../compare/stake-health-core.js) — `scoreStake` / `scoreOverall` / `TONE_COPY` / `summarizeRecentPicture` / reward-history + money helpers. The page loads this file first; the bot `require`s it. |
 | Stake resolution | Dashboard [`/api/my-stake`](https://validator-transparency-dashboard.vercel.app/api/my-stake) (same production API as the site). Public RPC fallback if that fails. |
-| Rewards | Last finished epoch from `/api/my-stake` (`getInflationReward`). Cumulative: further `getInflationReward` calls for a consecutive window of up to 16 finished epochs, from activation when that span fits – Hub [`/api/inflation-rewards`](../api/inflation-rewards.js) on the page, the same RPC helper in the bot. Missing epochs stay in the Stake story list as No reward recorded, never filled with 0. Status copy uses that same window size – not the count of recorded rows. |
+| Rewards | Last finished epoch from `/api/my-stake` (`getInflationReward`). Extra payouts: further `getInflationReward` calls – Hub [`/api/inflation-rewards`](../api/inflation-rewards.js) on the page, the same RPC helper in the bot. The page and bot only list amounts we actually received – never a fake 0, and never an empty epoch row. |
 | Overlays | `/api/rpc`, `/api/ratings`, `/api/snapshots?limit=1&include_all_stats=1`, joined by vote pubkey — same as `compare/mystake.js`. |
 | Fiat | CoinGecko SOL price, then CoinGecko USD + exchangerate-api / static FX — `loadSolFiatRates` in the core. Marked ≈. |
 

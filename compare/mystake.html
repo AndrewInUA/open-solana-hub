@@ -4,18 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="See how your native Solana stake is doing with money: size, last-epoch rewards, and a recent rewards total – plus a short validator checkup. Education only." />
+  <meta name="description" content="See how your native Solana stake is doing: size, last-epoch payout, and a short validator checkup. Education only." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/compare/mystake.html" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Stake health – Validator Transparency" />
-  <meta property="og:description" content="Paste a wallet or stake account. See stake size, last-epoch and recent rewards in SOL and ≈ fiat, then a short validator checkup – not financial advice." />
+  <meta property="og:description" content="Paste a wallet or stake account. See stake size and last-epoch payout in SOL and ≈ fiat, then a short validator checkup. Education only." />
   <meta property="og:url" content="https://www.opensolanahub.com/compare/mystake.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="https://www.opensolanahub.com/compare/assets/stake-health-logo.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Stake health – Validator Transparency" />
-  <meta name="twitter:description" content="Stake size, last-epoch and recent rewards in SOL and ≈ fiat, then a short validator checkup. Education only." />
+  <meta name="twitter:description" content="Stake size and last-epoch payout in SOL and ≈ fiat, then a short validator checkup. Education only." />
   <meta name="twitter:image" content="https://www.opensolanahub.com/compare/assets/stake-health-logo.png" />
   <title>Stake health – Validator Transparency | Open Solana Hub</title>
   <script type="application/ld+json">
@@ -24,7 +24,7 @@
     "@type": "WebApplication",
     "name": "Stake health",
     "url": "https://www.opensolanahub.com/compare/mystake.html",
-    "description": "See native Solana stake size, last-epoch rewards, and a recent rewards total, plus Validator Transparency health signals.",
+    "description": "See native Solana stake size and last-epoch payout, plus Validator Transparency health signals.",
     "applicationCategory": "FinanceApplication",
     "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
     "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
@@ -68,8 +68,12 @@
       --btn-primary-fg: #ffffff;
       --stat-green: #3a7d00;
       --pill-ok-fg: #3a6600;
+      --pill-ok-border: rgba(58, 125, 0, 0.35);
+      --pill-ok-bg: rgba(185, 240, 0, 0.18);
       --pill-watch-fg: #9a5b00;
+      --pill-watch-bg: rgba(230, 126, 34, 0.12);
       --pill-risk-fg: #b03030;
+      --pill-risk-bg: rgba(243, 107, 107, 0.12);
       --font: "Inter", system-ui, sans-serif;
       --card-radius: 24px;
       --shadow-card: 0 6px 24px rgba(10, 12, 20, 0.06);
@@ -89,8 +93,12 @@
       --btn-primary-fg: #060314;
       --stat-green: #9fe000;
       --pill-ok-fg: #c8f070;
+      --pill-ok-border: rgba(185, 240, 0, 0.42);
+      --pill-ok-bg: rgba(185, 240, 0, 0.14);
       --pill-watch-fg: #ffc56a;
+      --pill-watch-bg: rgba(230, 126, 34, 0.14);
       --pill-risk-fg: #ff9a9a;
+      --pill-risk-bg: rgba(243, 107, 107, 0.14);
       color-scheme: dark;
     }
     * { box-sizing: border-box; }
@@ -239,9 +247,18 @@
     .muted { color: var(--text2); font-size: 13px; }
     .error { color: var(--warn); font-size: 14px; }
     .verdict { border-width: 2px; }
-    .verdict.ok { border-color: rgba(185, 240, 0, 0.5); }
-    .verdict.watch { border-color: rgba(230, 126, 34, 0.65); }
-    .verdict.risk { border-color: rgba(243, 107, 107, 0.7); }
+    .verdict.ok {
+      border-color: var(--pill-ok-border);
+      background: linear-gradient(180deg, var(--pill-ok-bg) 0%, var(--surface) 55%);
+    }
+    .verdict.watch {
+      border-color: rgba(230, 126, 34, 0.65);
+      background: linear-gradient(180deg, var(--pill-watch-bg) 0%, var(--surface) 55%);
+    }
+    .verdict.risk {
+      border-color: rgba(243, 107, 107, 0.7);
+      background: linear-gradient(180deg, var(--pill-risk-bg) 0%, var(--surface) 55%);
+    }
     .verdict.wait { border-color: var(--border2); }
     .verdict-kicker {
       font-size: 11px;
@@ -255,6 +272,7 @@
     .verdict.watch .verdict-kicker { color: #e67e22; }
     .verdict.risk .verdict-kicker { color: var(--warn); }
     .verdict h2 { margin: 0 0 10px; font-size: 22px; color: var(--heading); }
+    .verdict.ok h2 { color: var(--stat-green); }
     .hidden { display: none; }
     .wallet-line { font-size: 13px; color: var(--text2); margin: 8px 0 0; word-break: break-all; }
     .health-pill {
@@ -269,9 +287,21 @@
       border: 1px solid var(--border);
       background: var(--surface2);
     }
-    .health-pill.ok { color: var(--pill-ok-fg); border-color: rgba(185, 240, 0, 0.45); }
-    .health-pill.watch { color: var(--pill-watch-fg); border-color: rgba(230, 126, 34, 0.45); }
-    .health-pill.risk { color: var(--pill-risk-fg); border-color: rgba(243, 107, 107, 0.45); }
+    .health-pill.ok {
+      color: var(--pill-ok-fg);
+      border-color: var(--pill-ok-border);
+      background: var(--pill-ok-bg);
+    }
+    .health-pill.watch {
+      color: var(--pill-watch-fg);
+      border-color: rgba(230, 126, 34, 0.45);
+      background: var(--pill-watch-bg);
+    }
+    .health-pill.risk {
+      color: var(--pill-risk-fg);
+      border-color: rgba(243, 107, 107, 0.45);
+      background: var(--pill-risk-bg);
+    }
     .stake-card {
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -424,6 +454,9 @@
     .stake-meta a:hover { text-decoration: underline; }
     .how-list { margin: 0; padding-left: 18px; color: var(--text2); }
     .how-list li { margin: 6px 0; }
+    .how-list li[data-tone="ok"] strong { color: var(--stat-green); }
+    .how-list li[data-tone="watch"] strong { color: #e67e22; }
+    .how-list li[data-tone="risk"] strong { color: var(--warn); }
     .telegram-card,
     #telegram-card.hidden {
       display: block;
@@ -507,9 +540,9 @@
       <h1>How is my stake doing?</h1>
       <p class="lead">
         For people who already delegated. Paste the wallet that owns the stake – or a single stake account –
-        to see how much you have staked, what you earned last epoch, and what we can add up from recent rewards.
-        Validator voting and stability live on <strong>Your validator</strong> (Validator Transparency), not in this stake money story.
-        A checkup in plain English, not a yield promise.
+        to see how much you have staked and what you earned last epoch.
+        <strong>Your validator</strong> shows this operator’s voting, stability, and fee history.
+        A checkup in plain English.
       </p>
       <div class="row" style="margin-bottom:12px">
         <div class="field">
@@ -540,7 +573,7 @@
       <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
       <h2 id="telegram-headline">Get epoch checkups in Telegram</h2>
       <p class="lead" id="telegram-body">
-        Same money picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.
+        Same last-epoch picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.
       </p>
       <p class="muted" id="telegram-steps" style="margin:0 0 14px">
         <strong>/start → /wallet → /status</strong> – public key only. We never move SOL.
@@ -570,16 +603,16 @@
     </div>
 
     <div class="card full-stake-story hidden" id="full-stake-story">
-      <div class="verdict-kicker">Stake story</div>
-      <h2>What this stake earned</h2>
+      <div class="verdict-kicker">Last payout</div>
+      <h2>Last epoch</h2>
       <p class="muted" id="full-stake-story-lead">
-        Recent rewards – last N finished epochs (we look back up to 16). Inflation rewards we could read – missing epochs are No reward recorded, not 0.
+        The latest finished payout.
       </p>
       <div class="verdict-amounts" id="full-stake-story-amounts"></div>
       <div id="full-stake-story-accounts"></div>
       <p class="muted" id="full-stake-story-note"></p>
       <div class="full-story" id="your-validator">
-        <p class="muted" id="your-validator-line">Your validator opens Validator Transparency – that is not the stake money story.</p>
+        <p class="muted" id="your-validator-line">Your validator opens this operator’s profile: voting, stability, and fee history.</p>
         <div class="row" id="your-validator-links"></div>
       </div>
     </div>
@@ -598,11 +631,11 @@
     <div class="card">
       <div class="verdict-kicker">How to read this</div>
       <ul class="how-list" id="how-list">
-        <li><strong>OK</strong> – Everything looks fine. You don’t need to do anything right now.</li>
-        <li><strong>Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
-        <li><strong>Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
+        <li data-tone="ok"><strong>✅ OK</strong> – Everything looks fine. You don’t need to do anything right now.</li>
+        <li data-tone="watch"><strong>👀 Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
+        <li data-tone="risk"><strong>⚠️ Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest finished payout. Recent rewards is a consecutive window of last N finished epochs (we look back up to 16). Missing epochs stay in the list as No reward recorded – never filled with 0, and never called all time. Stake story is this money picture. Your validator is a separate compare profile.</li>
+        <li>Last epoch is the latest payout. Your validator is this operator’s profile: voting, stability, and fee history.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
@@ -611,7 +644,7 @@
     </div>
 
     <div class="footer">
-      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Cumulative rewards add further <code>getInflationReward</code> calls for a consecutive window of up to 16 finished epochs, from activation when that span fits – missing epochs stay in the list as No reward recorded, never filled with 0. This is not a guaranteed lifetime total if you delegated longer ago, split/merged stake, or withdrew rewards. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard (Your validator). Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Extra recent payouts appear only when further <code>getInflationReward</code> calls return amounts. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard (Your validator). Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
       <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>
