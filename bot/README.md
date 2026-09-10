@@ -13,10 +13,11 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 | `/status` | On-demand checkup (stake money picture + OK / Watch / Risk) |
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
+| **Notify: On / Off** (keyboard) | Turn epoch notes on or off without unlinking. Default On after `/wallet`. `/status` still works. |
 
-A persistent keyboard (Status, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/`. The Telegram **Menu** (`/`) lists the same commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start).
+A persistent keyboard (Status, Notify: On/Off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (`Notify: On` / `Notify: Off` toggle epoch notes). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start).
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch / recent rewards ≈ fiat, health one-liner, link back to mystake with `?wallet=`).
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with **Notify: On** gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch / recent rewards ≈ fiat, health one-liner, link back to mystake with `?wallet=`). Chats with Notify: Off are skipped.
 
 ## How website sync is maintained
 
@@ -110,4 +111,4 @@ There is no long-running Node process. Do not run a polling bot next to this web
 
 ## Privacy
 
-Stored per chat: Telegram `chat_id`, public wallet, fiat code, last verdict tone, last notified epoch. No seeds, no private keys, no SOL transfers.
+Stored per chat: Telegram `chat_id`, public wallet, fiat code, epoch-notify on/off, last verdict tone, last notified epoch. No seeds, no private keys, no SOL transfers.
