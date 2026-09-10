@@ -9,8 +9,8 @@
  *      (getAccountInfo / getProgramAccounts on the Stake program)
  *   3. Extra payouts: Hub `/api/inflation-rewards` (same getInflationReward
  *      path as the Telegram bot), then public RPC. Last epoch is the number
- *      we stand behind. Extra finished epochs may appear when RPC returns
- *      them – the page only lists amounts we actually received.
+ *      we stand behind. Extra finished epochs appear only as a consecutive
+ *      run from last epoch – a gappy list never reaches the page.
  *
  * Health:
  *   Join each vote account to `/api/rpc`, `/api/ratings`, and `/api/snapshots`
@@ -642,9 +642,11 @@ function renderFullStakeStory(view) {
   if (lead) {
     const n = Number(money?.recordedCount || money?.windowSize);
     lead.textContent =
-      money?.showCumulative && Number.isFinite(n) && n > 1
-        ? `Last epoch, plus ${n} payouts we could read.`
-        : "The latest finished payout.";
+      money?.showCumulative && money?.fromActivation
+        ? "Last epoch, and every payout since this stake activated."
+        : money?.showCumulative && Number.isFinite(n) && n > 1
+          ? "Last epoch, and the payouts right before it."
+          : "The latest finished payout.";
   }
   if (amounts) {
     amounts.innerHTML = "";

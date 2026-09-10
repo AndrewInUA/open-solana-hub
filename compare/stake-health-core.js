@@ -550,8 +550,9 @@
   }
 
   /**
-   * Consecutive finished-epoch rows for the money story.
+   * Consecutive finished-epoch rows from last finished, newest first.
    * Missing / null RPC results stay in the window as unrecorded – never 0.
+   * Display uses leadingRecordedRun so a gappy basket never reaches the page.
    */
   function consecutiveRewardWindow(acc, currentEpoch, options = {}) {
     const range = rewardEpochsToFetch({
@@ -578,6 +579,16 @@
       lastFinished: range.lastFinished,
       start: range.start
     };
+  }
+
+  /** Payouts in a row from last finished epoch. Stops at the first hole. */
+  function leadingRecordedRun(window) {
+    const run = [];
+    for (const row of window?.rows || []) {
+      if (!row?.recorded || !Number.isFinite(Number(row.amountSol))) break;
+      run.push(row);
+    }
+    return run;
   }
 
   function formatRewardEpochLine(row) {
@@ -642,7 +653,7 @@
   /**
    * Extra getInflationReward epochs on top of last-epoch data from /api/my-stake.
    * Per-epoch RPC failures and nulls are omitted from `rewards` – amounts are
-   * never filled with 0. The page only lists payouts we actually received.
+   * never filled with 0. The page lists a consecutive run from last epoch only.
    */
   async function fetchRewardHistory(rpcCallImpl, accounts, currentEpoch, options = {}) {
     const list = Array.isArray(accounts) ? accounts : [];
@@ -718,44 +729,42 @@
 
   function summarizeAccountRewards(acc, currentEpoch, options = {}) {
     const window = consecutiveRewardWindow(acc, currentEpoch, options);
-    const recorded = window.rows.filter(r => r.recorded);
+    const run = leadingRecordedRun(window);
     const lastReward =
-      window.lastFinished != null
-        ? recorded.find(r => Number(r.epoch) === window.lastFinished) || null
-        : recorded[0] || null;
+      run[0] && Number(run[0].epoch) === window.lastFinished ? run[0] : null;
     const lastEpochSol =
       lastReward && Number.isFinite(Number(lastReward.amountSol))
         ? Number(lastReward.amountSol)
         : null;
-    const cumulativeRaw = recorded.length
-      ? recorded.reduce((s, r) => s + Number(r.amountSol), 0)
+    const cumulativeRaw = run.length
+      ? run.reduce((s, r) => s + Number(r.amountSol), 0)
       : null;
     const coverage = acc?.rewardCoverage;
     const fromActivation = Boolean(
       coverage
-        ? coverage.fromActivation && recorded.length === window.windowSize
-        : window.fromActivation && recorded.length === window.windowSize
+        ? coverage.fromActivation && run.length === window.windowSize
+        : window.fromActivation && run.length === window.windowSize
     );
-    const showCumulative = recorded.length > 1 && Number.isFinite(cumulativeRaw);
+    const showCumulative = run.length > 1 && Number.isFinite(cumulativeRaw);
     return {
       activeSol: Number(acc?.delegatedSol) || 0,
       lastEpochSol,
       lastEpoch: lastReward?.epoch ?? null,
       cumulativeSol: showCumulative ? cumulativeRaw : null,
-      epochCount: recorded.length,
-      windowSize: recorded.length,
-      recordedCount: recorded.length,
-      firstEpoch: recorded.length ? recorded[recorded.length - 1].epoch : window.start,
+      epochCount: run.length,
+      windowSize: run.length,
+      recordedCount: run.length,
+      firstEpoch: run.length ? run[run.length - 1].epoch : window.start,
       fromActivation,
       showCumulative,
       windowLabel: rewardsWindowLabel({
         showCumulative,
-        recordedCount: recorded.length,
-        epochCount: recorded.length,
-        windowSize: recorded.length
+        recordedCount: run.length,
+        epochCount: run.length,
+        windowSize: run.length
       }),
       incomplete: Boolean(showCumulative && !fromActivation),
-      rewardRows: recorded
+      rewardRows: run
     };
   }
 
@@ -1376,6 +1385,7 @@
     finiteEpoch,
     rewardEpochsToFetch,
     consecutiveRewardWindow,
+    leadingRecordedRun,
     formatRewardEpochLine,
     normalizeRewardRow,
     mergeRewardsByEpoch,
