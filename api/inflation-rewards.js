@@ -5,8 +5,9 @@
  * Body: { currentEpoch, accounts: [{ pubkey, activationEpoch }] }
  *
  * Uses the same public Solana RPC path as the Telegram bot. Caps at 16
- * finished epochs (from activation when that span fits). Failures skip an
- * epoch – amounts are never filled with 0.
+ * finished epochs (from activation when that span fits). Failures and nulls
+ * skip an amount – never filled with 0. The page lists those epochs as
+ * “No reward recorded”.
  */
 const core = require("../compare/stake-health-core");
 const lookup = require("../lib/stake-lookup");
