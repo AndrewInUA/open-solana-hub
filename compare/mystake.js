@@ -693,6 +693,8 @@ function renderStakeCard(row, { compact = false } = {}) {
     const pill = el("span", `health-pill ${health.tone}`, health.label);
     const title = el("h3", "", health.headline);
     left.append(pill, title);
+    const storyText = moneyStory({ ...money, stakeCount: 1 }, fiatRates, currentFiat());
+    if (storyText) left.append(el("p", "money-story", storyText));
     top.append(left);
 
     const amounts = el("div", "stake-amounts");
@@ -708,8 +710,6 @@ function renderStakeCard(row, { compact = false } = {}) {
     amounts.append(kv("Stake status", acc.status || "–"));
     top.append(amounts);
     article.append(top);
-    const storyText = moneyStory({ ...money, stakeCount: 1 }, fiatRates, currentFiat());
-    if (storyText) article.append(el("p", "money-story", storyText));
   }
 
   const signalsBlock = el("div", "signals-block");

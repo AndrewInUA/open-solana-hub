@@ -749,7 +749,7 @@
     const parts = [];
     if (Number.isFinite(Number(money.activeSol)) && money.activeSol > 0) {
       const across =
-        Number(money.stakeCount) > 1 ? ` across ${money.stakeCount} stakes` : "";
+        Number(money.stakeCount) > 1 ? `, across ${money.stakeCount} stakes` : "";
       parts.push(`You hold ${moneyLine(money.activeSol, rates, code)}${across}.`);
     }
     if (money.lastEpochSol != null && Number.isFinite(Number(money.lastEpochSol))) {
