@@ -10,13 +10,13 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 |---------|--------|
 | `/start` | Intro + how to link a wallet |
 | `/wallet <address>` | Save the public key for this chat |
-| `/status` | On-demand checkup (verdict, stakes, ≈ fiat) |
+| `/status` | On-demand checkup (stake money picture + OK / Watch / Risk) |
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
 
 A persistent keyboard (Status, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/`. The Telegram **Menu** (`/`) lists the same commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start).
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat gets one short digest (tone, notable change if the previous tone differed, stake total ≈ fiat, 1–2 history lines from recent voting/snapshots, one-line next step, link back to mystake with `?wallet=`).
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch / recent rewards ≈ fiat, health one-liner, link back to mystake with `?wallet=`).
 
 ## How website sync is maintained
 
@@ -24,8 +24,9 @@ Do not add a parallel scoring model in the bot.
 
 | Piece | Shared path |
 |-------|-------------|
-| Verdicts & copy | [`compare/stake-health-core.js`](../compare/stake-health-core.js) — `scoreStake` / `scoreOverall` / `TONE_COPY` / `summarizeRecentPicture` / fiat helpers. The page loads this file first; the bot `require`s it. |
+| Verdicts & copy | [`compare/stake-health-core.js`](../compare/stake-health-core.js) — `scoreStake` / `scoreOverall` / `TONE_COPY` / `summarizeRecentPicture` / reward-history + money helpers. The page loads this file first; the bot `require`s it. |
 | Stake resolution | Dashboard [`/api/my-stake`](https://validator-transparency-dashboard.vercel.app/api/my-stake) (same production API as the site). Public RPC fallback if that fails. |
+| Rewards | Last finished epoch from `/api/my-stake` (`getInflationReward`). Cumulative: further `getInflationReward` calls for up to 16 finished epochs, from activation when that span fits – Hub [`/api/inflation-rewards`](../api/inflation-rewards.js) on the page, the same RPC helper in the bot. Missing epochs are omitted, never filled with 0. |
 | Overlays | `/api/rpc`, `/api/ratings`, `/api/snapshots?limit=1&include_all_stats=1`, joined by vote pubkey — same as `compare/mystake.js`. |
 | Fiat | CoinGecko SOL price, then CoinGecko USD + exchangerate-api / static FX — `loadSolFiatRates` in the core. Marked ≈. |
 

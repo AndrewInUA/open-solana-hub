@@ -7,16 +7,18 @@
  *   1. Production dashboard `/api/my-stake` (Helius-backed stake scan + last-epoch rewards)
  *   2. If that fails, or the pasted key is a stake account, public Solana RPC
  *      (getAccountInfo / getProgramAccounts on the Stake program)
+ *   3. Cumulative rewards: Hub `/api/inflation-rewards` (same getInflationReward
+ *      window as the Telegram bot), then public RPC. Up to 16 finished epochs;
+ *      from activation when that span fits. Missing epochs are skipped, never filled with 0.
  *
  * Health:
  *   Join each vote account to `/api/rpc`, `/api/ratings`, and `/api/snapshots`
- *   and score OK / Watch / Risk in the same voice as the Hub.
+ *   and score OK / Watch / Risk in the same voice as the Hub. Signals stay below the money picture.
  */
 
 const {
   DASHBOARD_API,
   STAKE_PROGRAM,
-  LAMPORTS_PER_SOL,
   PUBLIC_RPCS,
   FIATS,
   RATE_TTL_MS,
@@ -40,6 +42,10 @@ const {
   solWithFiat: solWithFiatCore,
   fiatFreshnessCopy,
   summarizeRecentPicture,
+  fetchRewardHistory,
+  mergeRewardsByEpoch,
+  moneyStory,
+  summarizeAccountRewards,
   telegramBotUrl,
   telegramBotUsername,
   isTelegramBotUrl,
@@ -250,29 +256,9 @@ async function fetchEpoch() {
   return Number(info?.epoch);
 }
 
-async function attachRewards(accounts) {
-  const keys = accounts.map(a => a.pubkey).filter(Boolean);
-  if (!keys.length) return accounts;
+async function attachRewards(accounts, currentEpoch) {
   try {
-    const rewards = await rpcCall("getInflationReward", [keys]);
-    if (!Array.isArray(rewards)) return accounts;
-    return accounts.map((acc, i) => {
-      const r = rewards[i];
-      if (!r || !Number.isFinite(Number(r.amount))) return acc;
-      return {
-        ...acc,
-        rewards: [
-          {
-            epoch: r.epoch,
-            amountSol: Number(r.amount) / LAMPORTS_PER_SOL,
-            commission: r.commission,
-            postBalanceSol: Number.isFinite(Number(r.postBalance))
-              ? Number(r.postBalance) / LAMPORTS_PER_SOL
-              : null
-          }
-        ]
-      };
-    });
+    return await fetchRewardHistory(rpcCall, accounts, currentEpoch);
   } catch {
     return accounts;
   }
@@ -293,7 +279,7 @@ async function resolveStakeAccount(pubkey) {
     return null;
   }
   const acc = parseStakeAccount(pubkey, value, currentEpoch);
-  const [withRewards] = await attachRewards([acc]);
+  const [withRewards] = await attachRewards([acc], currentEpoch);
   return {
     ok: true,
     wallet: withRewards.withdrawer || withRewards.staker || pubkey,
@@ -329,7 +315,8 @@ async function resolveWalletViaRpc(wallet) {
       /* GPA is often rate-limited; my-stake is the primary path */
     }
   }
-  const accounts = await attachRewards([...seen.values()]);
+  const parsed = [...seen.values()];
+  const accounts = await attachRewards(parsed, currentEpoch);
   return {
     ok: true,
     wallet,
@@ -341,6 +328,50 @@ async function resolveWalletViaRpc(wallet) {
     source: "rpc_wallet",
     accounts
   };
+}
+
+function applyRewardPack(accounts, packAccounts) {
+  const byKey = new Map((packAccounts || []).map(a => [a.pubkey, a]));
+  return (accounts || []).map(acc => {
+    const hit = byKey.get(acc.pubkey);
+    if (!hit) return acc;
+    return {
+      ...acc,
+      rewards: mergeRewardsByEpoch(acc.rewards, hit.rewards),
+      rewardCoverage: hit.rewardCoverage || acc.rewardCoverage
+    };
+  });
+}
+
+async function enrichRewardHistory(accounts, currentEpoch) {
+  if (!accounts?.length) return accounts;
+  try {
+    const res = await fetch("/api/inflation-rewards", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+      body: JSON.stringify({
+        currentEpoch,
+        accounts: accounts.map(a => ({
+          pubkey: a.pubkey,
+          activationEpoch: a.activationEpoch
+        }))
+      })
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.ok && Array.isArray(json.accounts)) {
+        return applyRewardPack(accounts, json.accounts);
+      }
+    }
+  } catch {
+    /* static previews have no Hub API – fall back to public RPC */
+  }
+  try {
+    return await fetchRewardHistory(rpcCall, accounts, currentEpoch);
+  } catch {
+    return accounts;
+  }
 }
 
 async function fetchMyStake(wallet) {
@@ -552,8 +583,15 @@ function renderOverall(v) {
   card.classList.add(v.tone);
   $("verdict-kicker").textContent = v.kicker || "Verdict";
   $("verdict-headline").textContent = v.headline || "";
+  const story = $("verdict-money-story");
   const amounts = $("verdict-amounts");
   const fiatHost = $("verdict-fiat");
+  const money = v.money;
+  const storyText = moneyStory(money, fiatRates, currentFiat());
+  if (story) {
+    story.textContent = storyText;
+    story.classList.toggle("hidden", !storyText);
+  }
   if (amounts) {
     amounts.innerHTML = "";
     if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
@@ -562,8 +600,13 @@ function renderOverall(v) {
     if (v.lastEpochSol != null && Number.isFinite(Number(v.lastEpochSol))) {
       amounts.appendChild(kvMoney("Last epoch", v.lastEpochSol, { signed: true }));
     }
-    const showMoney = Boolean(amounts.childElementCount);
-    amounts.classList.toggle("hidden", !showMoney);
+    if (money?.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.appendChild(
+        kvMoney(money.windowLabel || "Recent rewards", money.cumulativeSol)
+      );
+    }
+    const showMoney = Boolean(amounts.childElementCount) || Boolean(storyText);
+    amounts.classList.toggle("hidden", !amounts.childElementCount);
     fiatHost?.classList.toggle("hidden", !showMoney);
     if (showMoney) renderFiatHint();
   }
@@ -631,7 +674,7 @@ function renderHistory(rows, pack) {
     }
   }
   if (note) {
-    const bits = ["This is more than last epoch – recent voting plus stored snapshots."];
+    const bits = ["Validator voting and stored snapshots – secondary to the money picture above."];
     if (Number.isFinite(Number(pack?.currentEpoch))) {
       bits.push(`Epoch ${pack.currentEpoch} is still in progress.`);
     }
@@ -642,6 +685,7 @@ function renderHistory(rows, pack) {
 function renderStakeCard(row, { compact = false } = {}) {
   const { acc, health, overlay } = row;
   const article = el("article", `stake-card ${health.tone}`);
+  const money = row.money || summarizeAccountRewards(acc, lastView?.pack?.currentEpoch);
 
   if (!compact) {
     const top = el("div", "stake-card-top");
@@ -652,15 +696,20 @@ function renderStakeCard(row, { compact = false } = {}) {
     top.append(left);
 
     const amounts = el("div", "stake-amounts");
-    amounts.append(
-      kvMoney("Active", acc.delegatedSol),
-      acc.rewards?.[0]
-        ? kvMoney("Last epoch", acc.rewards[0].amountSol, { signed: true })
-        : kv("Last epoch", "–"),
-      kv("Stake status", acc.status || "–")
-    );
+    amounts.append(kvMoney("Active", acc.delegatedSol));
+    if (money.lastEpochSol != null) {
+      amounts.append(kvMoney("Last epoch", money.lastEpochSol, { signed: true }));
+    } else {
+      amounts.append(kv("Last epoch", "–"));
+    }
+    if (money.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.append(kvMoney(money.windowLabel || "Recent rewards", money.cumulativeSol));
+    }
+    amounts.append(kv("Stake status", acc.status || "–"));
     top.append(amounts);
     article.append(top);
+    const storyText = moneyStory({ ...money, stakeCount: 1 }, fiatRates, currentFiat());
+    if (storyText) article.append(el("p", "money-story", storyText));
   }
 
   const signalsBlock = el("div", "signals-block");
@@ -843,6 +892,7 @@ function hideResults() {
   $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
+  $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
 }
 
@@ -885,12 +935,22 @@ async function loadLookup({ wallet, stake }) {
   const fiatP = fetchSolFiatRates().catch(() => null);
   try {
     const pack = await resolvePositions({ wallet, stake });
-    const accounts = pack.accounts || [];
+    let accounts = pack.accounts || [];
     let overlays = null;
-    paintLookup(accounts, pack, overlays);
+    const paint = () => paintLookup(accounts, pack, overlays);
+    paint();
     fiatP.then(() => {
-      if (lastView?.pack === pack) paintLookup(accounts, pack, overlays);
+      if (lastView?.pack === pack) paint();
     });
+    const enrichP = accounts.some(a => a.pubkey && !a.rewardCoverage)
+      ? enrichRewardHistory(accounts, pack.currentEpoch)
+          .then(next => {
+            accounts = next;
+            pack.accounts = next;
+            if (lastView?.pack === pack) paint();
+          })
+          .catch(() => null)
+      : Promise.resolve();
     setStatus(
       accounts.length
         ? `Found ${accounts.length} stake account${accounts.length === 1 ? "" : "s"}. Reading transparency signals…`
@@ -899,10 +959,13 @@ async function loadLookup({ wallet, stake }) {
     const share = $("share-url");
     if (share) share.value = shareUrl(wallet || pack.wallet, stake);
     if (!accounts.some(a => a.vote)) {
+      await enrichP;
       return;
     }
     overlays = await loadOverlays(accounts.map(a => a.vote));
-    paintLookup(accounts, pack, overlays);
+    paint();
+    await enrichP;
+    if (lastView?.pack === pack) paint();
     setStatus(
       `Found ${pack.accountCount || accounts.length} stake account${
         (pack.accountCount || accounts.length) === 1 ? "" : "s"
@@ -1000,6 +1063,10 @@ function fillHowToRead() {
   leftover.textContent =
     "Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.";
   ul.append(leftover);
+  const moneyNote = document.createElement("li");
+  moneyNote.textContent =
+    "Last epoch is the latest finished payout. Since activation is the sum of inflation rewards we could read from when this stake went live. If that history is long, we add up a recent window and say so – we never invent missing epochs.";
+  ul.append(moneyNote);
 }
 
 function applyTelegramLink(url) {

@@ -4,18 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="Check the health of your native Solana stake in plain English: validator status, commission, voting consistency, and stability from Validator Transparency." />
+  <meta name="description" content="See how your native Solana stake is doing with money: size, last-epoch rewards, and a recent rewards total – plus a short validator checkup. Education only." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/compare/mystake.html" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Stake health – Validator Transparency" />
-  <meta property="og:description" content="Paste a wallet or stake account. See whether the validators you already delegated to look healthy – not financial advice." />
+  <meta property="og:description" content="Paste a wallet or stake account. See stake size, last-epoch and recent rewards in SOL and ≈ fiat, then a short validator checkup – not financial advice." />
   <meta property="og:url" content="https://www.opensolanahub.com/compare/mystake.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="https://www.opensolanahub.com/compare/assets/stake-health-logo.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Stake health – Validator Transparency" />
-  <meta name="twitter:description" content="Plain-English checkup for people who already staked SOL. Paste a wallet, see validator health." />
+  <meta name="twitter:description" content="Stake size, last-epoch and recent rewards in SOL and ≈ fiat, then a short validator checkup. Education only." />
   <meta name="twitter:image" content="https://www.opensolanahub.com/compare/assets/stake-health-logo.png" />
   <title>Stake health – Validator Transparency | Open Solana Hub</title>
   <script type="application/ld+json">
@@ -24,7 +24,7 @@
     "@type": "WebApplication",
     "name": "Stake health",
     "url": "https://www.opensolanahub.com/compare/mystake.html",
-    "description": "Plain-English checkup for native Solana stake using Validator Transparency signals.",
+    "description": "See native Solana stake size, last-epoch rewards, and a recent rewards total, plus Validator Transparency health signals.",
     "applicationCategory": "FinanceApplication",
     "isPartOf": { "@type": "WebSite", "name": "Open Solana Hub", "url": "https://www.opensolanahub.com/" },
     "author": { "@type": "Person", "name": "Andrii (AndrewInUA)", "url": "https://andrewinua.com/" },
@@ -363,6 +363,13 @@
       color: var(--text3);
     }
     #fiat-hint:empty { display: none; }
+    .money-story {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: var(--text);
+      max-width: 680px;
+    }
+    .money-story:empty { display: none; }
     .verdict-amounts {
       display: grid;
       gap: 8px;
@@ -410,6 +417,7 @@
     .signal.watch { color: var(--pill-watch-fg); }
     .signal.risk { color: var(--pill-risk-fg); }
     .stake-body { margin: 0 0 8px; color: var(--text); }
+    .stake-card .money-story { margin: 10px 0 4px; font-size: 14px; }
     .stake-notes { margin: 0; padding-left: 18px; color: var(--text2); font-size: 13px; }
     .stake-meta { margin: 12px 0 0; font-size: 12px; color: var(--text3); }
     .stake-meta a { font-weight: 600; text-decoration: none; }
@@ -510,8 +518,9 @@
       <h1>How is my stake doing?</h1>
       <p class="lead">
         For people who already delegated. Paste the wallet that owns the stake – or a single stake account –
-        and we overlay the same transparency signals as <a href="./index.html">Validator Transparency</a>:
-        live status, commission, recent voting, and stored stability. A checkup in plain English, not a yield promise.
+        to see how much you have staked, what you earned last epoch, and what we can add up from recent rewards.
+        Validator signals (status, commission, voting, stability) stay below that money picture.
+        A checkup in plain English, not a yield promise.
       </p>
       <div class="row" style="margin-bottom:12px">
         <div class="field">
@@ -542,7 +551,7 @@
       <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
       <h2 id="telegram-headline">Get epoch checkups in Telegram</h2>
       <p class="lead" id="telegram-body">
-        Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.
+        Same money picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.
       </p>
       <p class="muted" id="telegram-steps" style="margin:0 0 14px">
         <strong>/start → /wallet → /status</strong> – public key only. We never move SOL.
@@ -556,6 +565,7 @@
     <div class="card verdict hidden" id="verdict-card">
       <div class="verdict-kicker" id="verdict-kicker">Verdict</div>
       <h2 id="verdict-headline"></h2>
+      <p class="money-story hidden" id="verdict-money-story"></p>
       <div class="verdict-amounts hidden" id="verdict-amounts"></div>
       <div id="verdict-fiat" class="hidden">
         <div class="fiat-control" id="fiat-control">
@@ -570,17 +580,6 @@
       <p class="muted" id="verdict-next"></p>
     </div>
 
-    <div class="card history-card hidden" id="history-card">
-      <div class="verdict-kicker">Recent picture</div>
-      <h2>More than last epoch</h2>
-      <p class="muted history-lead">
-        Last-epoch rewards are one slice. Here is a short scan of finished voting epochs and stored snapshots – the same transparency feeds as Validator Transparency.
-      </p>
-      <ul class="history-lines" id="history-lines"></ul>
-      <div id="history-spark"></div>
-      <p class="muted" id="history-note" style="margin:12px 0 0"></p>
-    </div>
-
     <div class="card hidden" id="stakes-card">
       <div class="stakes-head">
         <div class="stakes-head-main">
@@ -592,6 +591,17 @@
       <p class="muted" id="stakes-note" style="margin-top:12px"></p>
     </div>
 
+    <div class="card history-card hidden" id="history-card">
+      <div class="verdict-kicker">Validator</div>
+      <h2>Recent voting picture</h2>
+      <p class="muted history-lead">
+        Secondary to the money picture. A short scan of finished voting epochs and stored snapshots – the same transparency feeds as Validator Transparency.
+      </p>
+      <ul class="history-lines" id="history-lines"></ul>
+      <div id="history-spark"></div>
+      <p class="muted" id="history-note" style="margin:12px 0 0"></p>
+    </div>
+
     <div class="card">
       <div class="verdict-kicker">How to read this</div>
       <ul class="how-list" id="how-list">
@@ -599,6 +609,7 @@
         <li><strong>Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li><strong>Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
+        <li>Last epoch is the latest finished payout. Since activation is the sum of inflation rewards we could read from when this stake went live. If that history is long, we add up a recent window and say so – we never invent missing epochs.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
@@ -607,7 +618,7 @@
     </div>
 
     <div class="footer">
-      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint. A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Cumulative rewards add further <code>getInflationReward</code> calls for up to 16 finished epochs, from activation when that span fits, otherwise a recent window – missing epochs are omitted, never filled with 0. This is not a guaranteed lifetime total if you delegated longer ago, split/merged stake, or withdrew rewards. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
       <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>
