@@ -725,7 +725,7 @@ function renderHistory(rows, pack) {
   }
 }
 
-function renderStakeCard(row, { compact = false } = {}) {
+function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}) {
   const { acc, health, overlay } = row;
   const article = el("article", `stake-card ${health.tone}`);
   const money = row.money || summarizeAccountRewards(acc, lastView?.pack?.currentEpoch);
@@ -757,7 +757,7 @@ function renderStakeCard(row, { compact = false } = {}) {
 
   const signalsBlock = el("div", "signals-block");
   signalsBlock.append(el("div", "verdict-kicker", "Signals"));
-  if (acc.vote && !compact) {
+  if (acc.vote && showValidatorLink) {
     const a = document.createElement("a");
     a.className = "validator-link";
     a.href = profileHref(acc.vote);
@@ -866,10 +866,12 @@ function renderStakes(rows, pack) {
   const delegated = rows.filter(r => r.acc.vote);
   const idle = rows.filter(r => !r.acc.vote);
   const compact = delegated.length === 1 && idle.length === 0;
+  const uniqueVotes = [...new Set(delegated.map(r => r.acc.vote).filter(Boolean))];
+  const showValidatorLink = uniqueVotes.length > 1;
   card.classList.toggle("single-stake", compact);
   const kicker = $("stakes-kicker");
   if (kicker) kicker.textContent = compact ? "This stake" : "Your stakes";
-  for (const row of delegated) list.append(renderStakeCard(row, { compact }));
+  for (const row of delegated) list.append(renderStakeCard(row, { compact, showValidatorLink }));
   if (idle.length) {
     list.append(
       el(
