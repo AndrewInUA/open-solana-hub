@@ -945,7 +945,7 @@
         kicker: "Risk",
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open Full story for the stake money picture. This is a checkup, not an instruction to unstake.",
+        next: "Open Stake story for the stake money picture. This is a checkup, not an instruction to unstake.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1093,7 +1093,7 @@
     return u.toString();
   }
 
-  /** Wallet / stake / single vote for Full story deep-links. Never dumps every vote. */
+  /** Wallet / stake / single vote for Stake story deep-links. Never dumps every vote. */
   function storyContextFromView(view, wallet) {
     const rows = view?.rows || [];
     const votes = [];

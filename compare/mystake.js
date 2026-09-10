@@ -728,7 +728,8 @@ function renderFullStakeStory(view) {
 }
 
 function focusFullStakeStory() {
-  if (String(window.location.hash || "").replace(/^#/, "") !== "full-stake-story") return;
+  const hash = String(window.location.hash || "").replace(/^#/, "");
+  if (hash !== "full-stake-story" && hash !== "stake-story") return;
   requestAnimationFrame(() => {
     $("full-stake-story")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
@@ -1098,7 +1099,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest finished payout. Recent rewards is a consecutive window of last N finished epochs (we look back up to 16). Missing epochs stay in the list as No reward recorded – never filled with 0, and never called all time. Full story is this money picture. Your validator is a separate compare profile.";
+    "Last epoch is the latest finished payout. Recent rewards is a consecutive window of last N finished epochs (we look back up to 16). Missing epochs stay in the list as No reward recorded – never filled with 0, and never called all time. Stake story is this money picture. Your validator is a separate compare profile.";
   ul.append(moneyNote);
 }
 

@@ -15,7 +15,7 @@ One place to **learn Solana** and **assess validators** – plain-English educat
 | `/ecosystem.html` | Validators, staking, apps – light overview |
 | `/about.html` | Who built this and how the parts fit together |
 | `/compare/` | **Validator Transparency** – stability history, commission risk, voting consistency, APY context, pool splits, A-vs-B compare |
-| `/compare/mystake.html` | **Stake health** – paste a wallet (or stake account) to see stake size, last-epoch and recent rewards (≈ fiat). Full story is that consecutive-epoch money picture; Your validator is a separate compare profile |
+| `/compare/mystake.html` | **Stake health** – paste a wallet (or stake account) to see stake size, last-epoch and recent rewards (≈ fiat). Stake story is that consecutive-epoch money picture; Your validator is a separate compare profile |
 | `/api/telegram` | **Stake health Telegram bot** ([@stake_health_bot](https://t.me/stake_health_bot)) – webhook; epoch digest via `/api/telegram-cron`. Setup: [bot/README.md](./bot/README.md) |
 
 ## How data works
