@@ -306,9 +306,9 @@
     }
     .stake-amounts { display: grid; gap: 8px; }
     .kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; align-items: baseline; }
-    .kv span { color: var(--text3); }
+    .kv span { color: var(--text3); flex: 1; min-width: 0; }
     .kv strong { font-variant-numeric: tabular-nums; }
-    .kv-val { text-align: right; }
+    .kv-val { text-align: right; flex-shrink: 0; }
     .kv-val strong { display: block; }
     .fiat-approx {
       display: block;
@@ -424,41 +424,6 @@
     .stake-meta a:hover { text-decoration: underline; }
     .how-list { margin: 0; padding-left: 18px; color: var(--text2); }
     .how-list li { margin: 6px 0; }
-    .history-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
-    .history-lead { margin: 0 0 12px; }
-    .history-lines { margin: 0; padding-left: 18px; color: var(--text); }
-    .history-lines li { margin: 6px 0; }
-    .epoch-spark {
-      display: flex;
-      align-items: flex-end;
-      gap: 4px;
-      height: 36px;
-      margin: 12px 0 4px;
-    }
-    .epoch-spark i {
-      display: block;
-      flex: 1;
-      max-width: 14px;
-      min-width: 6px;
-      border-radius: 3px 3px 1px 1px;
-      min-height: 3px;
-      background: var(--stat-green);
-    }
-    .epoch-spark i.watch { background: #e67e22; }
-    .epoch-spark i.risk { background: var(--warn); }
-    .epoch-spark-row {
-      display: grid;
-      grid-template-columns: minmax(80px, 140px) 1fr;
-      gap: 10px;
-      align-items: end;
-      margin-top: 8px;
-    }
-    .epoch-spark-name {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text2);
-      padding-bottom: 4px;
-    }
     .telegram-card,
     #telegram-card.hidden {
       display: block;
@@ -488,11 +453,14 @@
       scroll-margin-top: 16px;
     }
     #full-stake-story h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
+    #full-stake-story .verdict-amounts { max-width: 560px; }
     .full-stake-account { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--border); }
     .full-stake-account:first-of-type { border-top: 0; padding-top: 0; }
     .full-stake-account h3 { margin: 0 0 8px; font-size: 16px; color: var(--heading); }
     .epoch-reward-list { margin: 8px 0 0; padding-left: 18px; color: var(--text); font-size: 13px; }
     .epoch-reward-list li { margin: 4px 0; font-variant-numeric: tabular-nums; }
+    .epoch-reward-heading { margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--heading); }
+    .epoch-reward-list li.epoch-reward-empty { color: var(--text3); }
     .footer {
       margin-top: 8px;
       padding: 4px 2px 0;
@@ -540,7 +508,7 @@
       <p class="lead">
         For people who already delegated. Paste the wallet that owns the stake – or a single stake account –
         to see how much you have staked, what you earned last epoch, and what we can add up from recent rewards.
-        Validator signals (status, commission, voting, stability) stay below that money picture.
+        Validator voting and stability live on <strong>Your validator</strong> (Validator Transparency), not in this stake money story.
         A checkup in plain English, not a yield promise.
       </p>
       <div class="row" style="margin-bottom:12px">
@@ -605,7 +573,7 @@
       <div class="verdict-kicker">Full stake story</div>
       <h2>What this stake earned</h2>
       <p class="muted" id="full-stake-story-lead">
-        Inflation rewards we could read – not a lifetime total, and not validator voting.
+        Recent rewards – last N finished epochs (we look back up to 16). Inflation rewards we could read – missing epochs are No reward recorded, not 0.
       </p>
       <div class="verdict-amounts" id="full-stake-story-amounts"></div>
       <div id="full-stake-story-accounts"></div>
@@ -627,17 +595,6 @@
       <p class="muted" id="stakes-note" style="margin-top:12px"></p>
     </div>
 
-    <div class="card history-card hidden" id="history-card">
-      <div class="verdict-kicker">Validator</div>
-      <h2>Recent voting picture</h2>
-      <p class="muted history-lead">
-        Secondary to the money picture. A short scan of finished voting epochs and stored snapshots – the same transparency feeds as Validator Transparency.
-      </p>
-      <ul class="history-lines" id="history-lines"></ul>
-      <div id="history-spark"></div>
-      <p class="muted" id="history-note" style="margin:12px 0 0"></p>
-    </div>
-
     <div class="card">
       <div class="verdict-kicker">How to read this</div>
       <ul class="how-list" id="how-list">
@@ -645,7 +602,7 @@
         <li><strong>Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li><strong>Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest finished payout. Since activation is inflation rewards we could read from when this stake went live. If that history is long, we label it Recent rewards (last N epochs) – never “all time.” Full stake story is that money picture. Your validator is a separate compare profile.</li>
+        <li>Last epoch is the latest finished payout. Recent rewards is a consecutive window of last N finished epochs (we look back up to 16). Missing epochs stay in the list as No reward recorded – never filled with 0, and never called all time. Full story is this money picture. Your validator is a separate compare profile.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
@@ -654,7 +611,7 @@
     </div>
 
     <div class="footer">
-      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Cumulative rewards add further <code>getInflationReward</code> calls for up to 16 finished epochs, from activation when that span fits, otherwise a recent window – missing epochs are omitted, never filled with 0. This is not a guaranteed lifetime total if you delegated longer ago, split/merged stake, or withdrew rewards. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard. Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Cumulative rewards add further <code>getInflationReward</code> calls for a consecutive window of up to 16 finished epochs, from activation when that span fits – missing epochs stay in the list as No reward recorded, never filled with 0. This is not a guaranteed lifetime total if you delegated longer ago, split/merged stake, or withdrew rewards. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard (Your validator). Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
       <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>

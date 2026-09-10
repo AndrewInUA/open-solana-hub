@@ -30,6 +30,7 @@
   const MAX_REWARD_HISTORY_EPOCHS = 16;
   /** One wave of getInflationReward calls – extra rounds on public RPC are slower and rate-limit more. */
   const REWARD_RPC_CONCURRENCY = 16;
+  const NO_REWARD_RECORDED = "No reward recorded";
   const PUBLIC_RPCS = [
     "https://api.mainnet-beta.solana.com",
     "https://solana.drpc.org",
@@ -533,6 +534,48 @@
     return { epochs, fromActivation, lastFinished, start };
   }
 
+  /**
+   * Consecutive finished-epoch rows for the money story.
+   * Missing / null RPC results stay in the window as unrecorded – never 0.
+   */
+  function consecutiveRewardWindow(acc, currentEpoch, options = {}) {
+    const range = rewardEpochsToFetch({
+      activationEpoch: acc?.activationEpoch,
+      currentEpoch,
+      maxEpochs: options.maxEpochs
+    });
+    const byEpoch = new Map(
+      mergeRewardsByEpoch(acc?.rewards, []).map(r => [Number(r.epoch), r])
+    );
+    const rows = range.epochs.map(epoch => {
+      const hit = byEpoch.get(epoch);
+      const amount = hit != null ? Number(hit.amountSol) : NaN;
+      if (Number.isFinite(amount)) {
+        return { epoch, amountSol: amount, recorded: true };
+      }
+      return { epoch, amountSol: null, recorded: false };
+    });
+    return {
+      rows,
+      windowSize: range.epochs.length,
+      recordedCount: rows.filter(r => r.recorded).length,
+      fromActivation: Boolean(range.fromActivation),
+      lastFinished: range.lastFinished,
+      start: range.start
+    };
+  }
+
+  function formatRewardEpochLine(row) {
+    const epoch = Number(row?.epoch);
+    const prefix = Number.isFinite(epoch) ? `Epoch ${epoch}` : "Epoch –";
+    if (!row?.recorded || !Number.isFinite(Number(row.amountSol))) {
+      return `${prefix}  ${NO_REWARD_RECORDED}`;
+    }
+    const amount = Number(row.amountSol);
+    const signed = amount > 0 ? "+" : "";
+    return `${prefix}  ${signed}${fmtSol(amount)} SOL`;
+  }
+
   function normalizeRewardRow(row, epochFallback) {
     if (!row || typeof row !== "object") return null;
     let amountSol = Number(row.amountSol);
@@ -585,7 +628,9 @@
 
   /**
    * Extra getInflationReward epochs on top of last-epoch data from /api/my-stake.
-   * Per-epoch RPC failures are skipped – amounts are never filled with 0.
+   * Per-epoch RPC failures and nulls are omitted from `rewards` – amounts are
+   * never filled with 0. The consecutive display window fills those gaps with
+   * “No reward recorded”, not 0.
    */
   async function fetchRewardHistory(rpcCallImpl, accounts, currentEpoch, options = {}) {
     const list = Array.isArray(accounts) ? accounts : [];
@@ -660,50 +705,46 @@
   }
 
   function summarizeAccountRewards(acc, currentEpoch, options = {}) {
-    const sorted = mergeRewardsByEpoch(acc?.rewards, []);
-    const range = rewardEpochsToFetch({
-      activationEpoch: acc?.activationEpoch,
-      currentEpoch,
-      maxEpochs: options.maxEpochs
-    });
-    const lastFinished = finiteEpoch(currentEpoch);
-    const lastFinishedEpoch = lastFinished != null ? lastFinished - 1 : null;
+    const window = consecutiveRewardWindow(acc, currentEpoch, options);
+    const recorded = window.rows.filter(r => r.recorded);
     const lastReward =
-      lastFinishedEpoch != null
-        ? sorted.find(r => Number(r.epoch) === lastFinishedEpoch) || null
-        : sorted[0] || null;
+      window.lastFinished != null
+        ? recorded.find(r => Number(r.epoch) === window.lastFinished) || null
+        : recorded[0] || null;
     const lastEpochSol =
       lastReward && Number.isFinite(Number(lastReward.amountSol))
         ? Number(lastReward.amountSol)
         : null;
-    const cumulativeRaw = sorted.length
-      ? sorted.reduce((s, r) => s + Number(r.amountSol), 0)
+    const cumulativeRaw = recorded.length
+      ? recorded.reduce((s, r) => s + Number(r.amountSol), 0)
       : null;
     const coverage = acc?.rewardCoverage;
     const fromActivation = Boolean(
       coverage
-        ? coverage.fromActivation && sorted.length > 0
-        : range.fromActivation &&
-            sorted.length > 0 &&
-            sorted.length >= Math.max(1, range.epochs.length - 1)
+        ? coverage.fromActivationWindow || coverage.fromActivation
+        : window.fromActivation
     );
     const showCumulative =
-      Number.isFinite(cumulativeRaw) && (sorted.length > 1 || fromActivation);
+      Number.isFinite(cumulativeRaw) && (window.windowSize > 1 || fromActivation);
     return {
       activeSol: Number(acc?.delegatedSol) || 0,
       lastEpochSol,
       lastEpoch: lastReward?.epoch ?? null,
       cumulativeSol: showCumulative ? cumulativeRaw : null,
-      epochCount: sorted.length,
-      firstEpoch: sorted.length ? Math.min(...sorted.map(r => r.epoch)) : null,
+      epochCount: window.windowSize,
+      windowSize: window.windowSize,
+      recordedCount: window.recordedCount,
+      firstEpoch: window.start,
       fromActivation,
       showCumulative,
       windowLabel: rewardsWindowLabel({
         showCumulative,
         fromActivation,
-        epochCount: sorted.length
+        epochCount: window.windowSize,
+        windowSize: window.windowSize
       }),
-      incomplete: Boolean(showCumulative && !fromActivation)
+      incomplete: Boolean(showCumulative && !fromActivation),
+      rewardRows: window.rows
     };
   }
 
@@ -721,10 +762,11 @@
     const lastBits = parts.map(p => p.lastEpochSol).filter(n => Number.isFinite(n));
     const lastEpochSol = lastBits.length ? lastBits.reduce((s, n) => s + n, 0) : null;
     const cumParts = parts.filter(p => p.showCumulative && Number.isFinite(p.cumulativeSol));
-    const epochCount = parts.reduce((m, p) => Math.max(m, p.epochCount || 0), 0);
+    const windowSize = parts.reduce((m, p) => Math.max(m, p.windowSize || p.epochCount || 0), 0);
+    const recordedCount = parts.reduce((s, p) => s + (Number(p.recordedCount) || 0), 0);
     const fromActivation =
       parts.length > 0 && parts.every(p => p.fromActivation) && cumParts.length === parts.length;
-    const showCumulative = cumParts.length > 0 && (epochCount > 1 || fromActivation);
+    const showCumulative = cumParts.length > 0 && (windowSize > 1 || fromActivation);
     const cumulativeSol = showCumulative
       ? cumParts.reduce((s, p) => s + Number(p.cumulativeSol), 0)
       : null;
@@ -732,14 +774,17 @@
       activeSol: totalActiveSol,
       lastEpochSol,
       cumulativeSol,
-      epochCount,
+      epochCount: windowSize,
+      windowSize,
+      recordedCount,
       fromActivation,
       showCumulative,
       stakeCount: target.length,
       windowLabel: rewardsWindowLabel({
         showCumulative,
         fromActivation,
-        epochCount
+        epochCount: windowSize,
+        windowSize
       }),
       incomplete: Boolean(showCumulative && !fromActivation)
     };
@@ -763,15 +808,20 @@
       money.cumulativeSol != null &&
       Number.isFinite(Number(money.cumulativeSol))
     ) {
+      const n = Number(money.windowSize || money.epochCount);
+      const cap = MAX_REWARD_HISTORY_EPOCHS;
+      const windowBit = Number.isFinite(n) && n > 0
+        ? `the last ${n} finished epochs (we look back up to ${cap}`
+        : `a recent window (we look back up to ${cap}`;
       if (money.fromActivation) {
         const who =
           Number(money.stakeCount) > 1 ? "these stakes activated" : "this stake activated";
-        parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} earned since ${who}.`);
+        parts.push(
+          `About ${moneyLine(money.cumulativeSol, rates, code)} from recorded rewards since ${who} – ${windowBit}; missing epochs are not 0).`
+        );
       } else {
         parts.push(
-          `About ${moneyLine(money.cumulativeSol, rates, code)} earned over the last ${
-            money.epochCount
-          } finished epochs – not the full time since you delegated.`
+          `About ${moneyLine(money.cumulativeSol, rates, code)} from recorded rewards in ${windowBit}; missing epochs are not 0). Not the full time since you delegated.`
         );
       }
     }
@@ -1018,11 +1068,15 @@
   }
 
   function rewardsWindowLabel(money) {
-    if (!money?.showCumulative) return null;
-    if (money.fromActivation) return "Since activation";
-    const n = Number(money.epochCount);
-    if (Number.isFinite(n) && n > 0) return `Recent rewards (last ${n} epochs)`;
-    return "Recent rewards";
+    const cap = MAX_REWARD_HISTORY_EPOCHS;
+    const n = Number(money?.windowSize ?? money?.epochCount);
+    if (Number.isFinite(n) && n > 0) {
+      return `Recent rewards – last ${n} finished epochs (we look back up to ${cap})`;
+    }
+    if (money?.showCumulative) {
+      return `Recent rewards (we look back up to ${cap} finished epochs)`;
+    }
+    return null;
   }
 
   function mystakeUrl(wallet, stake, opts = {}) {
@@ -1274,6 +1328,7 @@
     OVERLAY_TTL_MS,
     MAX_REWARD_HISTORY_EPOCHS,
     REWARD_RPC_CONCURRENCY,
+    NO_REWARD_RECORDED,
     PUBLIC_RPCS,
     FIATS,
     FIAT_CODES,
@@ -1308,6 +1363,8 @@
     lastSumFrom,
     finiteEpoch,
     rewardEpochsToFetch,
+    consecutiveRewardWindow,
+    formatRewardEpochLine,
     normalizeRewardRow,
     mergeRewardsByEpoch,
     fetchRewardHistory,

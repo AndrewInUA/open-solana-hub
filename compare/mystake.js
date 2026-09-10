@@ -8,12 +8,14 @@
  *   2. If that fails, or the pasted key is a stake account, public Solana RPC
  *      (getAccountInfo / getProgramAccounts on the Stake program)
  *   3. Cumulative rewards: Hub `/api/inflation-rewards` (same getInflationReward
- *      window as the Telegram bot), then public RPC. Up to 16 finished epochs;
- *      from activation when that span fits. Missing epochs are skipped, never filled with 0.
+ *      window as the Telegram bot), then public RPC. Consecutive window of up to
+ *      16 finished epochs; from activation when that span fits. Missing epochs
+ *      stay in the list as “No reward recorded”, never filled with 0.
  *
  * Health:
  *   Join each vote account to `/api/rpc`, `/api/ratings`, and `/api/snapshots`
- *   and score OK / Watch / Risk in the same voice as the Hub. Signals stay below the money picture.
+ *   and score OK / Watch / Risk in the same voice as the Hub. Validator voting
+ *   bars live on Your validator (Transparency), not in the stake money story.
  */
 
 const {
@@ -28,7 +30,6 @@ const {
   TELEGRAM_BOT_URL,
   shortKey,
   fmtSol,
-  fmtPct,
   localeDefaultFiat: localeDefaultFiatFromLang,
   isPubkey,
   votingFromCredits,
@@ -42,12 +43,14 @@ const {
   loadSolFiatRates,
   solWithFiat: solWithFiatCore,
   fiatFreshnessCopy,
-  summarizeRecentPicture,
   fetchRewardHistory,
   mergeRewardsByEpoch,
   moneyStory,
   summarizeAccountRewards,
   rewardsWindowLabel,
+  formatRewardEpochLine,
+  MAX_REWARD_HISTORY_EPOCHS,
+  NO_REWARD_RECORDED,
   telegramBotUrl,
   telegramBotUsername,
   isTelegramBotUrl,
@@ -637,13 +640,15 @@ function renderFullStakeStory(view) {
     return;
   }
   host.classList.remove("hidden");
-  const windowLabel = rewardsWindowLabel(money);
+  const windowLabel =
+    rewardsWindowLabel(money) ||
+    (Number(money?.windowSize) > 0
+      ? `Recent rewards – last ${money.windowSize} finished epochs (we look back up to ${MAX_REWARD_HISTORY_EPOCHS})`
+      : `Recent rewards (we look back up to ${MAX_REWARD_HISTORY_EPOCHS} finished epochs)`);
   if (lead) {
     lead.textContent = money?.fromActivation
-      ? "Inflation rewards we could read since these stakes activated – not splits, merges, or withdrawn rewards, and not validator voting."
-      : windowLabel
-        ? `${windowLabel} – inflation rewards we could read, not the full time since you delegated, and not validator voting.`
-        : "Inflation rewards we could read – not a lifetime total, and not validator voting.";
+      ? `${windowLabel}. Inflation rewards since these stakes activated – missing epochs are ${NO_REWARD_RECORDED}, not 0. Not validator voting.`
+      : `${windowLabel}. Inflation rewards we could read – missing epochs are ${NO_REWARD_RECORDED}, not 0. Not all time, and not validator voting.`;
   }
   if (amounts) {
     amounts.innerHTML = "";
@@ -676,25 +681,22 @@ function renderFullStakeStory(view) {
       rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Recent rewards", m.cumulativeSol));
     }
     block.append(rowAmounts);
-    const rewards = [...(acc.rewards || [])]
-      .filter(r => Number.isFinite(Number(r.epoch)) && Number.isFinite(Number(r.amountSol)))
-      .sort((a, b) => Number(b.epoch) - Number(a.epoch));
-    if (rewards.length) {
+    const rewardRows = m.rewardRows || [];
+    if (rewardRows.length) {
+      const listHead = el("p", "epoch-reward-heading", rewardsWindowLabel(m) || windowLabel);
       const list = el("ul", "epoch-reward-list");
-      for (const r of rewards) {
-        const signed = Number(r.amountSol) > 0 ? "+" : "";
-        list.append(
-          el("li", "", `Epoch ${r.epoch}  ${signed}${fmtSol(r.amountSol)} SOL`)
-        );
+      for (const r of rewardRows) {
+        const item = el("li", r.recorded ? "" : "epoch-reward-empty", formatRewardEpochLine(r));
+        list.append(item);
       }
-      block.append(list);
+      block.append(listHead, list);
     }
     accountsHost.append(block);
   }
   if (note) {
     note.textContent = money?.fromActivation
-      ? "This is the full stake story we can fetch from inflation rewards – not an all-time accounting of deposits or withdrawals."
-      : "We cap this checkup at 16 finished epochs, so this is a recent stake story, not all time.";
+      ? `${windowLabel}. Sum counts recorded rewards only – not deposits, withdrawals, or validator voting.`
+      : `${windowLabel}. Sum counts recorded rewards only – not all time, and not validator voting.`;
   }
   if (validatorLinks) {
     validatorLinks.innerHTML = "";
@@ -730,74 +732,6 @@ function focusFullStakeStory() {
   requestAnimationFrame(() => {
     $("full-stake-story")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-}
-
-function epochSpark(epochs) {
-  const wrap = el("div", "epoch-spark");
-  wrap.setAttribute("role", "img");
-  const vals = (epochs || []).map(e => Number(e.pct)).filter(Number.isFinite);
-  wrap.setAttribute(
-    "aria-label",
-    vals.length
-      ? `Finished-epoch voting, ${vals.length} epochs: ${vals.map(v => `${Math.round(v)}%`).join(", ")}`
-      : "No finished-epoch voting bars"
-  );
-  for (const point of epochs || []) {
-    const pct = Number(point.pct);
-    const bar = document.createElement("i");
-    const h = Number.isFinite(pct) ? Math.max(8, Math.min(100, pct)) : 8;
-    bar.style.height = `${h}%`;
-    bar.title = Number.isFinite(point.epoch)
-      ? `Epoch ${point.epoch}: ${fmtPct(pct)}`
-      : fmtPct(pct);
-    if (pct < 80) bar.className = "risk";
-    else if (pct < 95) bar.className = "watch";
-    else bar.className = "ok";
-    wrap.append(bar);
-  }
-  return wrap;
-}
-
-function renderHistory(rows, pack) {
-  const card = $("history-card");
-  const list = $("history-lines");
-  const sparkHost = $("history-spark");
-  const note = $("history-note");
-  if (!card || !list) return;
-  const picture = summarizeRecentPicture(rows);
-  list.innerHTML = "";
-  if (sparkHost) sparkHost.innerHTML = "";
-  if (!picture.lines.length && !picture.sparks.length) {
-    card.classList.add("hidden");
-    return;
-  }
-  card.classList.remove("hidden");
-  for (const line of picture.lines) {
-    list.append(el("li", "", line));
-  }
-  if (sparkHost && picture.sparks.length === 1) {
-    const spark = picture.sparks[0];
-    sparkHost.append(epochSpark(spark.epochs));
-    const caption = el(
-      "p",
-      "muted",
-      "Each bar is one finished epoch (current epoch is still filling in)."
-    );
-    sparkHost.append(caption);
-  } else if (sparkHost && picture.sparks.length > 1) {
-    for (const spark of picture.sparks) {
-      const row = el("div", "epoch-spark-row");
-      row.append(el("span", "epoch-spark-name", spark.name), epochSpark(spark.epochs));
-      sparkHost.append(row);
-    }
-  }
-  if (note) {
-    const bits = ["Validator voting and stored snapshots – secondary to the money picture above."];
-    if (Number.isFinite(Number(pack?.currentEpoch))) {
-      bits.push(`Epoch ${pack.currentEpoch} is still in progress.`);
-    }
-    note.textContent = bits.join(" ");
-  }
 }
 
 function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}) {
@@ -862,27 +796,6 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
         health.commission >= 50 ? "risk" : health.commission > 10 ? "watch" : "ok"
       )
     );
-  }
-  if (Number.isFinite(health.voting)) {
-    signals.append(
-      signalChip(
-        "Recent voting",
-        fmtPct(health.voting),
-        health.voting < 80 ? "risk" : health.voting < 95 ? "watch" : "ok"
-      )
-    );
-  }
-  if (Number.isFinite(health.stability?.score)) {
-    signals.append(
-      signalChip(
-        "Stability",
-        `${health.stability.score}/100 · ${health.stability.label}`,
-        health.stability.score < 50 ? "risk" : health.stability.score < 70 ? "watch" : "ok"
-      )
-    );
-  }
-  if (Number.isFinite(overlay?.apyMedian)) {
-    signals.append(signalChip("APY context", fmtPct(overlay.apyMedian, 2)));
   }
   if (signals.childNodes.length) signalsBlock.append(signals);
   if (signalsBlock.childNodes.length > 1) article.append(signalsBlock);
@@ -1009,7 +922,6 @@ function kvMoney(label, sol, opts) {
 function hideResults() {
   lastView = null;
   $("verdict-card")?.classList.add("hidden");
-  $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
   $("full-stake-story")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
@@ -1044,7 +956,6 @@ function paintLookup(accounts, pack, overlays) {
   const view = buildHealthView(accounts, overlays, pack);
   lastView = view;
   renderOverall(view.overall);
-  renderHistory(view.rows, pack);
   renderStakes(view.rows, pack);
   focusFullStakeStory();
   return view.rows;
@@ -1187,7 +1098,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest finished payout. Since activation is inflation rewards we could read from when this stake went live. If that history is long, we label it Recent rewards (last N epochs) – never “all time.” Full stake story is that money picture. Your validator is a separate compare profile.";
+    "Last epoch is the latest finished payout. Recent rewards is a consecutive window of last N finished epochs (we look back up to 16). Missing epochs stay in the list as No reward recorded – never filled with 0, and never called all time. Full story is this money picture. Your validator is a separate compare profile.";
   ul.append(moneyNote);
 }
 

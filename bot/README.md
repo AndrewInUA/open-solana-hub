@@ -29,7 +29,7 @@ Do not add a parallel scoring model in the bot.
 |-------|-------------|
 | Verdicts & copy | [`compare/stake-health-core.js`](../compare/stake-health-core.js) — `scoreStake` / `scoreOverall` / `TONE_COPY` / `summarizeRecentPicture` / reward-history + money helpers. The page loads this file first; the bot `require`s it. |
 | Stake resolution | Dashboard [`/api/my-stake`](https://validator-transparency-dashboard.vercel.app/api/my-stake) (same production API as the site). Public RPC fallback if that fails. |
-| Rewards | Last finished epoch from `/api/my-stake` (`getInflationReward`). Cumulative: further `getInflationReward` calls for up to 16 finished epochs, from activation when that span fits – Hub [`/api/inflation-rewards`](../api/inflation-rewards.js) on the page, the same RPC helper in the bot. Missing epochs are omitted, never filled with 0. |
+| Rewards | Last finished epoch from `/api/my-stake` (`getInflationReward`). Cumulative: further `getInflationReward` calls for a consecutive window of up to 16 finished epochs, from activation when that span fits – Hub [`/api/inflation-rewards`](../api/inflation-rewards.js) on the page, the same RPC helper in the bot. Missing epochs stay in the Full story list as No reward recorded, never filled with 0. Status copy uses that same window size – not the count of recorded rows. |
 | Overlays | `/api/rpc`, `/api/ratings`, `/api/snapshots?limit=1&include_all_stats=1`, joined by vote pubkey — same as `compare/mystake.js`. |
 | Fiat | CoinGecko SOL price, then CoinGecko USD + exchangerate-api / static FX — `loadSolFiatRates` in the core. Marked ≈. |
 
