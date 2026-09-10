@@ -7,16 +7,18 @@
  *   1. Production dashboard `/api/my-stake` (Helius-backed stake scan + last-epoch rewards)
  *   2. If that fails, or the pasted key is a stake account, public Solana RPC
  *      (getAccountInfo / getProgramAccounts on the Stake program)
+ *   3. Cumulative rewards: Hub `/api/inflation-rewards` (same getInflationReward
+ *      window as the Telegram bot), then public RPC. Up to 16 finished epochs;
+ *      from activation when that span fits. Missing epochs are skipped, never filled with 0.
  *
  * Health:
  *   Join each vote account to `/api/rpc`, `/api/ratings`, and `/api/snapshots`
- *   and score OK / Watch / Risk in the same voice as the Hub.
+ *   and score OK / Watch / Risk in the same voice as the Hub. Signals stay below the money picture.
  */
 
 const {
   DASHBOARD_API,
   STAKE_PROGRAM,
-  LAMPORTS_PER_SOL,
   PUBLIC_RPCS,
   FIATS,
   RATE_TTL_MS,
@@ -25,6 +27,7 @@ const {
   TELEGRAM_CTA,
   TELEGRAM_BOT_URL,
   shortKey,
+  fmtSol,
   fmtPct,
   localeDefaultFiat: localeDefaultFiatFromLang,
   isPubkey,
@@ -40,6 +43,11 @@ const {
   solWithFiat: solWithFiatCore,
   fiatFreshnessCopy,
   summarizeRecentPicture,
+  fetchRewardHistory,
+  mergeRewardsByEpoch,
+  moneyStory,
+  summarizeAccountRewards,
+  rewardsWindowLabel,
   telegramBotUrl,
   telegramBotUsername,
   isTelegramBotUrl,
@@ -250,29 +258,9 @@ async function fetchEpoch() {
   return Number(info?.epoch);
 }
 
-async function attachRewards(accounts) {
-  const keys = accounts.map(a => a.pubkey).filter(Boolean);
-  if (!keys.length) return accounts;
+async function attachRewards(accounts, currentEpoch) {
   try {
-    const rewards = await rpcCall("getInflationReward", [keys]);
-    if (!Array.isArray(rewards)) return accounts;
-    return accounts.map((acc, i) => {
-      const r = rewards[i];
-      if (!r || !Number.isFinite(Number(r.amount))) return acc;
-      return {
-        ...acc,
-        rewards: [
-          {
-            epoch: r.epoch,
-            amountSol: Number(r.amount) / LAMPORTS_PER_SOL,
-            commission: r.commission,
-            postBalanceSol: Number.isFinite(Number(r.postBalance))
-              ? Number(r.postBalance) / LAMPORTS_PER_SOL
-              : null
-          }
-        ]
-      };
-    });
+    return await fetchRewardHistory(rpcCall, accounts, currentEpoch);
   } catch {
     return accounts;
   }
@@ -293,7 +281,7 @@ async function resolveStakeAccount(pubkey) {
     return null;
   }
   const acc = parseStakeAccount(pubkey, value, currentEpoch);
-  const [withRewards] = await attachRewards([acc]);
+  const [withRewards] = await attachRewards([acc], currentEpoch);
   return {
     ok: true,
     wallet: withRewards.withdrawer || withRewards.staker || pubkey,
@@ -329,7 +317,8 @@ async function resolveWalletViaRpc(wallet) {
       /* GPA is often rate-limited; my-stake is the primary path */
     }
   }
-  const accounts = await attachRewards([...seen.values()]);
+  const parsed = [...seen.values()];
+  const accounts = await attachRewards(parsed, currentEpoch);
   return {
     ok: true,
     wallet,
@@ -341,6 +330,50 @@ async function resolveWalletViaRpc(wallet) {
     source: "rpc_wallet",
     accounts
   };
+}
+
+function applyRewardPack(accounts, packAccounts) {
+  const byKey = new Map((packAccounts || []).map(a => [a.pubkey, a]));
+  return (accounts || []).map(acc => {
+    const hit = byKey.get(acc.pubkey);
+    if (!hit) return acc;
+    return {
+      ...acc,
+      rewards: mergeRewardsByEpoch(acc.rewards, hit.rewards),
+      rewardCoverage: hit.rewardCoverage || acc.rewardCoverage
+    };
+  });
+}
+
+async function enrichRewardHistory(accounts, currentEpoch) {
+  if (!accounts?.length) return accounts;
+  try {
+    const res = await fetch("/api/inflation-rewards", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+      body: JSON.stringify({
+        currentEpoch,
+        accounts: accounts.map(a => ({
+          pubkey: a.pubkey,
+          activationEpoch: a.activationEpoch
+        }))
+      })
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.ok && Array.isArray(json.accounts)) {
+        return applyRewardPack(accounts, json.accounts);
+      }
+    }
+  } catch {
+    /* static previews have no Hub API – fall back to public RPC */
+  }
+  try {
+    return await fetchRewardHistory(rpcCall, accounts, currentEpoch);
+  } catch {
+    return accounts;
+  }
 }
 
 async function fetchMyStake(wallet) {
@@ -546,14 +579,22 @@ function renderOverall(v) {
   const card = $("verdict-card");
   if (!card || !v) {
     card?.classList.add("hidden");
+    $("full-stake-story")?.classList.add("hidden");
     return;
   }
   card.classList.remove("hidden", "ok", "watch", "risk", "wait");
   card.classList.add(v.tone);
   $("verdict-kicker").textContent = v.kicker || "Verdict";
   $("verdict-headline").textContent = v.headline || "";
+  const story = $("verdict-money-story");
   const amounts = $("verdict-amounts");
   const fiatHost = $("verdict-fiat");
+  const money = v.money;
+  const storyText = moneyStory(money, fiatRates, currentFiat());
+  if (story) {
+    story.textContent = storyText;
+    story.classList.toggle("hidden", !storyText);
+  }
   if (amounts) {
     amounts.innerHTML = "";
     if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
@@ -562,13 +603,133 @@ function renderOverall(v) {
     if (v.lastEpochSol != null && Number.isFinite(Number(v.lastEpochSol))) {
       amounts.appendChild(kvMoney("Last epoch", v.lastEpochSol, { signed: true }));
     }
-    const showMoney = Boolean(amounts.childElementCount);
-    amounts.classList.toggle("hidden", !showMoney);
+    if (money?.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.appendChild(
+        kvMoney(money.windowLabel || "Recent rewards", money.cumulativeSol)
+      );
+    }
+    const showMoney = Boolean(amounts.childElementCount) || Boolean(storyText);
+    amounts.classList.toggle("hidden", !amounts.childElementCount);
     fiatHost?.classList.toggle("hidden", !showMoney);
     if (showMoney) renderFiatHint();
   }
   $("verdict-body").textContent = v.body || "";
   $("verdict-next").textContent = v.next || "";
+  renderFullStakeStory(lastView);
+}
+
+function renderFullStakeStory(view) {
+  const host = $("full-stake-story");
+  const amounts = $("full-stake-story-amounts");
+  const accountsHost = $("full-stake-story-accounts");
+  const lead = $("full-stake-story-lead");
+  const note = $("full-stake-story-note");
+  const validatorLinks = $("your-validator-links");
+  if (!host || !accountsHost) return;
+  const rows = view?.rows || [];
+  const money = view?.overall?.money;
+  const hasMoney =
+    (Number.isFinite(Number(money?.activeSol)) && money.activeSol > 0) ||
+    Number.isFinite(Number(money?.lastEpochSol)) ||
+    (money?.showCumulative && Number.isFinite(Number(money?.cumulativeSol)));
+  if (!hasMoney) {
+    host.classList.add("hidden");
+    return;
+  }
+  host.classList.remove("hidden");
+  const windowLabel = rewardsWindowLabel(money);
+  if (lead) {
+    lead.textContent = money?.fromActivation
+      ? "Inflation rewards we could read since these stakes activated – not splits, merges, or withdrawn rewards, and not validator voting."
+      : windowLabel
+        ? `${windowLabel} – inflation rewards we could read, not the full time since you delegated, and not validator voting.`
+        : "Inflation rewards we could read – not a lifetime total, and not validator voting.";
+  }
+  if (amounts) {
+    amounts.innerHTML = "";
+    if (Number.isFinite(Number(money?.activeSol)) && money.activeSol > 0) {
+      amounts.appendChild(kvMoney("Active stake", money.activeSol));
+    }
+    if (money?.lastEpochSol != null && Number.isFinite(Number(money.lastEpochSol))) {
+      amounts.appendChild(kvMoney("Last epoch", money.lastEpochSol, { signed: true }));
+    }
+    if (money?.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.appendChild(kvMoney(windowLabel || "Recent rewards", money.cumulativeSol));
+    }
+  }
+  accountsHost.innerHTML = "";
+  const delegated = rows.filter(r => r.acc?.vote || Number(r.acc?.delegatedSol) > 0);
+  for (const row of delegated) {
+    const acc = row.acc;
+    const m = row.money || summarizeAccountRewards(acc, view?.pack?.currentEpoch);
+    const block = el("div", "full-stake-account");
+    const title =
+      row.health?.name ||
+      (acc.vote ? shortKey(acc.vote) : acc.pubkey ? `Stake ${shortKey(acc.pubkey)}` : "Stake");
+    block.append(el("h3", "", title));
+    const rowAmounts = el("div", "verdict-amounts");
+    rowAmounts.append(kvMoney("Active", acc.delegatedSol));
+    if (m.lastEpochSol != null) {
+      rowAmounts.append(kvMoney("Last epoch", m.lastEpochSol, { signed: true }));
+    }
+    if (m.showCumulative && Number.isFinite(Number(m.cumulativeSol))) {
+      rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Recent rewards", m.cumulativeSol));
+    }
+    block.append(rowAmounts);
+    const rewards = [...(acc.rewards || [])]
+      .filter(r => Number.isFinite(Number(r.epoch)) && Number.isFinite(Number(r.amountSol)))
+      .sort((a, b) => Number(b.epoch) - Number(a.epoch));
+    if (rewards.length) {
+      const list = el("ul", "epoch-reward-list");
+      for (const r of rewards) {
+        const signed = Number(r.amountSol) > 0 ? "+" : "";
+        list.append(
+          el("li", "", `Epoch ${r.epoch}  ${signed}${fmtSol(r.amountSol)} SOL`)
+        );
+      }
+      block.append(list);
+    }
+    accountsHost.append(block);
+  }
+  if (note) {
+    note.textContent = money?.fromActivation
+      ? "This is the full stake story we can fetch from inflation rewards – not an all-time accounting of deposits or withdrawals."
+      : "We cap this checkup at 16 finished epochs, so this is a recent stake story, not all time.";
+  }
+  if (validatorLinks) {
+    validatorLinks.innerHTML = "";
+    const votes = [];
+    const seen = new Set();
+    for (const row of rows) {
+      const vote = row?.acc?.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      votes.push({
+        vote,
+        name: row.health?.name || row.overlay?.name || shortKey(vote)
+      });
+    }
+    const shown = votes.slice(0, 3);
+    for (const v of shown) {
+      const a = document.createElement("a");
+      a.className = shown.length === 1 ? "copy-btn secondary" : "copy-btn secondary";
+      a.href = profileHref(v.vote);
+      a.textContent = votes.length === 1 ? "Your validator" : `Your validator – ${v.name}`;
+      validatorLinks.append(a);
+    }
+    if (votes.length > 3) {
+      validatorLinks.append(el("p", "muted", "More validators are on the stake cards below."));
+    }
+    $("your-validator")?.classList.toggle("hidden", !votes.length);
+  }
+  focusFullStakeStory();
+}
+
+function focusFullStakeStory() {
+  if (String(window.location.hash || "").replace(/^#/, "") !== "full-stake-story") return;
+  requestAnimationFrame(() => {
+    $("full-stake-story")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 function epochSpark(epochs) {
@@ -631,7 +792,7 @@ function renderHistory(rows, pack) {
     }
   }
   if (note) {
-    const bits = ["This is more than last epoch – recent voting plus stored snapshots."];
+    const bits = ["Validator voting and stored snapshots – secondary to the money picture above."];
     if (Number.isFinite(Number(pack?.currentEpoch))) {
       bits.push(`Epoch ${pack.currentEpoch} is still in progress.`);
     }
@@ -639,9 +800,10 @@ function renderHistory(rows, pack) {
   }
 }
 
-function renderStakeCard(row, { compact = false } = {}) {
+function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}) {
   const { acc, health, overlay } = row;
   const article = el("article", `stake-card ${health.tone}`);
+  const money = row.money || summarizeAccountRewards(acc, lastView?.pack?.currentEpoch);
 
   if (!compact) {
     const top = el("div", "stake-card-top");
@@ -649,27 +811,32 @@ function renderStakeCard(row, { compact = false } = {}) {
     const pill = el("span", `health-pill ${health.tone}`, health.label);
     const title = el("h3", "", health.headline);
     left.append(pill, title);
+    const storyText = moneyStory({ ...money, stakeCount: 1 }, fiatRates, currentFiat());
+    if (storyText) left.append(el("p", "money-story", storyText));
     top.append(left);
 
     const amounts = el("div", "stake-amounts");
-    amounts.append(
-      kvMoney("Active", acc.delegatedSol),
-      acc.rewards?.[0]
-        ? kvMoney("Last epoch", acc.rewards[0].amountSol, { signed: true })
-        : kv("Last epoch", "–"),
-      kv("Stake status", acc.status || "–")
-    );
+    amounts.append(kvMoney("Active", acc.delegatedSol));
+    if (money.lastEpochSol != null) {
+      amounts.append(kvMoney("Last epoch", money.lastEpochSol, { signed: true }));
+    } else {
+      amounts.append(kv("Last epoch", "–"));
+    }
+    if (money.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.append(kvMoney(money.windowLabel || "Recent rewards", money.cumulativeSol));
+    }
+    amounts.append(kv("Stake status", acc.status || "–"));
     top.append(amounts);
     article.append(top);
   }
 
   const signalsBlock = el("div", "signals-block");
   signalsBlock.append(el("div", "verdict-kicker", "Signals"));
-  if (acc.vote) {
+  if (acc.vote && showValidatorLink) {
     const a = document.createElement("a");
     a.className = "validator-link";
     a.href = profileHref(acc.vote);
-    a.textContent = `Open ${health.name || shortKey(acc.vote)} on Validator Transparency`;
+    a.textContent = `Your validator – ${health.name || shortKey(acc.vote)}`;
     signalsBlock.append(a);
   }
   const signals = el("div", "signals");
@@ -774,10 +941,12 @@ function renderStakes(rows, pack) {
   const delegated = rows.filter(r => r.acc.vote);
   const idle = rows.filter(r => !r.acc.vote);
   const compact = delegated.length === 1 && idle.length === 0;
+  const uniqueVotes = [...new Set(delegated.map(r => r.acc.vote).filter(Boolean))];
+  const showValidatorLink = uniqueVotes.length > 1;
   card.classList.toggle("single-stake", compact);
   const kicker = $("stakes-kicker");
   if (kicker) kicker.textContent = compact ? "This stake" : "Your stakes";
-  for (const row of delegated) list.append(renderStakeCard(row, { compact }));
+  for (const row of delegated) list.append(renderStakeCard(row, { compact, showValidatorLink }));
   if (idle.length) {
     list.append(
       el(
@@ -842,7 +1011,9 @@ function hideResults() {
   $("verdict-card")?.classList.add("hidden");
   $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
+  $("full-stake-story")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
+  $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
 }
 
@@ -875,6 +1046,7 @@ function paintLookup(accounts, pack, overlays) {
   renderOverall(view.overall);
   renderHistory(view.rows, pack);
   renderStakes(view.rows, pack);
+  focusFullStakeStory();
   return view.rows;
 }
 
@@ -885,12 +1057,22 @@ async function loadLookup({ wallet, stake }) {
   const fiatP = fetchSolFiatRates().catch(() => null);
   try {
     const pack = await resolvePositions({ wallet, stake });
-    const accounts = pack.accounts || [];
+    let accounts = pack.accounts || [];
     let overlays = null;
-    paintLookup(accounts, pack, overlays);
+    const paint = () => paintLookup(accounts, pack, overlays);
+    paint();
     fiatP.then(() => {
-      if (lastView?.pack === pack) paintLookup(accounts, pack, overlays);
+      if (lastView?.pack === pack) paint();
     });
+    const enrichP = accounts.some(a => a.pubkey && !a.rewardCoverage)
+      ? enrichRewardHistory(accounts, pack.currentEpoch)
+          .then(next => {
+            accounts = next;
+            pack.accounts = next;
+            if (lastView?.pack === pack) paint();
+          })
+          .catch(() => null)
+      : Promise.resolve();
     setStatus(
       accounts.length
         ? `Found ${accounts.length} stake account${accounts.length === 1 ? "" : "s"}. Reading transparency signals…`
@@ -899,10 +1081,13 @@ async function loadLookup({ wallet, stake }) {
     const share = $("share-url");
     if (share) share.value = shareUrl(wallet || pack.wallet, stake);
     if (!accounts.some(a => a.vote)) {
+      await enrichP;
       return;
     }
     overlays = await loadOverlays(accounts.map(a => a.vote));
-    paintLookup(accounts, pack, overlays);
+    paint();
+    await enrichP;
+    if (lastView?.pack === pack) paint();
     setStatus(
       `Found ${pack.accountCount || accounts.length} stake account${
         (pack.accountCount || accounts.length) === 1 ? "" : "s"
@@ -1000,6 +1185,10 @@ function fillHowToRead() {
   leftover.textContent =
     "Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.";
   ul.append(leftover);
+  const moneyNote = document.createElement("li");
+  moneyNote.textContent =
+    "Last epoch is the latest finished payout. Since activation is inflation rewards we could read from when this stake went live. If that history is long, we label it Recent rewards (last N epochs) – never “all time.” Full stake story is that money picture. Your validator is a separate compare profile.";
+  ul.append(moneyNote);
 }
 
 function applyTelegramLink(url) {

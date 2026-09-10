@@ -19,12 +19,17 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const DASHBOARD_API = "https://validator-transparency-dashboard.vercel.app";
   const MYSTAKE_PAGE = "https://www.opensolanahub.com/compare/mystake.html";
+  const COMPARE_PAGE = "https://www.opensolanahub.com/compare/index.html";
   const STAKE_PROGRAM = "Stake11111111111111111111111111111111111111";
   const PUBKEY_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
   const U64_MAX = 18446744073709551615n;
   const LAMPORTS_PER_SOL = 1e9;
   const RATE_TTL_MS = 15 * 60 * 1000;
   const OVERLAY_TTL_MS = 10 * 60 * 1000;
+  /** Finished epochs to request for cumulative inflation rewards (MVP cap). */
+  const MAX_REWARD_HISTORY_EPOCHS = 16;
+  /** One wave of getInflationReward calls – extra rounds on public RPC are slower and rate-limit more. */
+  const REWARD_RPC_CONCURRENCY = 16;
   const PUBLIC_RPCS = [
     "https://api.mainnet-beta.solana.com",
     "https://solana.drpc.org",
@@ -86,7 +91,7 @@
     kicker: "Telegram",
     headline: "Get epoch checkups in Telegram",
     body:
-      "Same plain-English OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
+      "Same money picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
     steps: "/start → /wallet → /status",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
@@ -494,6 +499,307 @@
     return last.length ? last.reduce((s, n) => s + n, 0) : null;
   }
 
+  function finiteEpoch(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < 0 || n > 1e12) return null;
+    return Math.floor(n);
+  }
+
+  /**
+   * Finished epochs to query via getInflationReward.
+   * First possible payout is the activation epoch (nulls are skipped, not invented).
+   * If activation is older than maxEpochs, this is a recent window – not lifetime.
+   */
+  function rewardEpochsToFetch({
+    activationEpoch,
+    currentEpoch,
+    maxEpochs = MAX_REWARD_HISTORY_EPOCHS
+  } = {}) {
+    const current = finiteEpoch(currentEpoch);
+    const maxN = Math.max(1, Math.min(40, Number(maxEpochs) || MAX_REWARD_HISTORY_EPOCHS));
+    if (current == null || current < 1) {
+      return { epochs: [], fromActivation: false, lastFinished: null, start: null };
+    }
+    const lastFinished = current - 1;
+    if (lastFinished < 0) {
+      return { epochs: [], fromActivation: false, lastFinished: null, start: null };
+    }
+    const act = finiteEpoch(activationEpoch);
+    const windowStart = Math.max(0, lastFinished - maxN + 1);
+    const start = act != null ? Math.max(windowStart, act) : windowStart;
+    const fromActivation = act != null && act >= windowStart;
+    const epochs = [];
+    for (let e = lastFinished; e >= start; e -= 1) epochs.push(e);
+    return { epochs, fromActivation, lastFinished, start };
+  }
+
+  function normalizeRewardRow(row, epochFallback) {
+    if (!row || typeof row !== "object") return null;
+    let amountSol = Number(row.amountSol);
+    if (!Number.isFinite(amountSol) && Number.isFinite(Number(row.amount))) {
+      amountSol = Number(row.amount) / LAMPORTS_PER_SOL;
+    }
+    if (!Number.isFinite(amountSol)) return null;
+    const epoch = Number.isFinite(Number(row.epoch))
+      ? Number(row.epoch)
+      : finiteEpoch(epochFallback);
+    const post = Number.isFinite(Number(row.postBalanceSol))
+      ? Number(row.postBalanceSol)
+      : Number.isFinite(Number(row.postBalance))
+        ? Number(row.postBalance) / LAMPORTS_PER_SOL
+        : null;
+    return {
+      epoch: epoch != null ? epoch : null,
+      amountSol,
+      commission: Number.isFinite(Number(row.commission)) ? Number(row.commission) : null,
+      postBalanceSol: Number.isFinite(post) ? post : null
+    };
+  }
+
+  function mergeRewardsByEpoch(existing, incoming) {
+    const map = new Map();
+    for (const row of [...(existing || []), ...(incoming || [])]) {
+      const n = normalizeRewardRow(row, row?.epoch);
+      if (!n || n.epoch == null) continue;
+      map.set(n.epoch, n);
+    }
+    return [...map.values()].sort((a, b) => b.epoch - a.epoch);
+  }
+
+  async function mapPool(items, concurrency, fn) {
+    const list = Array.isArray(items) ? items : [];
+    if (!list.length) return [];
+    const ret = new Array(list.length);
+    let next = 0;
+    const n = Math.max(1, Math.min(Number(concurrency) || 1, list.length));
+    async function worker() {
+      while (next < list.length) {
+        const idx = next;
+        next += 1;
+        ret[idx] = await fn(list[idx], idx);
+      }
+    }
+    await Promise.all(Array.from({ length: n }, () => worker()));
+    return ret;
+  }
+
+  /**
+   * Extra getInflationReward epochs on top of last-epoch data from /api/my-stake.
+   * Per-epoch RPC failures are skipped – amounts are never filled with 0.
+   */
+  async function fetchRewardHistory(rpcCallImpl, accounts, currentEpoch, options = {}) {
+    const list = Array.isArray(accounts) ? accounts : [];
+    if (!list.length || typeof rpcCallImpl !== "function") return list;
+    const keys = list.map(a => a.pubkey).filter(Boolean);
+    if (!keys.length) return list;
+    const activations = list.map(a => finiteEpoch(a.activationEpoch)).filter(n => n != null);
+    const oldestAct = activations.length ? Math.min(...activations) : null;
+    const maxEpochs = options.maxEpochs || MAX_REWARD_HISTORY_EPOCHS;
+    const union = rewardEpochsToFetch({
+      activationEpoch: oldestAct,
+      currentEpoch,
+      maxEpochs
+    });
+    if (!union.epochs.length) return list;
+
+    const already = list.map(acc => new Set(mergeRewardsByEpoch(acc.rewards, []).map(r => r.epoch)));
+    const epochsNeeded = union.epochs.filter(epoch =>
+      already.some(set => !set.has(epoch))
+    );
+    if (!epochsNeeded.length) return list;
+
+    const concurrency = options.concurrency || REWARD_RPC_CONCURRENCY;
+    const byEpoch = new Map();
+    await mapPool(epochsNeeded, concurrency, async epoch => {
+      try {
+        const result = await rpcCallImpl("getInflationReward", [
+          keys,
+          { epoch, commitment: "finalized" }
+        ]);
+        byEpoch.set(epoch, Array.isArray(result) ? result : false);
+      } catch {
+        byEpoch.set(epoch, false);
+      }
+    });
+
+    const keyIndex = new Map(keys.map((k, i) => [k, i]));
+    return list.map(acc => {
+      const idx = keyIndex.has(acc.pubkey) ? keyIndex.get(acc.pubkey) : null;
+      const extra = [];
+      let failed = 0;
+      let ok = 0;
+      const accRange = rewardEpochsToFetch({
+        activationEpoch: acc.activationEpoch,
+        currentEpoch,
+        maxEpochs
+      });
+      for (const epoch of accRange.epochs) {
+        const rows = byEpoch.get(epoch);
+        if (rows === undefined) continue;
+        if (rows === false) {
+          failed += 1;
+          continue;
+        }
+        ok += 1;
+        if (idx == null) continue;
+        const n = normalizeRewardRow(rows[idx], epoch);
+        if (n) extra.push(n);
+      }
+      return {
+        ...acc,
+        rewards: mergeRewardsByEpoch(acc.rewards, extra),
+        rewardCoverage: {
+          attempted: accRange.epochs.length,
+          ok,
+          failed,
+          fromActivationWindow: accRange.fromActivation,
+          fromActivation: Boolean(accRange.fromActivation && failed === 0)
+        }
+      };
+    });
+  }
+
+  function summarizeAccountRewards(acc, currentEpoch, options = {}) {
+    const sorted = mergeRewardsByEpoch(acc?.rewards, []);
+    const range = rewardEpochsToFetch({
+      activationEpoch: acc?.activationEpoch,
+      currentEpoch,
+      maxEpochs: options.maxEpochs
+    });
+    const lastFinished = finiteEpoch(currentEpoch);
+    const lastFinishedEpoch = lastFinished != null ? lastFinished - 1 : null;
+    const lastReward =
+      lastFinishedEpoch != null
+        ? sorted.find(r => Number(r.epoch) === lastFinishedEpoch) || null
+        : sorted[0] || null;
+    const lastEpochSol =
+      lastReward && Number.isFinite(Number(lastReward.amountSol))
+        ? Number(lastReward.amountSol)
+        : null;
+    const cumulativeRaw = sorted.length
+      ? sorted.reduce((s, r) => s + Number(r.amountSol), 0)
+      : null;
+    const coverage = acc?.rewardCoverage;
+    const fromActivation = Boolean(
+      coverage
+        ? coverage.fromActivation && sorted.length > 0
+        : range.fromActivation &&
+            sorted.length > 0 &&
+            sorted.length >= Math.max(1, range.epochs.length - 1)
+    );
+    const showCumulative =
+      Number.isFinite(cumulativeRaw) && (sorted.length > 1 || fromActivation);
+    return {
+      activeSol: Number(acc?.delegatedSol) || 0,
+      lastEpochSol,
+      lastEpoch: lastReward?.epoch ?? null,
+      cumulativeSol: showCumulative ? cumulativeRaw : null,
+      epochCount: sorted.length,
+      firstEpoch: sorted.length ? Math.min(...sorted.map(r => r.epoch)) : null,
+      fromActivation,
+      showCumulative,
+      windowLabel: rewardsWindowLabel({
+        showCumulative,
+        fromActivation,
+        epochCount: sorted.length
+      }),
+      incomplete: Boolean(showCumulative && !fromActivation)
+    };
+  }
+
+  function summarizeOverallMoney(rows, currentEpoch) {
+    const delegated = (rows || []).filter(r => r.acc?.vote);
+    const activeish = (rows || []).filter(
+      r => r.acc?.vote && (r.acc.status === "active" || r.acc.status === "activating")
+    );
+    const target = activeish.length ? activeish : delegated;
+    const parts = target.map(r => summarizeAccountRewards(r.acc, currentEpoch));
+    const totalActiveSol = (rows || []).reduce(
+      (s, r) => s + (Number(r.acc?.delegatedSol) || 0),
+      0
+    );
+    const lastBits = parts.map(p => p.lastEpochSol).filter(n => Number.isFinite(n));
+    const lastEpochSol = lastBits.length ? lastBits.reduce((s, n) => s + n, 0) : null;
+    const cumParts = parts.filter(p => p.showCumulative && Number.isFinite(p.cumulativeSol));
+    const epochCount = parts.reduce((m, p) => Math.max(m, p.epochCount || 0), 0);
+    const fromActivation =
+      parts.length > 0 && parts.every(p => p.fromActivation) && cumParts.length === parts.length;
+    const showCumulative = cumParts.length > 0 && (epochCount > 1 || fromActivation);
+    const cumulativeSol = showCumulative
+      ? cumParts.reduce((s, p) => s + Number(p.cumulativeSol), 0)
+      : null;
+    return {
+      activeSol: totalActiveSol,
+      lastEpochSol,
+      cumulativeSol,
+      epochCount,
+      fromActivation,
+      showCumulative,
+      stakeCount: target.length,
+      windowLabel: rewardsWindowLabel({
+        showCumulative,
+        fromActivation,
+        epochCount
+      }),
+      incomplete: Boolean(showCumulative && !fromActivation)
+    };
+  }
+
+  function moneyStory(money, rates, code) {
+    if (!money) return "";
+    const parts = [];
+    if (Number.isFinite(Number(money.activeSol)) && money.activeSol > 0) {
+      const across =
+        Number(money.stakeCount) > 1 ? `, across ${money.stakeCount} stakes` : "";
+      parts.push(`You hold ${moneyLine(money.activeSol, rates, code)}${across}.`);
+    }
+    if (money.lastEpochSol != null && Number.isFinite(Number(money.lastEpochSol))) {
+      parts.push(
+        `Last epoch ${moneyLine(money.lastEpochSol, rates, code, { signed: true })}.`
+      );
+    }
+    if (
+      money.showCumulative &&
+      money.cumulativeSol != null &&
+      Number.isFinite(Number(money.cumulativeSol))
+    ) {
+      if (money.fromActivation) {
+        const who =
+          Number(money.stakeCount) > 1 ? "these stakes activated" : "this stake activated";
+        parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} earned since ${who}.`);
+      } else {
+        parts.push(
+          `About ${moneyLine(money.cumulativeSol, rates, code)} earned over the last ${
+            money.epochCount
+          } finished epochs – not the full time since you delegated.`
+        );
+      }
+    }
+    return parts.join(" ");
+  }
+
+  function moneyLines(money, rates, code) {
+    const lines = [];
+    if (!money) return lines;
+    if (Number.isFinite(Number(money.activeSol)) && money.activeSol > 0) {
+      lines.push(`Active: ${moneyLine(money.activeSol, rates, code)}`);
+    }
+    if (money.lastEpochSol != null && Number.isFinite(Number(money.lastEpochSol))) {
+      lines.push(
+        `Last epoch: ${moneyLine(money.lastEpochSol, rates, code, { signed: true })}`
+      );
+    }
+    if (
+      money.showCumulative &&
+      money.cumulativeSol != null &&
+      Number.isFinite(Number(money.cumulativeSol))
+    ) {
+      const label = rewardsWindowLabel(money) || "Recent rewards";
+      lines.push(`${label}: ${moneyLine(money.cumulativeSol, rates, code)}`);
+    }
+    return lines;
+  }
+
   function situationHeadline(rows, names, nameBit) {
     const active = rows.filter(r => r.acc.status === "active");
     const activating = rows.filter(r => r.acc.status === "activating");
@@ -528,11 +834,10 @@
 
   function scoreOverall(rows, pack) {
     const delegated = rows.filter(r => r.acc.vote);
-    const active = rows.filter(
-      r => r.acc.vote && (r.acc.status === "active" || r.acc.status === "activating")
-    );
 
     const totalActiveSol = rows.reduce((s, r) => s + (Number(r.acc.delegatedSol) || 0), 0);
+
+    const money = summarizeOverallMoney(rows, pack?.currentEpoch);
 
     if (!rows.length) {
       return {
@@ -543,7 +848,9 @@
           "We did not find a stake account this address controls. Liquid staking tokens (JitoSOL, mSOL, and similar) will not show here – this page is for native stake only.",
         next: "If you expected a position, check you pasted the wallet that actually created the stake – or paste the stake account itself.",
         lastEpochSol: null,
-        totalActiveSol: 0
+        totalActiveSol: 0,
+        cumulativeSol: null,
+        money
       };
     }
 
@@ -555,7 +862,9 @@
         body: "There are stake accounts here, yet none are pointed at a validator. They are not earning.",
         next: "If you unstaked, wait for the cooldown. If you meant to be delegated, do that in your wallet.",
         lastEpochSol: null,
-        totalActiveSol
+        totalActiveSol,
+        cumulativeSol: null,
+        money
       };
     }
 
@@ -576,7 +885,7 @@
         ? names[0]
         : `${names.length || delegated.length} validators`;
 
-    const lastSum = lastSumFrom(active);
+    const lastSum = money.lastEpochSol;
     const commLine = overallCommLine(scored);
     const headline = situationHeadline(delegated, names, nameBit);
 
@@ -586,9 +895,11 @@
         kicker: "Risk",
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake.",
+        next: "Open Full story for the stake money picture. This is a checkup, not an instruction to unstake.",
         lastEpochSol: lastSum,
-        totalActiveSol
+        totalActiveSol,
+        cumulativeSol: money.cumulativeSol,
+        money
       };
     }
     if (worst === "watch") {
@@ -599,7 +910,9 @@
         body: `${commLine} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
         next: "Skim the cards below. Come back after the next epoch if you like a routine.",
         lastEpochSol: lastSum,
-        totalActiveSol
+        totalActiveSol,
+        cumulativeSol: money.cumulativeSol,
+        money
       };
     }
 
@@ -613,7 +926,9 @@
           ? `Epoch ${pack.currentEpoch} is in progress. Save this page and check again after it ends if you want.`
           : "Save this page and check again after the next epoch if you want.",
       lastEpochSol: lastSum,
-      totalActiveSol
+      totalActiveSol,
+      cumulativeSol: money.cumulativeSol,
+      money
     };
   }
 
@@ -626,7 +941,12 @@
   function buildHealthView(accounts, overlays, pack) {
     const rows = (accounts || []).map(acc => {
       const overlay = acc.vote ? overlayFromMap(overlays, acc.vote) : null;
-      return { acc, overlay, health: scoreStake(acc, overlay) };
+      return {
+        acc,
+        overlay,
+        health: scoreStake(acc, overlay),
+        money: summarizeAccountRewards(acc, pack?.currentEpoch)
+      };
     });
     rows.sort((a, b) => {
       const t = toneRank(b.health.tone) - toneRank(a.health.tone);
@@ -697,11 +1017,50 @@
     return `Approximate ${fiat} from ${rates.source} – ${age}`;
   }
 
-  function mystakeUrl(wallet, stake) {
+  function rewardsWindowLabel(money) {
+    if (!money?.showCumulative) return null;
+    if (money.fromActivation) return "Since activation";
+    const n = Number(money.epochCount);
+    if (Number.isFinite(n) && n > 0) return `Recent rewards (last ${n} epochs)`;
+    return "Recent rewards";
+  }
+
+  function mystakeUrl(wallet, stake, opts = {}) {
     const u = new URL(MYSTAKE_PAGE);
     if (wallet) u.searchParams.set("wallet", wallet);
     if (stake) u.searchParams.set("stake", stake);
+    if (opts.story) u.hash = "full-stake-story";
     return u.toString();
+  }
+
+  function compareUrl(vote) {
+    const u = new URL(COMPARE_PAGE);
+    if (vote) u.searchParams.set("vote", vote);
+    return u.toString();
+  }
+
+  /** Wallet / stake / single vote for Full story deep-links. Never dumps every vote. */
+  function storyContextFromView(view, wallet) {
+    const rows = view?.rows || [];
+    const votes = [];
+    const seen = new Set();
+    for (const row of rows) {
+      const vote = row?.acc?.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      votes.push({
+        vote,
+        name: row.health?.name || row.overlay?.name || null,
+        stake: row.acc?.pubkey || null
+      });
+    }
+    const stakes = [...new Set(rows.map(r => r.acc?.pubkey).filter(Boolean))];
+    return {
+      wallet: wallet || view?.pack?.wallet || null,
+      stake: stakes.length === 1 ? stakes[0] : null,
+      vote: votes.length === 1 ? votes[0].vote : null,
+      votes
+    };
   }
 
   function isTelegramBotUrl(value) {
@@ -913,6 +1272,8 @@
     LAMPORTS_PER_SOL,
     RATE_TTL_MS,
     OVERLAY_TTL_MS,
+    MAX_REWARD_HISTORY_EPOCHS,
+    REWARD_RPC_CONCURRENCY,
     PUBLIC_RPCS,
     FIATS,
     FIAT_CODES,
@@ -945,6 +1306,15 @@
     compactOverlay,
     scoreStake,
     lastSumFrom,
+    finiteEpoch,
+    rewardEpochsToFetch,
+    normalizeRewardRow,
+    mergeRewardsByEpoch,
+    fetchRewardHistory,
+    summarizeAccountRewards,
+    summarizeOverallMoney,
+    moneyStory,
+    moneyLines,
     situationHeadline,
     overallCommLine,
     scoreOverall,
@@ -954,7 +1324,10 @@
     solWithFiat,
     moneyLine,
     fiatFreshnessCopy,
+    rewardsWindowLabel,
     mystakeUrl,
+    compareUrl,
+    storyContextFromView,
     telegramBotUsername,
     telegramBotUrl,
     isTelegramBotUrl,
