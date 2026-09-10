@@ -484,6 +484,15 @@
       display: inline-flex;
       align-items: center;
     }
+    #full-stake-story {
+      scroll-margin-top: 16px;
+    }
+    #full-stake-story h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
+    .full-stake-account { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--border); }
+    .full-stake-account:first-of-type { border-top: 0; padding-top: 0; }
+    .full-stake-account h3 { margin: 0 0 8px; font-size: 16px; color: var(--heading); }
+    .epoch-reward-list { margin: 8px 0 0; padding-left: 18px; color: var(--text); font-size: 13px; }
+    .epoch-reward-list li { margin: 4px 0; font-variant-numeric: tabular-nums; }
     .footer {
       margin-top: 8px;
       padding: 4px 2px 0;
@@ -590,9 +599,20 @@
       </div>
       <p id="verdict-body"></p>
       <p class="muted" id="verdict-next"></p>
-      <div class="full-story hidden" id="full-story">
-        <p class="muted" id="full-story-line">This page stays on the recent money picture. Full story opens Validator Transparency – same product family.</p>
-        <div class="row" id="full-story-links"></div>
+    </div>
+
+    <div class="card full-stake-story hidden" id="full-stake-story">
+      <div class="verdict-kicker">Full stake story</div>
+      <h2>What this stake earned</h2>
+      <p class="muted" id="full-stake-story-lead">
+        Inflation rewards we could read – not a lifetime total, and not validator voting.
+      </p>
+      <div class="verdict-amounts" id="full-stake-story-amounts"></div>
+      <div id="full-stake-story-accounts"></div>
+      <p class="muted" id="full-stake-story-note"></p>
+      <div class="full-story" id="your-validator">
+        <p class="muted" id="your-validator-line">Your validator opens Validator Transparency – that is not the stake money story.</p>
+        <div class="row" id="your-validator-links"></div>
       </div>
     </div>
 
@@ -625,7 +645,7 @@
         <li><strong>Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li><strong>Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest finished payout. Since activation is the sum of inflation rewards we could read from when this stake went live. If that history is long, we add up a recent window and say so – we never invent missing epochs.</li>
+        <li>Last epoch is the latest finished payout. Since activation is inflation rewards we could read from when this stake went live. If that history is long, we label it Recent rewards (last N epochs) – never “all time.” Full stake story is that money picture. Your validator is a separate compare profile.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –

@@ -27,6 +27,7 @@ const {
   TELEGRAM_CTA,
   TELEGRAM_BOT_URL,
   shortKey,
+  fmtSol,
   fmtPct,
   localeDefaultFiat: localeDefaultFiatFromLang,
   isPubkey,
@@ -46,6 +47,7 @@ const {
   mergeRewardsByEpoch,
   moneyStory,
   summarizeAccountRewards,
+  rewardsWindowLabel,
   telegramBotUrl,
   telegramBotUsername,
   isTelegramBotUrl,
@@ -577,7 +579,7 @@ function renderOverall(v) {
   const card = $("verdict-card");
   if (!card || !v) {
     card?.classList.add("hidden");
-    $("full-story")?.classList.add("hidden");
+    $("full-stake-story")?.classList.add("hidden");
     return;
   }
   card.classList.remove("hidden", "ok", "watch", "risk", "wait");
@@ -613,48 +615,121 @@ function renderOverall(v) {
   }
   $("verdict-body").textContent = v.body || "";
   $("verdict-next").textContent = v.next || "";
-  renderFullStory(lastView?.rows);
+  renderFullStakeStory(lastView);
 }
 
-function renderFullStory(rows) {
-  const host = $("full-story");
-  const links = $("full-story-links");
-  const line = $("full-story-line");
-  if (!host || !links) return;
-  const votes = [];
-  const seen = new Set();
-  for (const row of rows || []) {
-    const vote = row?.acc?.vote;
-    if (!vote || seen.has(vote)) continue;
-    seen.add(vote);
-    votes.push({
-      vote,
-      name: row.health?.name || row.overlay?.name || shortKey(vote)
-    });
-  }
-  links.innerHTML = "";
-  if (!votes.length) {
+function renderFullStakeStory(view) {
+  const host = $("full-stake-story");
+  const amounts = $("full-stake-story-amounts");
+  const accountsHost = $("full-stake-story-accounts");
+  const lead = $("full-stake-story-lead");
+  const note = $("full-stake-story-note");
+  const validatorLinks = $("your-validator-links");
+  if (!host || !accountsHost) return;
+  const rows = view?.rows || [];
+  const money = view?.overall?.money;
+  const hasMoney =
+    (Number.isFinite(Number(money?.activeSol)) && money.activeSol > 0) ||
+    Number.isFinite(Number(money?.lastEpochSol)) ||
+    (money?.showCumulative && Number.isFinite(Number(money?.cumulativeSol)));
+  if (!hasMoney) {
     host.classList.add("hidden");
     return;
   }
   host.classList.remove("hidden");
-  if (line) {
-    line.textContent =
-      votes.length === 1
-        ? "This page stays on the recent money picture. Full story opens Validator Transparency for this validator – same product family."
-        : "This page stays on the recent money picture. Full story opens Validator Transparency for each validator – same product family.";
+  const windowLabel = rewardsWindowLabel(money);
+  if (lead) {
+    lead.textContent = money?.fromActivation
+      ? "Inflation rewards we could read since these stakes activated – not splits, merges, or withdrawn rewards, and not validator voting."
+      : windowLabel
+        ? `${windowLabel} – inflation rewards we could read, not the full time since you delegated, and not validator voting.`
+        : "Inflation rewards we could read – not a lifetime total, and not validator voting.";
   }
-  const shown = votes.slice(0, 3);
-  for (const v of shown) {
-    const a = document.createElement("a");
-    a.className = shown.length === 1 ? "copy-btn" : "copy-btn secondary";
-    a.href = profileHref(v.vote);
-    a.textContent = votes.length === 1 ? "Full story" : `Full story – ${v.name}`;
-    links.append(a);
+  if (amounts) {
+    amounts.innerHTML = "";
+    if (Number.isFinite(Number(money?.activeSol)) && money.activeSol > 0) {
+      amounts.appendChild(kvMoney("Active stake", money.activeSol));
+    }
+    if (money?.lastEpochSol != null && Number.isFinite(Number(money.lastEpochSol))) {
+      amounts.appendChild(kvMoney("Last epoch", money.lastEpochSol, { signed: true }));
+    }
+    if (money?.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.appendChild(kvMoney(windowLabel || "Recent rewards", money.cumulativeSol));
+    }
   }
-  if (votes.length > 3) {
-    links.append(el("p", "muted", "More validators are on the stake cards below."));
+  accountsHost.innerHTML = "";
+  const delegated = rows.filter(r => r.acc?.vote || Number(r.acc?.delegatedSol) > 0);
+  for (const row of delegated) {
+    const acc = row.acc;
+    const m = row.money || summarizeAccountRewards(acc, view?.pack?.currentEpoch);
+    const block = el("div", "full-stake-account");
+    const title =
+      row.health?.name ||
+      (acc.vote ? shortKey(acc.vote) : acc.pubkey ? `Stake ${shortKey(acc.pubkey)}` : "Stake");
+    block.append(el("h3", "", title));
+    const rowAmounts = el("div", "verdict-amounts");
+    rowAmounts.append(kvMoney("Active", acc.delegatedSol));
+    if (m.lastEpochSol != null) {
+      rowAmounts.append(kvMoney("Last epoch", m.lastEpochSol, { signed: true }));
+    }
+    if (m.showCumulative && Number.isFinite(Number(m.cumulativeSol))) {
+      rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Recent rewards", m.cumulativeSol));
+    }
+    block.append(rowAmounts);
+    const rewards = [...(acc.rewards || [])]
+      .filter(r => Number.isFinite(Number(r.epoch)) && Number.isFinite(Number(r.amountSol)))
+      .sort((a, b) => Number(b.epoch) - Number(a.epoch));
+    if (rewards.length) {
+      const list = el("ul", "epoch-reward-list");
+      for (const r of rewards) {
+        const signed = Number(r.amountSol) > 0 ? "+" : "";
+        list.append(
+          el("li", "", `Epoch ${r.epoch}  ${signed}${fmtSol(r.amountSol)} SOL`)
+        );
+      }
+      block.append(list);
+    }
+    accountsHost.append(block);
   }
+  if (note) {
+    note.textContent = money?.fromActivation
+      ? "This is the full stake story we can fetch from inflation rewards – not an all-time accounting of deposits or withdrawals."
+      : "We cap this checkup at 16 finished epochs, so this is a recent stake story, not all time.";
+  }
+  if (validatorLinks) {
+    validatorLinks.innerHTML = "";
+    const votes = [];
+    const seen = new Set();
+    for (const row of rows) {
+      const vote = row?.acc?.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      votes.push({
+        vote,
+        name: row.health?.name || row.overlay?.name || shortKey(vote)
+      });
+    }
+    const shown = votes.slice(0, 3);
+    for (const v of shown) {
+      const a = document.createElement("a");
+      a.className = shown.length === 1 ? "copy-btn secondary" : "copy-btn secondary";
+      a.href = profileHref(v.vote);
+      a.textContent = votes.length === 1 ? "Your validator" : `Your validator – ${v.name}`;
+      validatorLinks.append(a);
+    }
+    if (votes.length > 3) {
+      validatorLinks.append(el("p", "muted", "More validators are on the stake cards below."));
+    }
+    $("your-validator")?.classList.toggle("hidden", !votes.length);
+  }
+  focusFullStakeStory();
+}
+
+function focusFullStakeStory() {
+  if (String(window.location.hash || "").replace(/^#/, "") !== "full-stake-story") return;
+  requestAnimationFrame(() => {
+    $("full-stake-story")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 function epochSpark(epochs) {
@@ -761,7 +836,7 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
     const a = document.createElement("a");
     a.className = "validator-link";
     a.href = profileHref(acc.vote);
-    a.textContent = `Open ${health.name || shortKey(acc.vote)} on Validator Transparency`;
+    a.textContent = `Your validator – ${health.name || shortKey(acc.vote)}`;
     signalsBlock.append(a);
   }
   const signals = el("div", "signals");
@@ -936,7 +1011,7 @@ function hideResults() {
   $("verdict-card")?.classList.add("hidden");
   $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
-  $("full-story")?.classList.add("hidden");
+  $("full-stake-story")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
   $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
@@ -971,6 +1046,7 @@ function paintLookup(accounts, pack, overlays) {
   renderOverall(view.overall);
   renderHistory(view.rows, pack);
   renderStakes(view.rows, pack);
+  focusFullStakeStory();
   return view.rows;
 }
 
@@ -1111,7 +1187,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest finished payout. Since activation is the sum of inflation rewards we could read from when this stake went live. If that history is long, we add up a recent window and say so – we never invent missing epochs.";
+    "Last epoch is the latest finished payout. Since activation is inflation rewards we could read from when this stake went live. If that history is long, we label it Recent rewards (last N epochs) – never “all time.” Full stake story is that money picture. Your validator is a separate compare profile.";
   ul.append(moneyNote);
 }
 

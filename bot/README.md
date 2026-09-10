@@ -11,14 +11,15 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 | `/start` | Intro + how to link a wallet |
 | `/wallet <address>` | Save the public key for this chat |
 | `/status` | On-demand checkup (stake money picture + OK / Watch / Risk) |
-| **Full story** (keyboard) | Deep-link to Stake health (`?wallet=` / `?stake=`) and, when a vote is known, Validator Transparency (`?vote=`). Does not re-fetch rewards. |
+| **Full story** (keyboard) | Deep-link to Stake health money / rewards (`?wallet=` / `?stake=` + `#full-stake-story`). Does not re-fetch rewards. This is the stake story, not the validator page. |
+| **Your validator** (keyboard) | Validator Transparency compare profile (`?vote=`) when a single vote is known. Separate from Full story. |
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
 | **Notify: On / Off** (keyboard) | Turn epoch notes on or off without unlinking. Default On after `/wallet`. `/status` still works. |
 
-A persistent keyboard (Status, Full story, Notify: On/Off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (`Notify: On` / `Notify: Off` toggle epoch notes; **Full story** replies with Hub links). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start).
+A persistent keyboard (Status, Full story, Your validator, Notify: On/Off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (`Notify: On` / `Notify: Off` toggle epoch notes; **Full story** opens the stake money page; **Your validator** opens Validator Transparency). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start). After a deploy, send `/start` to refresh the keyboard.
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with **Notify: On** gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch / recent rewards ≈ fiat, health one-liner, **Full story** link to mystake with `?wallet=` and Validator Transparency when a single vote is known). Chats with Notify: Off are skipped. The bot does not dump lifetime reward history into Telegram.
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with **Notify: On** gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch / recent rewards ≈ fiat, health one-liner, **Full story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats with Notify: Off are skipped. The bot does not dump lifetime reward history into Telegram.
 
 ## How website sync is maintained
 

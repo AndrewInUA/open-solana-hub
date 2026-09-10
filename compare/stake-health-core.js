@@ -698,11 +698,11 @@
       firstEpoch: sorted.length ? Math.min(...sorted.map(r => r.epoch)) : null,
       fromActivation,
       showCumulative,
-      windowLabel: !showCumulative
-        ? null
-        : fromActivation
-          ? "Since activation"
-          : `Last ${sorted.length} epochs`,
+      windowLabel: rewardsWindowLabel({
+        showCumulative,
+        fromActivation,
+        epochCount: sorted.length
+      }),
       incomplete: Boolean(showCumulative && !fromActivation)
     };
   }
@@ -736,11 +736,11 @@
       fromActivation,
       showCumulative,
       stakeCount: target.length,
-      windowLabel: !showCumulative
-        ? null
-        : fromActivation
-          ? "Since activation"
-          : `Last ${epochCount} epochs`,
+      windowLabel: rewardsWindowLabel({
+        showCumulative,
+        fromActivation,
+        epochCount
+      }),
       incomplete: Boolean(showCumulative && !fromActivation)
     };
   }
@@ -794,9 +794,7 @@
       money.cumulativeSol != null &&
       Number.isFinite(Number(money.cumulativeSol))
     ) {
-      const label = money.fromActivation
-        ? "Since activation"
-        : `Last ${money.epochCount} epochs`;
+      const label = rewardsWindowLabel(money) || "Recent rewards";
       lines.push(`${label}: ${moneyLine(money.cumulativeSol, rates, code)}`);
     }
     return lines;
@@ -897,7 +895,7 @@
         kicker: "Risk",
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Full story opens the validator compare profile. This is a checkup, not an instruction to unstake.",
+        next: "Open Full story for the stake money picture. This is a checkup, not an instruction to unstake.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1019,10 +1017,19 @@
     return `Approximate ${fiat} from ${rates.source} – ${age}`;
   }
 
-  function mystakeUrl(wallet, stake) {
+  function rewardsWindowLabel(money) {
+    if (!money?.showCumulative) return null;
+    if (money.fromActivation) return "Since activation";
+    const n = Number(money.epochCount);
+    if (Number.isFinite(n) && n > 0) return `Recent rewards (last ${n} epochs)`;
+    return "Recent rewards";
+  }
+
+  function mystakeUrl(wallet, stake, opts = {}) {
     const u = new URL(MYSTAKE_PAGE);
     if (wallet) u.searchParams.set("wallet", wallet);
     if (stake) u.searchParams.set("stake", stake);
+    if (opts.story) u.hash = "full-stake-story";
     return u.toString();
   }
 
@@ -1317,6 +1324,7 @@
     solWithFiat,
     moneyLine,
     fiatFreshnessCopy,
+    rewardsWindowLabel,
     mystakeUrl,
     compareUrl,
     storyContextFromView,
