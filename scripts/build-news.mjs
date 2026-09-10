@@ -364,6 +364,7 @@ ${articleTagMetas(post)}
         </nav>
         <button type="button" id="theme-toggle" class="theme-btn" aria-label="Toggle theme">☀</button>
         <a class="btn btn-primary" href="../compare/">Assess validators</a>
+        <a class="btn btn-primary" href="../compare/mystake.html">Stake health</a>
       </div>
     </div>
   </header>
@@ -490,6 +491,7 @@ ${articleTagMetas(post)}
         </nav>
         <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
         <a class="btn btn-primary" href="../../compare/">Оцінити валідаторів</a>
+        <a class="btn btn-primary" href="../../compare/mystake.html">Як там мій стейк?</a>
       </div>
     </div>
   </header>
