@@ -19,6 +19,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const DASHBOARD_API = "https://validator-transparency-dashboard.vercel.app";
   const MYSTAKE_PAGE = "https://www.opensolanahub.com/compare/mystake.html";
+  const COMPARE_PAGE = "https://www.opensolanahub.com/compare/index.html";
   const STAKE_PROGRAM = "Stake11111111111111111111111111111111111111";
   const PUBKEY_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
   const U64_MAX = 18446744073709551615n;
@@ -896,7 +897,7 @@
         kicker: "Risk",
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open the validator profile for the full picture. This is a checkup, not an instruction to unstake.",
+        next: "Full story opens the validator compare profile. This is a checkup, not an instruction to unstake.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1023,6 +1024,36 @@
     if (wallet) u.searchParams.set("wallet", wallet);
     if (stake) u.searchParams.set("stake", stake);
     return u.toString();
+  }
+
+  function compareUrl(vote) {
+    const u = new URL(COMPARE_PAGE);
+    if (vote) u.searchParams.set("vote", vote);
+    return u.toString();
+  }
+
+  /** Wallet / stake / single vote for Full story deep-links. Never dumps every vote. */
+  function storyContextFromView(view, wallet) {
+    const rows = view?.rows || [];
+    const votes = [];
+    const seen = new Set();
+    for (const row of rows) {
+      const vote = row?.acc?.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      votes.push({
+        vote,
+        name: row.health?.name || row.overlay?.name || null,
+        stake: row.acc?.pubkey || null
+      });
+    }
+    const stakes = [...new Set(rows.map(r => r.acc?.pubkey).filter(Boolean))];
+    return {
+      wallet: wallet || view?.pack?.wallet || null,
+      stake: stakes.length === 1 ? stakes[0] : null,
+      vote: votes.length === 1 ? votes[0].vote : null,
+      votes
+    };
   }
 
   function isTelegramBotUrl(value) {
@@ -1287,6 +1318,8 @@
     moneyLine,
     fiatFreshnessCopy,
     mystakeUrl,
+    compareUrl,
+    storyContextFromView,
     telegramBotUsername,
     telegramBotUrl,
     isTelegramBotUrl,

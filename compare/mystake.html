@@ -472,6 +472,18 @@
       display: inline-flex;
       align-items: center;
     }
+    .full-story {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .full-story .muted { margin: 0 0 10px; max-width: 640px; }
+    .full-story .row { gap: 8px; }
+    .full-story a.copy-btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
     .footer {
       margin-top: 8px;
       padding: 4px 2px 0;
@@ -578,6 +590,10 @@
       </div>
       <p id="verdict-body"></p>
       <p class="muted" id="verdict-next"></p>
+      <div class="full-story hidden" id="full-story">
+        <p class="muted" id="full-story-line">This page stays on the recent money picture. Full story opens Validator Transparency – same product family.</p>
+        <div class="row" id="full-story-links"></div>
+      </div>
     </div>
 
     <div class="card hidden" id="stakes-card">

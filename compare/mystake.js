@@ -577,6 +577,7 @@ function renderOverall(v) {
   const card = $("verdict-card");
   if (!card || !v) {
     card?.classList.add("hidden");
+    $("full-story")?.classList.add("hidden");
     return;
   }
   card.classList.remove("hidden", "ok", "watch", "risk", "wait");
@@ -612,6 +613,48 @@ function renderOverall(v) {
   }
   $("verdict-body").textContent = v.body || "";
   $("verdict-next").textContent = v.next || "";
+  renderFullStory(lastView?.rows);
+}
+
+function renderFullStory(rows) {
+  const host = $("full-story");
+  const links = $("full-story-links");
+  const line = $("full-story-line");
+  if (!host || !links) return;
+  const votes = [];
+  const seen = new Set();
+  for (const row of rows || []) {
+    const vote = row?.acc?.vote;
+    if (!vote || seen.has(vote)) continue;
+    seen.add(vote);
+    votes.push({
+      vote,
+      name: row.health?.name || row.overlay?.name || shortKey(vote)
+    });
+  }
+  links.innerHTML = "";
+  if (!votes.length) {
+    host.classList.add("hidden");
+    return;
+  }
+  host.classList.remove("hidden");
+  if (line) {
+    line.textContent =
+      votes.length === 1
+        ? "This page stays on the recent money picture. Full story opens Validator Transparency for this validator – same product family."
+        : "This page stays on the recent money picture. Full story opens Validator Transparency for each validator – same product family.";
+  }
+  const shown = votes.slice(0, 3);
+  for (const v of shown) {
+    const a = document.createElement("a");
+    a.className = shown.length === 1 ? "copy-btn" : "copy-btn secondary";
+    a.href = profileHref(v.vote);
+    a.textContent = votes.length === 1 ? "Full story" : `Full story – ${v.name}`;
+    links.append(a);
+  }
+  if (votes.length > 3) {
+    links.append(el("p", "muted", "More validators are on the stake cards below."));
+  }
 }
 
 function epochSpark(epochs) {
@@ -714,7 +757,7 @@ function renderStakeCard(row, { compact = false } = {}) {
 
   const signalsBlock = el("div", "signals-block");
   signalsBlock.append(el("div", "verdict-kicker", "Signals"));
-  if (acc.vote) {
+  if (acc.vote && !compact) {
     const a = document.createElement("a");
     a.className = "validator-link";
     a.href = profileHref(acc.vote);
@@ -891,6 +934,7 @@ function hideResults() {
   $("verdict-card")?.classList.add("hidden");
   $("history-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
+  $("full-story")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
   $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
