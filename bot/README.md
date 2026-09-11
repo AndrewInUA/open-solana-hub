@@ -15,11 +15,11 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 | **Your validator** (keyboard) | This operator’s voting, stability, and fee history on Validator Transparency (`?vote=`), when a single vote is known. |
 | `/currency` or `/fiat` | Preferred approx. fiat: USD, EUR, UAH, GBP, PLN, CAD, BRL |
 | `/stop` or `/unlink` | Remove the link and stop epoch notes |
-| **Notify: On / Off** (keyboard) | Turn epoch notes on or off without unlinking. Default On after `/wallet`. `/status` still works. |
+| **Turn notes on / off** (keyboard) | The label is the action. Notes default on after `/wallet`. `/status` still works. Old **Notify: On / Off** buttons still toggle. |
 
-A persistent keyboard (Status, Stake story, Your validator, Notify: On/Off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (`Notify: On` / `Notify: Off` toggle epoch notes; **Stake story** opens last epoch on Stake health; **Your validator** opens this operator’s profile). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start). After a deploy, send `/start` to refresh the keyboard.
+A persistent keyboard (Status, Stake story, Your validator, Turn notes on / off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (**Turn notes off** means notes are on now – tap to stop them; **Stake story** opens last epoch on Stake health; **Your validator** opens this operator’s profile). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start). After a deploy, send `/start` to refresh the keyboard.
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with **Notify: On** gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch payout ≈ fiat, health one-liner, **Stake story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats with Notify: Off are skipped.
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with epoch notes on gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch payout ≈ fiat, health one-liner, **Stake story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats that turned notes off are skipped.
 
 ## How website sync is maintained
 
