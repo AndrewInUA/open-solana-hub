@@ -829,15 +829,6 @@
         `Last epoch ${moneyLine(money.lastEpochSol, rates, code, { signed: true })}.`
       );
     }
-    if (
-      money.showCumulative &&
-      money.cumulativeSol != null &&
-      Number.isFinite(Number(money.cumulativeSol))
-    ) {
-      const n = Number(money.recordedCount || money.windowSize || money.epochCount);
-      const nBit = Number.isFinite(n) && n > 1 ? `${n} payouts` : "recent payouts";
-      parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} from ${nBit} we could follow.`);
-    }
     return parts.join(" ");
   }
 
@@ -851,14 +842,6 @@
       lines.push(
         `Last epoch: ${moneyLine(money.lastEpochSol, rates, code, { signed: true })}`
       );
-    }
-    if (
-      money.showCumulative &&
-      money.cumulativeSol != null &&
-      Number.isFinite(Number(money.cumulativeSol))
-    ) {
-      const label = rewardsWindowLabel(money) || "Consecutive payouts";
-      lines.push(`${label}: ${moneyLine(money.cumulativeSol, rates, code)}`);
     }
     return lines;
   }
@@ -971,7 +954,7 @@
         kicker: TONE_BADGE.risk,
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open Stake story for last epoch and consecutive payouts we could follow.",
+        next: "Open Stake story for the last-epoch payout.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1094,10 +1077,8 @@
   }
 
   function rewardsWindowLabel(money) {
-    const n = Number(money?.epochCount ?? money?.windowSize ?? money?.recordedCount);
     if (!money?.showCumulative) return null;
-    if (Number.isFinite(n) && n > 1) return `Consecutive payouts – ${n} epochs`;
-    return "Consecutive payouts";
+    return "Last epoch rewards";
   }
 
   function mystakeUrl(wallet, stake, opts = {}) {
