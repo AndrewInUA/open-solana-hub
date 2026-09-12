@@ -759,6 +759,7 @@
       showCumulative,
       windowLabel: rewardsWindowLabel({
         showCumulative,
+        fromActivation,
         recordedCount: run.length,
         epochCount: run.length,
         windowSize: run.length
@@ -783,6 +784,10 @@
     const lastEpochSol = lastBits.length ? lastBits.reduce((s, n) => s + n, 0) : null;
     const cumParts = parts.filter(p => p.showCumulative && Number.isFinite(p.cumulativeSol));
     const recordedCount = parts.reduce((s, p) => s + (Number(p.recordedCount) || 0), 0);
+    const epochCount = parts.reduce(
+      (m, p) => Math.max(m, Number(p.epochCount || p.recordedCount) || 0),
+      0
+    );
     const fromActivation =
       parts.length > 0 && parts.every(p => p.fromActivation) && cumParts.length === parts.length;
     const showCumulative = cumParts.length > 0 && recordedCount > 1;
@@ -793,17 +798,19 @@
       activeSol: totalActiveSol,
       lastEpochSol,
       cumulativeSol,
-      epochCount: recordedCount,
-      windowSize: recordedCount,
+      epochCount,
+      windowSize: epochCount,
       recordedCount,
       fromActivation,
       showCumulative,
       stakeCount: target.length,
       windowLabel: rewardsWindowLabel({
         showCumulative,
+        fromActivation,
         recordedCount,
-        epochCount: recordedCount,
-        windowSize: recordedCount
+        epochCount,
+        windowSize: epochCount,
+        stakeCount: target.length
       }),
       incomplete: Boolean(showCumulative && !fromActivation)
     };
@@ -829,13 +836,7 @@
     ) {
       const n = Number(money.recordedCount || money.windowSize || money.epochCount);
       const nBit = Number.isFinite(n) && n > 1 ? `${n} payouts` : "recent payouts";
-      if (money.fromActivation) {
-        const who =
-          Number(money.stakeCount) > 1 ? "these stakes activated" : "this stake activated";
-        parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} from ${nBit} since ${who}.`);
-      } else {
-        parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} from ${nBit}.`);
-      }
+      parts.push(`About ${moneyLine(money.cumulativeSol, rates, code)} from ${nBit} since we started watching.`);
     }
     return parts.join(" ");
   }
@@ -856,7 +857,7 @@
       money.cumulativeSol != null &&
       Number.isFinite(Number(money.cumulativeSol))
     ) {
-      const label = rewardsWindowLabel(money) || "Recent payouts";
+      const label = rewardsWindowLabel(money) || "Since we started watching";
       lines.push(`${label}: ${moneyLine(money.cumulativeSol, rates, code)}`);
     }
     return lines;
@@ -970,7 +971,7 @@
         kicker: TONE_BADGE.risk,
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open Stake story for the last-epoch payout.",
+        next: "Open Stake story for last epoch and consecutive payouts we could follow.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1093,10 +1094,10 @@
   }
 
   function rewardsWindowLabel(money) {
-    const n = Number(money?.recordedCount ?? money?.windowSize ?? money?.epochCount);
-    if (Number.isFinite(n) && n > 1) return `Recent payouts (${n})`;
-    if (money?.showCumulative) return "Recent payouts";
-    return null;
+    const n = Number(money?.epochCount ?? money?.windowSize ?? money?.recordedCount);
+    if (!money?.showCumulative) return null;
+    if (Number.isFinite(n) && n > 1) return `Since we started watching – ${n} epochs`;
+    return "Since we started watching";
   }
 
   function mystakeUrl(wallet, stake, opts = {}) {

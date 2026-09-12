@@ -75,6 +75,15 @@ function $(id) {
 
 let fiatRates = null;
 let lastView = null;
+let rewardsPending = false;
+
+const HUB_ORIGIN = "https://www.opensolanahub.com";
+
+function needsExtraRewardHistory(accounts) {
+  return (accounts || []).some(
+    acc => acc?.pubkey && !Number.isFinite(Number(acc.rewardCoverage?.attempted))
+  );
+}
 
 function localeDefaultFiat() {
   let lang = "";
@@ -346,27 +355,42 @@ function applyRewardPack(accounts, packAccounts) {
   });
 }
 
+async function fetchInflationRewardPack(accounts, currentEpoch) {
+  const body = JSON.stringify({
+    currentEpoch,
+    accounts: accounts.map(a => ({
+      pubkey: a.pubkey,
+      activationEpoch: a.activationEpoch,
+      rewards: a.rewards
+    }))
+  });
+  const urls = ["/api/inflation-rewards"];
+  if (window.location.origin !== HUB_ORIGIN) {
+    urls.push(`${HUB_ORIGIN}/api/inflation-rewards`);
+  }
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body
+      });
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json?.ok && Array.isArray(json.accounts)) return json.accounts;
+    } catch {
+      /* try the next URL, then public RPC */
+    }
+  }
+  return null;
+}
+
 async function enrichRewardHistory(accounts, currentEpoch) {
   if (!accounts?.length) return accounts;
   try {
-    const res = await fetch("/api/inflation-rewards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      body: JSON.stringify({
-        currentEpoch,
-        accounts: accounts.map(a => ({
-          pubkey: a.pubkey,
-          activationEpoch: a.activationEpoch
-        }))
-      })
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json?.ok && Array.isArray(json.accounts)) {
-        return applyRewardPack(accounts, json.accounts);
-      }
-    }
+    const packAccounts = await fetchInflationRewardPack(accounts, currentEpoch);
+    if (packAccounts) return applyRewardPack(accounts, packAccounts);
   } catch {
     /* static previews have no Hub API – fall back to public RPC */
   }
@@ -606,7 +630,7 @@ function renderOverall(v) {
     }
     if (money?.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
       amounts.appendChild(
-        kvMoney(money.windowLabel || "Recent payouts", money.cumulativeSol)
+        kvMoney(money.windowLabel || "Since we started watching", money.cumulativeSol)
       );
     }
     const showMoney = Boolean(amounts.childElementCount) || Boolean(storyText);
@@ -638,14 +662,23 @@ function renderFullStakeStory(view) {
     return;
   }
   host.classList.remove("hidden");
-  const windowLabel = rewardsWindowLabel(money) || "Recent payouts";
+  const windowLabel = rewardsWindowLabel(money) || "Since we started watching";
+  const kickerEl = host.querySelector(".verdict-kicker");
+  const titleEl = host.querySelector("h2");
+  if (money?.showCumulative) {
+    if (kickerEl) kickerEl.textContent = "Recent payouts";
+    if (titleEl) titleEl.textContent = "Since we started watching";
+  } else {
+    if (kickerEl) kickerEl.textContent = "Last payout";
+    if (titleEl) titleEl.textContent = "Last epoch";
+  }
   if (lead) {
     const n = Number(money?.recordedCount || money?.windowSize);
     lead.textContent =
-      money?.showCumulative && money?.fromActivation
-        ? "Last epoch, and every payout since this stake activated."
-        : money?.showCumulative && Number.isFinite(n) && n > 1
-          ? "Last epoch, and the payouts right before it."
+      money?.showCumulative && Number.isFinite(n) && n > 1
+        ? "Last epoch, and earlier payouts since we started watching – not lifetime history."
+        : rewardsPending
+          ? "Last epoch is in. Reading consecutive payouts we could follow…"
           : "The latest finished payout.";
   }
   if (amounts) {
@@ -662,24 +695,28 @@ function renderFullStakeStory(view) {
   }
   accountsHost.innerHTML = "";
   const delegated = rows.filter(r => r.acc?.vote || Number(r.acc?.delegatedSol) > 0);
+  const repeatAccountMoney = delegated.length > 1;
   for (const row of delegated) {
     const acc = row.acc;
     const m = row.money || summarizeAccountRewards(acc, view?.pack?.currentEpoch);
+    const rewardRows = (m.rewardRows || []).filter(r => r.recorded);
+    if (!repeatAccountMoney && rewardRows.length <= 1) continue;
     const block = el("div", "full-stake-account");
     const title =
       row.health?.name ||
       (acc.vote ? shortKey(acc.vote) : acc.pubkey ? `Stake ${shortKey(acc.pubkey)}` : "Stake");
-    block.append(el("h3", "", title));
-    const rowAmounts = el("div", "verdict-amounts");
-    rowAmounts.append(kvMoney("Active", acc.delegatedSol));
-    if (m.lastEpochSol != null) {
-      rowAmounts.append(kvMoney("Last epoch", m.lastEpochSol, { signed: true }));
+    if (repeatAccountMoney) block.append(el("h3", "", title));
+    if (repeatAccountMoney) {
+      const rowAmounts = el("div", "verdict-amounts");
+      rowAmounts.append(kvMoney("Active", acc.delegatedSol));
+      if (m.lastEpochSol != null) {
+        rowAmounts.append(kvMoney("Last epoch", m.lastEpochSol, { signed: true }));
+      }
+      if (m.showCumulative && Number.isFinite(Number(m.cumulativeSol))) {
+        rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Since we started watching", m.cumulativeSol));
+      }
+      block.append(rowAmounts);
     }
-    if (m.showCumulative && Number.isFinite(Number(m.cumulativeSol))) {
-      rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Recent payouts", m.cumulativeSol));
-    }
-    block.append(rowAmounts);
-    const rewardRows = (m.rewardRows || []).filter(r => r.recorded);
     if (rewardRows.length > 1) {
       const listHead = el("p", "epoch-reward-heading", rewardsWindowLabel(m) || windowLabel);
       const list = el("ul", "epoch-reward-list");
@@ -690,11 +727,13 @@ function renderFullStakeStory(view) {
       }
       if (list.childNodes.length) block.append(listHead, list);
     }
-    accountsHost.append(block);
+    if (block.childNodes.length) accountsHost.append(block);
   }
   if (note) {
     if (money?.showCumulative) {
-      note.textContent = "Sum of those payouts.";
+      note.textContent = "Sum of those payouts since we started watching – not lifetime history.";
+    } else if (rewardsPending) {
+      note.textContent = "Reading consecutive payouts we could follow – not lifetime history.";
     } else {
       note.textContent = "";
     }
@@ -759,7 +798,7 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
       amounts.append(kv("Last epoch", "–"));
     }
     if (money.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
-      amounts.append(kvMoney(money.windowLabel || "Recent payouts", money.cumulativeSol));
+      amounts.append(kvMoney(money.windowLabel || "Since we started watching", money.cumulativeSol));
     }
     amounts.append(kv("Stake status", acc.status || "–"));
     top.append(amounts);
@@ -923,6 +962,7 @@ function kvMoney(label, sol, opts) {
 
 function hideResults() {
   lastView = null;
+  rewardsPending = false;
   $("verdict-card")?.classList.add("hidden");
   $("stakes-card")?.classList.add("hidden");
   $("full-stake-story")?.classList.add("hidden");
@@ -972,19 +1012,25 @@ async function loadLookup({ wallet, stake }) {
     const pack = await resolvePositions({ wallet, stake });
     let accounts = pack.accounts || [];
     let overlays = null;
+    rewardsPending = needsExtraRewardHistory(accounts);
     const paint = () => paintLookup(accounts, pack, overlays);
     paint();
     fiatP.then(() => {
       if (lastView?.pack === pack) paint();
     });
-    const enrichP = accounts.some(a => a.pubkey && !a.rewardCoverage)
+    rewardsPending = needsExtraRewardHistory(accounts);
+    const enrichP = rewardsPending
       ? enrichRewardHistory(accounts, pack.currentEpoch)
           .then(next => {
             accounts = next;
             pack.accounts = next;
+            rewardsPending = false;
             if (lastView?.pack === pack) paint();
           })
-          .catch(() => null)
+          .catch(() => {
+            rewardsPending = false;
+            if (lastView?.pack === pack) paint();
+          })
       : Promise.resolve();
     setStatus(
       accounts.length

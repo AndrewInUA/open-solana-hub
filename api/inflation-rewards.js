@@ -60,7 +60,8 @@ function parseAccounts(raw) {
       .map(row => {
         if (typeof row === "string") return { pubkey: row.trim(), activationEpoch: null };
         const pubkey = String(row?.pubkey || "").trim();
-        return { pubkey, activationEpoch: row?.activationEpoch ?? null };
+        const rewards = Array.isArray(row?.rewards) ? row.rewards : undefined;
+        return { pubkey, activationEpoch: row?.activationEpoch ?? null, rewards };
       })
       .filter(row => core.isPubkey(row.pubkey))
       .slice(0, MAX_ACCOUNTS);
