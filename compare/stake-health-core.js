@@ -28,8 +28,9 @@
   const OVERLAY_TTL_MS = 10 * 60 * 1000;
   /** Finished epochs to request in the background. The page only lists payouts we actually got. */
   const MAX_REWARD_HISTORY_EPOCHS = 16;
-  /** One wave of getInflationReward calls – extra rounds on public RPC are slower and rate-limit more. */
-  const REWARD_RPC_CONCURRENCY = 16;
+  /** Keep this small – 16 parallel getInflationReward calls get rate-limited and punch holes in the run. */
+  const REWARD_RPC_CONCURRENCY = 3;
+  const REWARD_RPC_RETRIES = 3;
   const PUBLIC_RPCS = [
     "https://api.mainnet-beta.solana.com",
     "https://solana.drpc.org",
@@ -677,18 +678,41 @@
     if (!epochsNeeded.length) return list;
 
     const concurrency = options.concurrency || REWARD_RPC_CONCURRENCY;
+    const retries = Math.max(1, Number(options.retries) || REWARD_RPC_RETRIES);
     const byEpoch = new Map();
-    await mapPool(epochsNeeded, concurrency, async epoch => {
-      try {
-        const result = await rpcCallImpl("getInflationReward", [
-          keys,
-          { epoch, commitment: "finalized" }
-        ]);
-        byEpoch.set(epoch, Array.isArray(result) ? result : false);
-      } catch {
-        byEpoch.set(epoch, false);
+    async function loadEpoch(epoch) {
+      for (let attempt = 1; attempt <= retries; attempt += 1) {
+        try {
+          const result = await rpcCallImpl("getInflationReward", [
+            keys,
+            { epoch, commitment: "finalized" }
+          ]);
+          if (Array.isArray(result)) {
+            byEpoch.set(epoch, result);
+            return;
+          }
+        } catch {
+          /* retry – a failed RPC is not a missing payout */
+        }
       }
-    });
+      byEpoch.set(epoch, false);
+    }
+    function epochHasAmount(epoch) {
+      if (already.some(set => set.has(epoch))) return true;
+      const rows = byEpoch.get(epoch);
+      if (!Array.isArray(rows)) return false;
+      return list.some((_, idx) => Boolean(normalizeRewardRow(rows[idx], epoch)));
+    }
+    for (let i = 0; i < epochsNeeded.length; i += concurrency) {
+      const batch = epochsNeeded.slice(i, i + concurrency);
+      await Promise.all(batch.map(loadEpoch));
+      const hole = union.epochs.find(epoch => {
+        const known = already.some(set => set.has(epoch)) || byEpoch.has(epoch);
+        if (!known) return false;
+        return !epochHasAmount(epoch);
+      });
+      if (hole) break;
+    }
 
     const keyIndex = new Map(keys.map((k, i) => [k, i]));
     return list.map(acc => {
@@ -1346,6 +1370,7 @@
     OVERLAY_TTL_MS,
     MAX_REWARD_HISTORY_EPOCHS,
     REWARD_RPC_CONCURRENCY,
+    REWARD_RPC_RETRIES,
     PUBLIC_RPCS,
     FIATS,
     FIAT_CODES,

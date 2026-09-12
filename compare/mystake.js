@@ -662,15 +662,14 @@ function renderFullStakeStory(view) {
   const titleEl = host.querySelector("h2");
   const n = Number(money?.recordedCount || money?.windowSize);
   const hasEpochList = money?.showCumulative && Number.isFinite(n) && n > 1;
-  const showRewardsCard = hasEpochList || rewardsPending;
-  if (kickerEl) kickerEl.textContent = showRewardsCard ? "Last epochs' rewards" : "Your validator";
-  if (titleEl) titleEl.textContent = showRewardsCard ? "Last epochs' rewards" : "Your validator";
+  if (kickerEl) kickerEl.textContent = "Last epochs' rewards";
+  if (titleEl) titleEl.textContent = "Last epochs' rewards";
   if (lead) {
     lead.textContent = hasEpochList
       ? "Last epoch is the latest payout above. These are last epochs' rewards in a row – not lifetime history."
       : rewardsPending
         ? "Last epoch is in. Loading last epochs' rewards…"
-        : "This operator’s profile: voting, stability, and fee history.";
+        : "Last epoch is above. We could not follow an earlier payout in a row after it.";
   }
   if (amounts) {
     amounts.innerHTML = "";
