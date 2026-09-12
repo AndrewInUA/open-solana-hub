@@ -630,7 +630,7 @@ function renderOverall(v) {
     }
     if (money?.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
       amounts.appendChild(
-        kvMoney(money.windowLabel || "Since we started watching", money.cumulativeSol)
+        kvMoney(money.windowLabel || "Consecutive payouts", money.cumulativeSol)
       );
     }
     const showMoney = Boolean(amounts.childElementCount) || Boolean(storyText);
@@ -662,12 +662,12 @@ function renderFullStakeStory(view) {
     return;
   }
   host.classList.remove("hidden");
-  const windowLabel = rewardsWindowLabel(money) || "Since we started watching";
+  const windowLabel = rewardsWindowLabel(money) || "Consecutive payouts";
   const kickerEl = host.querySelector(".verdict-kicker");
   const titleEl = host.querySelector("h2");
   if (money?.showCumulative) {
-    if (kickerEl) kickerEl.textContent = "Recent payouts";
-    if (titleEl) titleEl.textContent = "Since we started watching";
+    if (kickerEl) kickerEl.textContent = "Consecutive payouts";
+    if (titleEl) titleEl.textContent = "Consecutive payouts";
   } else {
     if (kickerEl) kickerEl.textContent = "Last payout";
     if (titleEl) titleEl.textContent = "Last epoch";
@@ -676,7 +676,7 @@ function renderFullStakeStory(view) {
     const n = Number(money?.recordedCount || money?.windowSize);
     lead.textContent =
       money?.showCumulative && Number.isFinite(n) && n > 1
-        ? "Last epoch, and earlier payouts since we started watching – not lifetime history."
+        ? "Last epoch, and the earlier payouts in this unbroken run – not lifetime history."
         : rewardsPending
           ? "Last epoch is in. Reading consecutive payouts we could follow…"
           : "The latest finished payout.";
@@ -713,7 +713,7 @@ function renderFullStakeStory(view) {
         rowAmounts.append(kvMoney("Last epoch", m.lastEpochSol, { signed: true }));
       }
       if (m.showCumulative && Number.isFinite(Number(m.cumulativeSol))) {
-        rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Since we started watching", m.cumulativeSol));
+        rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Consecutive payouts", m.cumulativeSol));
       }
       block.append(rowAmounts);
     }
@@ -731,7 +731,7 @@ function renderFullStakeStory(view) {
   }
   if (note) {
     if (money?.showCumulative) {
-      note.textContent = "Sum of those payouts since we started watching – not lifetime history.";
+      note.textContent = "Sum of this consecutive run – not lifetime history.";
     } else if (rewardsPending) {
       note.textContent = "Reading consecutive payouts we could follow – not lifetime history.";
     } else {
@@ -798,7 +798,7 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
       amounts.append(kv("Last epoch", "–"));
     }
     if (money.showCumulative && Number.isFinite(Number(money.cumulativeSol))) {
-      amounts.append(kvMoney(money.windowLabel || "Since we started watching", money.cumulativeSol));
+      amounts.append(kvMoney(money.windowLabel || "Consecutive payouts", money.cumulativeSol));
     }
     amounts.append(kv("Stake status", acc.status || "–"));
     top.append(amounts);
