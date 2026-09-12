@@ -657,28 +657,27 @@ function renderFullStakeStory(view) {
     return;
   }
   host.classList.remove("hidden");
-  const windowLabel = rewardsWindowLabel(money) || "Last epoch rewards";
+  const windowLabel = rewardsWindowLabel(money) || "Last epochs' rewards";
   const kickerEl = host.querySelector(".verdict-kicker");
   const titleEl = host.querySelector("h2");
-  if (kickerEl) kickerEl.textContent = "Last payout";
-  if (titleEl) titleEl.textContent = "Last epoch";
+  const n = Number(money?.recordedCount || money?.windowSize);
+  const hasEpochList = money?.showCumulative && Number.isFinite(n) && n > 1;
+  const showRewardsCard = hasEpochList || rewardsPending;
+  if (kickerEl) kickerEl.textContent = showRewardsCard ? "Last epochs' rewards" : "Your validator";
+  if (titleEl) titleEl.textContent = showRewardsCard ? "Last epochs' rewards" : "Your validator";
   if (lead) {
-    const n = Number(money?.recordedCount || money?.windowSize);
-    lead.textContent =
-      money?.showCumulative && Number.isFinite(n) && n > 1
-        ? "The latest finished payout, then earlier epochs in a row when we could follow them."
-        : rewardsPending
-          ? "Last epoch is in. Checking earlier epochs in a row…"
-          : "The latest finished payout.";
+    lead.textContent = hasEpochList
+      ? "Last epoch is the latest payout above. These are last epochs' rewards in a row – not lifetime history."
+      : rewardsPending
+        ? "Last epoch is in. Loading last epochs' rewards…"
+        : "This operator’s profile: voting, stability, and fee history.";
   }
   if (amounts) {
     amounts.innerHTML = "";
-    if (Number.isFinite(Number(money?.activeSol)) && money.activeSol > 0) {
-      amounts.appendChild(kvMoney("Active stake", money.activeSol));
+    if (hasEpochList && Number.isFinite(Number(money.cumulativeSol))) {
+      amounts.appendChild(kvMoney(windowLabel, money.cumulativeSol));
     }
-    if (money?.lastEpochSol != null && Number.isFinite(Number(money.lastEpochSol))) {
-      amounts.appendChild(kvMoney("Last epoch", money.lastEpochSol, { signed: true }));
-    }
+    amounts.classList.toggle("hidden", !amounts.childElementCount);
   }
   accountsHost.innerHTML = "";
   const delegated = rows.filter(r => r.acc?.vote || Number(r.acc?.delegatedSol) > 0);
@@ -692,32 +691,39 @@ function renderFullStakeStory(view) {
     const title =
       row.health?.name ||
       (acc.vote ? shortKey(acc.vote) : acc.pubkey ? `Stake ${shortKey(acc.pubkey)}` : "Stake");
-    if (repeatAccountMoney) block.append(el("h3", "", title));
     if (repeatAccountMoney) {
+      block.append(el("h3", "", title));
       const rowAmounts = el("div", "verdict-amounts");
       rowAmounts.append(kvMoney("Active", acc.delegatedSol));
       if (m.lastEpochSol != null) {
         rowAmounts.append(kvMoney("Last epoch", m.lastEpochSol, { signed: true }));
       }
+      if (m.showCumulative && Number.isFinite(Number(m.cumulativeSol))) {
+        rowAmounts.append(kvMoney(rewardsWindowLabel(m) || "Last epochs' rewards", m.cumulativeSol));
+      }
       block.append(rowAmounts);
     }
     if (rewardRows.length > 1) {
-      const listHead = el("p", "epoch-reward-heading", rewardsWindowLabel(m) || windowLabel);
       const list = el("ul", "epoch-reward-list");
       for (const r of rewardRows) {
         const line = formatRewardEpochLine(r);
         if (!line) continue;
         list.append(el("li", "", line));
       }
-      if (list.childNodes.length) block.append(listHead, list);
+      if (list.childNodes.length) {
+        if (repeatAccountMoney) {
+          block.append(el("p", "epoch-reward-heading", rewardsWindowLabel(m) || windowLabel));
+        }
+        block.append(list);
+      }
     }
     if (block.childNodes.length) accountsHost.append(block);
   }
   if (note) {
-    if (money?.showCumulative) {
-      note.textContent = "Not lifetime history – only last epoch, then earlier epochs in a row.";
+    if (hasEpochList) {
+      note.textContent = "Not lifetime history – only last epochs we could follow in a row.";
     } else if (rewardsPending) {
-      note.textContent = "Checking earlier epochs in a row – not lifetime history.";
+      note.textContent = "Loading last epochs' rewards – not lifetime history.";
     } else {
       note.textContent = "";
     }
@@ -1128,7 +1134,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest payout. Your validator is this operator’s profile: voting, stability, and fee history.";
+    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is this operator’s profile: voting, stability, and fee history.";
   ul.append(moneyNote);
 }
 

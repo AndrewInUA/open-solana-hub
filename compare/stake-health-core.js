@@ -804,6 +804,7 @@
       fromActivation,
       showCumulative,
       stakeCount: target.length,
+      rewardRows: target.length === 1 ? parts[0].rewardRows || [] : [],
       windowLabel: rewardsWindowLabel({
         showCumulative,
         fromActivation,
@@ -842,6 +843,21 @@
       lines.push(
         `Last epoch: ${moneyLine(money.lastEpochSol, rates, code, { signed: true })}`
       );
+    }
+    if (
+      money.showCumulative &&
+      money.cumulativeSol != null &&
+      Number.isFinite(Number(money.cumulativeSol))
+    ) {
+      const label = rewardsWindowLabel(money) || "Last epochs' rewards";
+      lines.push(`${label}: ${moneyLine(money.cumulativeSol, rates, code)}`);
+      const rows = (money.rewardRows || []).filter(r => r.recorded);
+      if (rows.length > 1) {
+        for (const r of rows) {
+          const line = formatRewardEpochLine(r);
+          if (line) lines.push(line);
+        }
+      }
     }
     return lines;
   }
@@ -954,7 +970,7 @@
         kicker: TONE_BADGE.risk,
         headline,
         body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open Stake story for the last-epoch payout.",
+        next: "Open Stake story for last epoch, then last epochs' rewards.",
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1078,7 +1094,7 @@
 
   function rewardsWindowLabel(money) {
     if (!money?.showCumulative) return null;
-    return "Last epoch rewards";
+    return "Last epochs' rewards";
   }
 
   function mystakeUrl(wallet, stake, opts = {}) {
