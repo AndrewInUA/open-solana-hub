@@ -126,8 +126,9 @@ a:hover { color: var(--link-hover); }
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
+  display: block;
 }
 
 .brand-title {
@@ -861,7 +862,7 @@ html[data-theme="light"] .btn-primary {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 

@@ -97,7 +97,7 @@ function escapeHtml(s) {
 // Posts with an `image` get a large Twitter/OG card; the rest fall back to the logo.
 function socialCard(post) {
   if (!post.image) {
-    return { image: `${SITE}/assets/logo.png`, card: "summary" };
+    return { image: `${SITE}/assets/open-solana-hub-logo.png`, card: "summary" };
   }
   const src = post.image.startsWith("http")
     ? post.image
@@ -328,15 +328,15 @@ ${articleTagMetas(post)}
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
-  <link rel="icon" href="../assets/logo.png" type="image/jpeg" />
+  <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
   <script src="../site.js?v=5" defer></script>
 </head>
 <body>
   <header class="site-header">
     <div class="site-header-inner">
       <div class="brand">
-        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
-          <img src="../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        <a href="../index.html" class="brand-logo-link" aria-label="Open Solana Hub">
+          <img src="../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="44" height="44" />
         </a>
         <a href="../index.html" class="brand-text-link">
           <span class="brand-text">
@@ -388,8 +388,8 @@ ${articleTagMetas(post)}
 
   <footer class="wrap site-footer">
     <div class="footer-brand">
-      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="AndrewInUA validator – andrewinua.com">
-        <img src="../assets/logo.png" alt="" width="36" height="36" />
+      <a href="../index.html" class="footer-logo-link" aria-label="Open Solana Hub">
+        <img src="../assets/open-solana-hub-logo.svg" alt="" width="36" height="36" />
       </a>
       <div class="footer-brand-text">
         <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
@@ -455,15 +455,15 @@ ${articleTagMetas(post)}
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../styles.css" />
-  <link rel="icon" href="../../assets/logo.png" type="image/jpeg" />
+  <link rel="icon" href="../../assets/open-solana-hub-logo.png" type="image/png" />
   <script src="../../site.js?v=5" defer></script>
 </head>
 <body>
   <header class="site-header">
     <div class="site-header-inner">
       <div class="brand">
-        <a href="https://andrewinua.com/" class="brand-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA – andrewinua.com">
-          <img src="../../assets/logo.png" alt="" class="brand-logo" width="44" height="44" />
+        <a href="../index.html" class="brand-logo-link" aria-label="Open Solana Hub">
+          <img src="../../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="44" height="44" />
         </a>
         <a href="../index.html" class="brand-text-link">
           <span class="brand-text">
@@ -515,8 +515,8 @@ ${articleTagMetas(post)}
 
   <footer class="wrap site-footer">
     <div class="footer-brand">
-      <a href="https://andrewinua.com/" class="footer-logo-link" target="_blank" rel="noopener noreferrer" aria-label="Валідатор AndrewInUA">
-        <img src="../../assets/logo.png" alt="" width="36" height="36" />
+      <a href="../index.html" class="footer-logo-link" aria-label="Open Solana Hub">
+        <img src="../../assets/open-solana-hub-logo.svg" alt="" width="36" height="36" />
       </a>
       <div class="footer-brand-text">
         <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Open Solana Hub">
+  <title>Open Solana Hub</title>
+  <defs>
+    <linearGradient id="osh-bars" x1="150" y1="160" x2="366" y2="352" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2ee9d0"/>
+      <stop offset="50%" stop-color="#3b6cff"/>
+      <stop offset="100%" stop-color="#b14cff"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="214" fill="#12151c"/>
+  <circle cx="256" cy="256" r="214" fill="none" stroke="#c9ff15" stroke-width="26"/>
+  <g fill="url(#osh-bars)" transform="translate(138 164) scale(0.593)">
+    <path d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z"/>
+    <path d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z"/>
+    <path d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z"/>
+  </g>
+</svg>
