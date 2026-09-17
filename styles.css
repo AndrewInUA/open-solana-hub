@@ -123,8 +123,8 @@ a:hover { color: var(--link-hover); }
 }
 
 .brand-logo {
-  width: 42px;
-  height: 42px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: contain;
   flex-shrink: 0;
@@ -859,8 +859,8 @@ html[data-theme="light"] .btn-primary {
 }
 
 .footer-logo-link img {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: contain;
   display: block;

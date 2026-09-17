@@ -336,7 +336,7 @@ ${articleTagMetas(post)}
     <div class="site-header-inner">
       <div class="brand">
         <a href="../index.html" class="brand-logo-link" aria-label="Open Solana Hub">
-          <img src="../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="44" height="44" />
+          <img src="../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="32" height="32" />
         </a>
         <a href="../index.html" class="brand-text-link">
           <span class="brand-text">
@@ -389,7 +389,7 @@ ${articleTagMetas(post)}
   <footer class="wrap site-footer">
     <div class="footer-brand">
       <a href="../index.html" class="footer-logo-link" aria-label="Open Solana Hub">
-        <img src="../assets/open-solana-hub-logo.svg" alt="" width="36" height="36" />
+        <img src="../assets/open-solana-hub-logo.svg" alt="" width="32" height="32" />
       </a>
       <div class="footer-brand-text">
         <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
@@ -463,7 +463,7 @@ ${articleTagMetas(post)}
     <div class="site-header-inner">
       <div class="brand">
         <a href="../index.html" class="brand-logo-link" aria-label="Open Solana Hub">
-          <img src="../../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="44" height="44" />
+          <img src="../../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="32" height="32" />
         </a>
         <a href="../index.html" class="brand-text-link">
           <span class="brand-text">
@@ -516,7 +516,7 @@ ${articleTagMetas(post)}
   <footer class="wrap site-footer">
     <div class="footer-brand">
       <a href="../index.html" class="footer-logo-link" aria-label="Open Solana Hub">
-        <img src="../../assets/open-solana-hub-logo.svg" alt="" width="36" height="36" />
+        <img src="../../assets/open-solana-hub-logo.svg" alt="" width="32" height="32" />
       </a>
       <div class="footer-brand-text">
         <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
