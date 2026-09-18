@@ -95,8 +95,10 @@
   ];
 
   const DEFAULT_TELEGRAM_BOT_USERNAME = "stake_health_bot";
-  const TELEGRAM_BOT_URL = `https://t.me/${DEFAULT_TELEGRAM_BOT_USERNAME}`;
-  const TELEGRAM_BOT_URL_RE = /^https:\/\/t\.me\/[A-Za-z0-9_]{5,32}$/;
+  // telegram.me, not t.me: t.me times out on some networks while telegram.me still loads.
+  const TELEGRAM_BOT_HOST = "telegram.me";
+  const TELEGRAM_BOT_URL = `https://${TELEGRAM_BOT_HOST}/${DEFAULT_TELEGRAM_BOT_USERNAME}`;
+  const TELEGRAM_BOT_URL_RE = /^https:\/\/(?:t\.me|telegram\.me)\/[A-Za-z0-9_]{5,32}$/;
 
   const TELEGRAM_CTA = {
     kicker: "Telegram",
@@ -1163,26 +1165,23 @@
     return TELEGRAM_BOT_URL_RE.test(String(value || "").trim());
   }
 
-  /** Only a real https://t.me/<username> link; never #, relative, or mystake URLs. */
+  /** Only a real Telegram bot link; never #, relative, or mystake URLs. Always emit telegram.me. */
   function safeTelegramBotUrl(value) {
     const trimmed = String(value || "").trim();
-    return isTelegramBotUrl(trimmed) ? trimmed : TELEGRAM_BOT_URL;
+    return isTelegramBotUrl(trimmed) ? telegramBotUrl(trimmed) : TELEGRAM_BOT_URL;
   }
 
   function telegramBotUsername(raw) {
     const trimmed = String(raw || "").trim();
-    if (isTelegramBotUrl(trimmed)) {
-      return trimmed.slice("https://t.me/".length);
-    }
+    const fromUrl = trimmed.match(/^https:\/\/(?:t\.me|telegram\.me)\/([A-Za-z0-9_]{5,32})$/);
+    if (fromUrl) return fromUrl[1];
     const username = trimmed.replace(/^@/, "");
     if (/^[A-Za-z0-9_]{5,32}$/.test(username)) return username;
     return DEFAULT_TELEGRAM_BOT_USERNAME;
   }
 
   function telegramBotUrl(raw) {
-    const trimmed = String(raw || "").trim();
-    if (isTelegramBotUrl(trimmed)) return trimmed;
-    return `https://t.me/${telegramBotUsername(raw)}`;
+    return `https://${TELEGRAM_BOT_HOST}/${telegramBotUsername(raw)}`;
   }
 
   function rangePct(min, max) {
