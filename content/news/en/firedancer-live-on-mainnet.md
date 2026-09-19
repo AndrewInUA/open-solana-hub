@@ -8,6 +8,7 @@ description: >-
 teaser: >-
   Jump Crypto's independent client is producing mainnet blocks. Client diversity is now a production
   reality, not a roadmap item.
+image: /content/media/firedancer-client-card.png
 ---
 
 Firedancer, the Solana validator client built from scratch by Jump Crypto, is now running in
@@ -15,7 +16,10 @@ Firedancer, the Solana validator client built from scratch by Jump Crypto, is no
  Solana's first fully independent second client. The headline is network resilience: a single client
  bug no longer halts the entire chain.
 
-      
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/firedancer-client-card.png" alt="Editorial illustration of Firedancer: two independent validator clients producing the same chain" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Two independent clients, one chain. A bug in Agave no longer has to stop every node at once.</figcaption>
+</figure>
 
 ## Why one client was a problem
 

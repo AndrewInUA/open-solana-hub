@@ -8,13 +8,17 @@ description: >-
 teaser: >-
   Solana Governance Proposals went live on July 2. Stake-weighted votes are now on-chain, and
   delegators can override their validator's position.
+image: /content/media/sgp-governance-card.png
 ---
 
 On July 2, 2026, the Solana Foundation activated **Solana Governance Proposals (SGPs)**,
  the network's first formal, on-chain way to vote on its direction. For the first time, big decisions
  get a recorded, stake-weighted vote instead of informal consensus. If you delegate SOL, you can also vote yourself.
 
-      
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/sgp-governance-card.png" alt="Editorial illustration of Solana on-chain governance: a stake-weighted vote recorded on a public ledger" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>SGPs put the vote on-chain. Your stake has weight – and you can override your validator.</figcaption>
+</figure>
 
 ## How an SGP works
 

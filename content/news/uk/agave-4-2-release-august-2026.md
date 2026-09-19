@@ -8,6 +8,7 @@ description: >-
 teaser: >-
   Серпневий реліз Anza знижує ренту ~на 90%, піднімає max tx до 4096 байт і цілиться в слоти 200 мс.
   Повний код Alpenglow – для тестів; перемикання консенсусу на mainnet чекає 4.3.
+image: /content/media/agave-4-2-card.png
 ---
 
 Anza випустила **Agave 4.2** – наступний реліз основного клієнта валідатора Solana.
@@ -15,6 +16,19 @@ Anza випустила **Agave 4.2** – наступний реліз осно
  суттєве зниження ончейн-ренти, більші транзакції та коротші слоти. У тому ж релізі вже є повний
  код консенсусу [Alpenglow](./alpenglow-consensus-status-july-2026.html) –
  для community test cluster, але без активації на mainnet до Agave 4.3.
+
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/agave-4-2-card.png" alt="Ілюстрація релізу Agave 4.2: дешевша рента, більші транзакції й швидші слоти" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Agave 4.2: дешевша рента, більші транзакції й швидший годинник – Alpenglow іще чекає в кулісах.</figcaption>
+</figure>
+
+<div class="callout">
+<strong>Оновлення, вересень 2026</strong>
+        Transaction v1 увімкнувся 15 вересня. <a href="./solana-250ms-slots-september-2026.html">Слоти 250 мс
+        активувалися на епосі 1037</a> 18 вересня. Того ж дня Agave 4.3 вийшов на mainnet із Alpenglow
+        усе ще за закритим feature gate – операторські нотатки тепер вказують на пізніше перемикання
+        в районі 4.4, не 4.3.
+</div>
 
       
 

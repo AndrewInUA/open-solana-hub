@@ -8,13 +8,17 @@ description: >-
 teaser: >-
   Solana Governance Proposals запрацювали 2 липня. Голосування з вагою стейку тепер на ланцюзі, а
   делегатори можуть скасувати позицію свого валідатора.
+image: /content/media/sgp-governance-card.png
 ---
 
 2 липня 2026 року Solana Foundation активувала **Solana Governance Proposals (SGP)**,
  перший формальний ончейн-механізм голосування за напрям розвитку мережі. Важливі рішення
  тепер фіксуються з вагою стейку на ланцюзі. Якщо ви делегуєте SOL, можете проголосувати самі.
 
-      
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/sgp-governance-card.png" alt="Ілюстрація ончейн-голосування Solana: голос із вагою стейку записаний у відкритий реєстр" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>SGP фіксує голос ончейн. Стейк має вагу – і ви можете скасувати позицію валідатора.</figcaption>
+</figure>
 
 ## Як працює SGP
 

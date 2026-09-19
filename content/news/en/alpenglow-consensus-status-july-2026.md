@@ -8,20 +8,24 @@ description: >-
 teaser: >-
   Votor consensus is rolling out through Agave, with testnet activation this summer and mainnet
   targeted for late 2026. What ships now, what waits, and what changes for validators.
+image: /content/media/alpenglow-consensus-card.png
 ---
 
 Alpenglow is the largest change to how Solana agrees on blocks since the network launched.
  As of mid-July 2026 it is rolling out through the Agave validator client, with testnet activation
  expected this summer and mainnet activation later in the year, after community testing and security audits.
 
-      
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/alpenglow-consensus-card.png" alt="Editorial illustration of Alpenglow consensus: validators agreeing on a block in a blink" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Alpenglow replaces on-chain vote transactions with Votor: finality measured in a blink, not several seconds.</figcaption>
+</figure>
 
 <div class="callout">
-<strong>August 2026 update</strong>
-        <a href="./agave-4-2-release-august-2026.html">Agave 4.2</a> now ships the complete Alpenglow codebase
-        for community test clusters and security review. Mainnet activation is expected in Agave 4.3
-        (targeted for October 2026), not in 4.2. Anza is also running an Alpenglow bug bounty
-        (up to 50,000 SOL) from August 5–19, 2026.
+<strong>September 2026 update</strong>
+        <a href="./agave-4-2-release-august-2026.html">Agave 4.2</a> shipped the complete Alpenglow codebase
+        for test clusters. Agave 4.3 reached mainnet on September 18 with the Alpenglow feature gate
+        still closed; operator notes now point to a later 4.4-era activation, not a 4.3 flip.
+        Separately, <a href="./solana-250ms-slots-september-2026.html">250ms slots are live</a> as of epoch 1037.
 </div>
 
       
@@ -120,5 +124,5 @@ If you hold or use SOL without running infrastructure, the practical change is f
 <div class="callout">
 <strong>In one sentence</strong>
         Alpenglow replaces Solana's original voting system with a faster, simpler one: finality in a blink.
-        The full code is in Agave 4.2 for testing; mainnet activation is aimed at Agave 4.3 later in 2026.
+        The full code is in Agave 4.3, still feature-gated; mainnet activation is now aimed at a later 4.4-era flip.
 </div>

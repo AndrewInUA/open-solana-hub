@@ -8,20 +8,24 @@ description: >-
 teaser: >-
   Консенсус Votor розгортається через Agave: testnet цього літа, mainnet наприкінці 2026 року. Що
   входить у реліз, що відкладено, і що зміниться для валідаторів.
+image: /content/media/alpenglow-consensus-card.png
 ---
 
 Alpenglow є найбільшою зміною в тому, як Solana узгоджує блоки, від моменту запуску мережі.
  На середину липня 2026 року оновлення розгортається через клієнт валідатора Agave: активація
  на testnet очікується цього літа, mainnet після тестування спільноти та аудитів безпеки.
 
-      
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/alpenglow-consensus-card.png" alt="Ілюстрація консенсусу Alpenglow: валідатори узгоджують блок за мить" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Alpenglow замінює ончейн vote-транзакції на Votor: фіналізація за мить, а не за кілька секунд.</figcaption>
+</figure>
 
 <div class="callout">
-<strong>Оновлення серпня 2026</strong>
-        <a href="./agave-4-2-release-august-2026.html">Agave 4.2</a> уже містить повний код Alpenglow
-        для community test cluster і security review. Активація на mainnet очікується в Agave 4.3
-        (орієнтовно жовтень 2026), не в 4.2. Anza також проводить bug bounty для Alpenglow
-        (до 50 000 SOL) з 5 по 19 серпня 2026.
+<strong>Оновлення, вересень 2026</strong>
+        <a href="./agave-4-2-release-august-2026.html">Agave 4.2</a> приніс повний код Alpenglow
+        для test cluster. Agave 4.3 вийшов на mainnet 18 вересня із закритим feature gate Alpenglow;
+        операторські нотатки тепер вказують на пізнішу активацію в районі 4.4, не на перемикання в 4.3.
+        Окремо <a href="./solana-250ms-slots-september-2026.html">слоти 250 мс уже живі</a> з епохи 1037.
 </div>
 
       
@@ -118,6 +122,6 @@ Alpenglow приходить через релізи Agave, тож плануй�
 <div class="callout">
 <strong>Коротко</strong>
         Alpenglow замінює стару систему голосування на швидшу й простішу: фіналізація за сотні
-        мілісекунд. Повний код уже в Agave 4.2 для тестів; активація на mainnet цілиться на Agave 4.3
-        пізніше у 2026 році.
+        мілісекунд. Повний код уже в Agave 4.3, але feature gate ще закритий; активація на mainnet
+        тепер цілиться на пізніше перемикання в районі 4.4.
 </div>

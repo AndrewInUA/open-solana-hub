@@ -9,6 +9,7 @@ description: >-
 teaser: >-
   Anza's August release cuts rent ~90%, raises max tx size to 4096 bytes, and targets 200ms slots.
   Full Alpenglow code ships for testing; mainnet consensus flip waits for 4.3.
+image: /content/media/agave-4-2-card.png
 ---
 
 Anza shipped **Agave 4.2**, the next release of Solana's primary validator client.
@@ -16,6 +17,18 @@ Anza shipped **Agave 4.2**, the next release of Solana's primary validator clien
  a deep cut to on-chain rent, larger transactions, and shorter slot times. The same release carries
  the complete [Alpenglow](./alpenglow-consensus-status-july-2026.html) consensus code –
  ready for community testing, but not activated on mainnet until Agave 4.3.
+
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/agave-4-2-card.png" alt="Editorial illustration for Agave 4.2: cheaper rent, larger transactions, and faster slots" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Agave 4.2: cheaper rent, larger transactions, and a faster clock – with Alpenglow still waiting in the wings.</figcaption>
+</figure>
+
+<div class="callout">
+<strong>September 2026 update</strong>
+        Transaction v1 went live on September 15. <a href="./solana-250ms-slots-september-2026.html">250ms slots
+        activated at epoch 1037</a> on September 18. Agave 4.3 also reached mainnet that day with Alpenglow
+        still feature-gated off – operator notes now point to a later 4.4-era flip, not 4.3.
+</div>
 
       
 

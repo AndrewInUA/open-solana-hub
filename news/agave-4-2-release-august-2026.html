@@ -17,13 +17,13 @@
   <meta property="og:description" content="Agave 4.2 ships cheaper rent, larger transactions, and 200ms slots. Alpenglow code is feature-complete for test clusters, with mainnet activation targeted for Agave 4.3 in October 2026." />
   <meta property="og:url" content="https://www.opensolanahub.com/news/agave-4-2-release-august-2026.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
-  <meta property="og:image" content="https://www.opensolanahub.com/assets/open-solana-hub-logo.png" />
+  <meta property="og:image" content="https://www.opensolanahub.com/content/media/agave-4-2-card.png" />
   <meta property="article:published_time" content="2026-08-03" />
   <meta property="article:section" content="Clients" />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Agave 4.2: cheaper rent, larger transactions, faster slots – Alpenglow on deck" />
   <meta name="twitter:description" content="Agave 4.2 ships cheaper rent, larger transactions, and 200ms slots. Alpenglow code is feature-complete for test clusters, with mainnet activation targeted for Agave 4.3 in October 2026." />
-  <meta name="twitter:image" content="https://www.opensolanahub.com/assets/open-solana-hub-logo.png" />
+  <meta name="twitter:image" content="https://www.opensolanahub.com/content/media/agave-4-2-card.png" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -31,7 +31,7 @@
     "headline": "Agave 4.2: cheaper rent, larger transactions, faster slots – Alpenglow on deck",
     "description": "Agave 4.2 ships cheaper rent, larger transactions, and 200ms slots. Alpenglow code is feature-complete for test clusters, with mainnet activation targeted for Agave 4.3 in October 2026.",
     "url": "https://www.opensolanahub.com/news/agave-4-2-release-august-2026.html",
-    "image": "https://www.opensolanahub.com/assets/open-solana-hub-logo.png",
+    "image": "https://www.opensolanahub.com/content/media/agave-4-2-card.png",
     "datePublished": "2026-08-03",
     "dateModified": "2026-08-03",
     "inLanguage": "en",
@@ -56,7 +56,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../styles.css?v=6" />
   <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
   <script src="../site.js?v=5" defer></script>
 </head>
@@ -111,6 +111,20 @@
  a deep cut to on-chain rent, larger transactions, and shorter slot times. The same release carries
  the complete <a href="./alpenglow-consensus-status-july-2026.html">Alpenglow</a> consensus code –
  ready for community testing, but not activated on mainnet until Agave 4.3.</p>
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/agave-4-2-card.png" alt="Editorial illustration for Agave 4.2: cheaper rent, larger transactions, and faster slots" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Agave 4.2: cheaper rent, larger transactions, and a faster clock – with Alpenglow still waiting in the wings.</figcaption>
+</figure>
+
+<div class="callout">
+<strong>September 2026 update</strong>
+        Transaction v1 went live on September 15. <a href="./solana-250ms-slots-september-2026.html">250ms slots
+        activated at epoch 1037</a> on September 18. Agave 4.3 also reached mainnet that day with Alpenglow
+        still feature-gated off – operator notes now point to a later 4.4-era flip, not 4.3.
+</div>
+
+      
+
 <h2>What ships in 4.2</h2>
 <ul>
 <li><strong>90% rent reduction (SIMD-0437):</strong> the storage bond constant falls from 6,960 to 696 lamports per byte, rolled out across five feature gates so the network can watch state growth at each step. A typical SPL token account deposit drops from roughly sixteen cents of SOL to about one and a half – making it far more practical for apps to cover rent for users.</li>

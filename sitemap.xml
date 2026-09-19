@@ -223,6 +223,24 @@
   </url>
   <!-- cms-sitemap-start -->
   <url>
+    <loc>https://www.opensolanahub.com/news/solana-250ms-slots-september-2026.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/solana-250ms-slots-september-2026.html" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/solana-250ms-slots-september-2026.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/news/solana-250ms-slots-september-2026.html" />
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.opensolanahub.com/uk/news/solana-250ms-slots-september-2026.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/solana-250ms-slots-september-2026.html" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/solana-250ms-slots-september-2026.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/news/solana-250ms-slots-september-2026.html" />
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.opensolanahub.com/news/solana-summit-serbia-first-time.html</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/solana-summit-serbia-first-time.html" />
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/solana-summit-serbia-first-time.html" />

@@ -8,13 +8,17 @@ description: >-
 teaser: >-
   Незалежний клієнт Jump Crypto вже виробляє блоки на mainnet. Різноманітність клієнтів це вже
   продакшн, а не пункт дорожньої карти.
+image: /content/media/firedancer-client-card.png
 ---
 
 Firedancer, клієнт валідатора, написаний з нуля Jump Crypto, працює на mainnet,
  виробляє блоки й обробив десятки мільйонів транзакцій. Це перший повністю незалежний
  другий клієнт Solana. Головне: стійкість мережі. Баг у одному клієнті більше не зупиняє всю мережу.
 
-      
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/firedancer-client-card.png" alt="Ілюстрація Firedancer: два незалежні клієнти валідатора виробляють один ланцюг" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Два незалежні клієнти, один ланцюг. Баг в Agave більше не мусить зупиняти всі ноди одразу.</figcaption>
+</figure>
 
 ## Чому один клієнт був проблемою
 

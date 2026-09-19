@@ -327,7 +327,7 @@ ${articleTagMetas(post)}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../styles.css?v=6" />
   <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
   <script src="../site.js?v=5" defer></script>
 </head>
@@ -454,7 +454,7 @@ ${articleTagMetas(post)}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../styles.css?v=6" />
   <link rel="icon" href="../../assets/open-solana-hub-logo.png" type="image/png" />
   <script src="../../site.js?v=5" defer></script>
 </head>
@@ -537,16 +537,25 @@ ${articleTagMetas(post)}
 `;
 }
 
+function newsThumb(post) {
+  if (!post.image) return "";
+  return `          <img class="news-card-thumb" src="${escapeHtml(post.image)}" alt="" width="320" height="180" loading="lazy" decoding="async" />
+`;
+}
+
 function newsCardEn(post, hrefPrefix = "./") {
   const dateShort = formatDateEnShort(post.date);
+  const mediaClass = post.image ? " news-card-has-media" : "";
   return `      <li>
-        <a class="news-card" href="${hrefPrefix}${post.slug}.html">
+        <a class="news-card${mediaClass}" href="${hrefPrefix}${post.slug}.html">
+${newsThumb(post)}          <span class="news-card-body">
           <span class="news-meta">
             <time class="news-date" datetime="${post.date.iso}">${dateShort}</time>
             <span class="news-tag">${escapeHtml(post.tag)}</span>
           </span>
           <span class="news-title">${escapeHtml(post.title)}</span>
           <span class="news-teaser">${escapeHtml(post.teaser)}</span>
+          </span>
         </a>
       </li>`;
 }
@@ -554,14 +563,17 @@ function newsCardEn(post, hrefPrefix = "./") {
 function newsCardUk(post, hrefPrefix = "./") {
   const dateShort = formatDateUkShort(post.date);
   const tagLabel = TAG_UK[post.tag] || post.tag;
+  const mediaClass = post.image ? " news-card-has-media" : "";
   return `      <li>
-        <a class="news-card" href="${hrefPrefix}${post.slug}.html">
+        <a class="news-card${mediaClass}" href="${hrefPrefix}${post.slug}.html">
+${newsThumb(post)}          <span class="news-card-body">
           <span class="news-meta">
             <time class="news-date" datetime="${post.date.iso}">${dateShort}</time>
             <span class="news-tag">${escapeHtml(tagLabel)}</span>
           </span>
           <span class="news-title">${escapeHtml(post.title)}</span>
           <span class="news-teaser">${escapeHtml(post.teaser)}</span>
+          </span>
         </a>
       </li>`;
 }
