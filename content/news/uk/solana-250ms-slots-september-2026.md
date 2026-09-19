@@ -1,6 +1,6 @@
 ---
-title: 'Годинник Solana прискорився: слоти 250 мс уже на mainnet'
-seo_title: 'Слоти Solana 250 мс уже на mainnet'
+title: 'Годинник Solana прискорився: слоти 250 мс вже на mainnet'
+seo_title: 'Слоти Solana 250 мс вже на mainnet'
 date: '2026-09-19'
 tag: Consensus
 description: >-

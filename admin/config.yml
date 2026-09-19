@@ -340,14 +340,14 @@ collections:
           required: false,
           hint: "Search terms for this page: event name, city, venue. Used in structured data, not a Google ranking tag.",
         }
-      - label: Event (SEO)
+      - label: Event (SEO, optional)
         name: event
         widget: object
         required: false
         collapsed: true
-        hint: "If the article is about a conference, this helps Google understand the event."
+        hint: "Only for conference posts (e.g. Summit). Leave every field empty for protocol news – empty is valid."
         fields:
-          - { label: Name, name: name, widget: string }
+          - { label: Name, name: name, widget: string, required: false }
           - {
               label: Start date,
               name: start,
@@ -355,6 +355,7 @@ collections:
               date_format: YYYY-MM-DD,
               time_format: false,
               format: YYYY-MM-DD,
+              required: false,
             }
           - {
               label: End date,
@@ -460,14 +461,14 @@ collections:
           required: false,
           hint: "Пошукові терміни: назва події, місто, локація. Для structured data, не для Google ranking.",
         }
-      - label: Event (SEO)
+      - label: Event (SEO, optional)
         name: event
         widget: object
         required: false
         collapsed: true
-        hint: "Якщо стаття про конференцію — допомагає Google зрозуміти подію."
+        hint: "Лише для статей про конференції (напр. Summit). Для новин протоколу залиште всі поля порожніми – так і треба."
         fields:
-          - { label: Name, name: name, widget: string }
+          - { label: Name, name: name, widget: string, required: false }
           - {
               label: Start date,
               name: start,
@@ -475,6 +476,7 @@ collections:
               date_format: YYYY-MM-DD,
               time_format: false,
               format: YYYY-MM-DD,
+              required: false,
             }
           - {
               label: End date,
