@@ -173,6 +173,33 @@
     true
   );
 
+  function initCopyShare() {
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-share-url]");
+      if (!btn) return;
+      e.preventDefault();
+      var url = btn.getAttribute("data-share-url");
+      var original = btn.getAttribute("data-label") || btn.textContent;
+      var copied = btn.getAttribute("data-copied") || "Copied";
+      function showCopied() {
+        btn.classList.add("is-copied");
+        var textEl = btn.querySelector("[data-share-label]");
+        if (textEl) textEl.textContent = copied;
+        window.setTimeout(function () {
+          btn.classList.remove("is-copied");
+          if (textEl) textEl.textContent = original;
+        }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(showCopied).catch(function () {
+          window.prompt(original, url);
+        });
+      } else {
+        window.prompt(original, url);
+      }
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     if (isHubThemePage()) {
       initTheme();
@@ -185,5 +212,6 @@
       }
     }
     initLinkTargets();
+    initCopyShare();
   });
 })();

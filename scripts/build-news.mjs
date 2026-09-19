@@ -212,6 +212,21 @@ function parseEvent(data) {
   };
 }
 
+const X_SHARE_ICON =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
+
+function shareHtml(post, url, lang, { end = false } = {}) {
+  const intent = `https://x.com/intent/tweet?text=${encodeURIComponent(post.seoTitle || post.title)}&url=${encodeURIComponent(url)}&via=Andrew_In_UA`;
+  const xLabel = lang === "uk" ? "Поділитися в X" : "Share on X";
+  const copyLabel = lang === "uk" ? "Копіювати посилання" : "Copy link";
+  const copiedLabel = lang === "uk" ? "Скопійовано" : "Copied";
+  const cls = end ? "article-share article-share-end" : "article-share";
+  return `<div class="${cls}">
+        <a class="article-share-x" href="${escapeHtml(intent)}">${X_SHARE_ICON}<span>${xLabel}</span></a>
+        <button type="button" class="article-share-copy" data-share-url="${escapeHtml(url)}" data-label="${escapeHtml(copyLabel)}" data-copied="${escapeHtml(copiedLabel)}"><span data-share-label>${copyLabel}</span></button>
+      </div>`;
+}
+
 function articleTagMetas(post) {
   const lines = [`  <meta property="article:section" content="${escapeHtml(post.tag)}" />`];
   if (post.keywords.length) {
@@ -375,9 +390,9 @@ ${articleTagMetas(post)}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=6" />
+  <link rel="stylesheet" href="../styles.css?v=8" />
   <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
-  <script src="../site.js?v=5" defer></script>
+  <script src="../site.js?v=6" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -425,8 +440,10 @@ ${articleTagMetas(post)}
         <time datetime="${date.iso}">${dateLong}</time>
         <span class="news-tag">${tagEsc}</span>
       </div>
+${shareHtml(post, url, "en")}
       ${bodyHtml}
 
+${shareHtml(post, url, "en", { end: true })}
       <div class="path-row">
         <a class="btn btn-primary" href="./index.html">More Solana news</a>
         <a class="btn btn-ghost" href="../ecosystem.html">How staking works</a>
@@ -503,9 +520,9 @@ ${articleTagMetas(post)}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../styles.css?v=6" />
+  <link rel="stylesheet" href="../../styles.css?v=8" />
   <link rel="icon" href="../../assets/open-solana-hub-logo.png" type="image/png" />
-  <script src="../../site.js?v=5" defer></script>
+  <script src="../../site.js?v=6" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -553,8 +570,10 @@ ${articleTagMetas(post)}
         <time datetime="${date.iso}">${dateLong}</time>
         <span class="news-tag">${tagLabel}</span>
       </div>
+${shareHtml(post, url, "uk")}
       ${bodyHtml}
 
+${shareHtml(post, url, "uk", { end: true })}
       <div class="path-row">
         <a class="btn btn-primary" href="./index.html">Більше новин Solana</a>
         <a class="btn btn-ghost" href="../ecosystem.html">Як працює стейкінг</a>

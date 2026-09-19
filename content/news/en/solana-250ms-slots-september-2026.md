@@ -58,7 +58,16 @@ This is the part that is easy to get wrong. The network now targets four slots a
  37.5 million CUs, down from 60 million at 400ms – so the per-second budget stays
  about where it was.
 
-What *does* change is latency. Wallets, DEX UIs, and market makers see state sooner.
+<div class="article-analogy">
+<strong>In plain terms</strong>
+Think of the lift in a busy office. It used to arrive every 30 seconds. Now it
+ arrives every 25. Each trip still carries the same number of people, and over
+ an hour about the same number still move between floors. The queue by the
+ doors eases, people get moving sooner, and a bottleneck is less likely to form
+ in the lobby.
+</div>
+
+That wait is latency. Wallets, DEX UIs, and market makers see state sooner.
  Any confirmation or finality threshold that is counted in slots takes less
  real time. Epochs are still a fixed 432,000 slots, but they now last about
  **30 hours** instead of 48 hours at 400ms (and 36 hours at 300ms). Stake rewards
