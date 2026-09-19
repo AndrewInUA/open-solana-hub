@@ -90,6 +90,17 @@ Watch skip rates. That is the metric that decides whether 200ms gets a mainnet
  already in Agave 4.2, not a new binary on the day – but operators on stale
  clients still show up in skip stats.
 
+<div class="callout">
+<strong>Validators pay more in vote fees</strong>
+A vote still costs the same, but there are more slots per hour, so validators
+ send more votes and pay more per day – about 1.6× the original 400ms clock,
+ and double if 200ms lands. Smaller validators feel it more: they vote constantly
+ and rarely lead, so they recoup less of those fees. This lasts until
+ <a href="./alpenglow-consensus-status-july-2026.html">Alpenglow</a> replaces vote
+ transactions. That flip is not switched on yet – expected closer to a later 4.4
+ release.
+</div>
+
 ### Delegators
 
 No restaking, no wallet migration. The practical signal is still operator
