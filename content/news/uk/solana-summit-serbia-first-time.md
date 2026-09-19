@@ -26,6 +26,7 @@ event:
 teaser: Два дні в Белграді, мій перший Solana-саміт. Я їхав переважно задля
   нетворкінгу – і не думав, що це буде настільки легко.
 image: /content/media/summit-serbia-2026-card.jpg
+image_alt: 'Solana Summit Serbia 2026 у Белграді в Sava Congress Center'
 ---
 
 До останнього тижня серпня Solana жила для мене за екраном: валідатор, який треба тримати в тонусі,

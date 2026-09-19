@@ -40,7 +40,7 @@
         "name": "What is an epoch on Solana?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "An epoch is Solana's internal calendar unit, roughly 2–3 days long. Staking changes – delegating, undelegating, commission updates – take effect at epoch boundaries, and staking rewards are paid once per epoch."
+          "text": "An epoch is 432,000 slots – about 30 hours on today's 250ms clock (it was roughly two days when slots were 400ms). Staking changes – delegating, undelegating, commission updates – take effect at epoch boundaries, and staking rewards are paid once per epoch."
         }
       },
       {
@@ -129,7 +129,8 @@ Every field has its dialect; crypto just speaks it louder. Here are the words yo
   <li><strong>Fee</strong> – the small amount of SOL a transaction costs; on Solana usually a fraction of a cent.</li>
   <li><strong>Address</strong> – your public "account number" on Solana; safe to share, unlike your keys.</li>
   <li><strong>Explorer</strong> – a public website (Solscan, Solana FM) where anyone can look up transactions, addresses, and validators.</li>
-  <li><strong>Epoch</strong> – Solana's calendar unit, roughly 2–3 days; staking changes and rewards happen on epoch boundaries.</li>
+  <li><strong>Epoch</strong> – Solana's calendar unit of 432,000 slots, currently about 30 hours; staking changes and rewards happen on epoch boundaries.</li>
+  <li><strong>Slot</strong> – the short window in which one validator may add a block; on mainnet that window is currently 250 milliseconds.</li>
   <li><strong>Mainnet</strong> – the real network with real value, as opposed to test networks used for practice.</li>
   <li><strong>Devnet / testnet</strong> – practice networks where coins have no value; developers and curious people break things here safely.</li>
   </ul>
@@ -182,8 +183,9 @@ Every field has its dialect; crypto just speaks it louder. Here are the words yo
   <h2>Frequently asked questions</h2>
   <h3>What is an epoch on Solana?</h3>
   <p>
-  An epoch is Solana's internal calendar unit, roughly 2–3 days long. Staking changes – delegating,
-  undelegating, commission updates – take effect at epoch boundaries, and rewards are paid once per epoch.
+  An epoch is 432,000 slots – about 30 hours on today's 250ms clock (it was roughly two days when
+  slots were 400ms). Staking changes – delegating, undelegating, commission updates – take effect
+  at epoch boundaries, and rewards are paid once per epoch.
   </p>
   <h3>What is validator commission?</h3>
   <p>

@@ -1,14 +1,21 @@
 ---
 title: 'Alpenglow moves closer to mainnet: where Solana''s biggest consensus change stands'
+seo_title: "Alpenglow: Solana's next consensus upgrade"
 date: '2026-07-15'
 tag: Consensus
 description: >-
-  Where Solana's Alpenglow consensus upgrade stands in July 2026: Votor, ~150ms finality, the end of
-  on-chain vote transactions, testnet timing, and what it means for stakers.
+  Alpenglow in July 2026: Votor, ~150ms finality, and the end of on-chain vote transactions. What
+  was shipping then, what still waits, and what it means for stakers.
+keywords:
+  - Alpenglow
+  - Votor
+  - Solana consensus
+  - 150ms finality
 teaser: >-
   Votor consensus is rolling out through Agave, with testnet activation this summer and mainnet
   targeted for late 2026. What ships now, what waits, and what changes for validators.
 image: /content/media/alpenglow-consensus-card.png
+image_alt: 'Alpenglow consensus: validators agreeing on a block in a blink'
 ---
 
 Alpenglow is the largest change to how Solana agrees on blocks since the network launched.
@@ -16,7 +23,7 @@ Alpenglow is the largest change to how Solana agrees on blocks since the network
  expected this summer and mainnet activation later in the year, after community testing and security audits.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/alpenglow-consensus-card.png" alt="Editorial illustration of Alpenglow consensus: validators agreeing on a block in a blink" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/alpenglow-consensus-card.png" alt="Alpenglow consensus: validators agreeing on a block in a blink" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>Alpenglow replaces on-chain vote transactions with Votor: finality measured in a blink, not several seconds.</figcaption>
 </figure>
 
@@ -55,7 +62,7 @@ Alpenglow replaces this with a new voting and finality protocol called **Votor**
 - **September 2025:** the validator governance vote passed with about 98% approval, one of the strongest mandates in Solana's history.
 - **May 2026:** Alpenglow went live on a community test cluster, the first time external validators ran it.
 - **July 2026:** the final feature flag work has been merged into Agave; testnet activation is expected over the summer, with mainnet to follow once audits and testing complete. Most estimates point to late 2026.
-- **July 31 / August 2026:** Agave 4.2 ships with feature-complete Alpenglow for test clusters; mainnet consensus activation is targeted for Agave 4.3 in October 2026.
+- **July 31 / August 2026:** Agave 4.2 ships with feature-complete Alpenglow for test clusters; mainnet consensus activation was then targeted for Agave 4.3 in October 2026 (that date later slipped – see the update above).
 
       
 

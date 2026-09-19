@@ -1,14 +1,21 @@
 ---
 title: 'Firedancer is live on mainnet: why a second validator client matters'
+seo_title: 'Firedancer is live: why a second client matters'
 date: '2026-07-04'
 tag: Clients
 description: >-
   Firedancer, Jump Crypto's independent Solana validator client, is live on mainnet and producing
-  blocks. What client diversity means for network reliability and everyday SOL holders.
+  blocks. Why a second client matters for reliability — and for everyday SOL holders.
+keywords:
+  - Firedancer
+  - Jump Crypto
+  - Solana client diversity
+  - validator client
 teaser: >-
   Jump Crypto's independent client is producing mainnet blocks. Client diversity is now a production
   reality, not a roadmap item.
 image: /content/media/firedancer-client-card.png
+image_alt: 'Firedancer: two independent validator clients producing the same chain'
 ---
 
 Firedancer, the Solana validator client built from scratch by Jump Crypto, is now running in
@@ -17,7 +24,7 @@ Firedancer, the Solana validator client built from scratch by Jump Crypto, is no
  bug no longer halts the entire chain.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/firedancer-client-card.png" alt="Editorial illustration of Firedancer: two independent validator clients producing the same chain" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/firedancer-client-card.png" alt="Firedancer: two independent validator clients producing the same chain" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>Two independent clients, one chain. A bug in Agave no longer has to stop every node at once.</figcaption>
 </figure>
 

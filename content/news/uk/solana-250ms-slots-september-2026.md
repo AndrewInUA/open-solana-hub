@@ -4,8 +4,8 @@ seo_title: 'Слоти Solana 250 мс уже на mainnet'
 date: '2026-09-19'
 tag: Consensus
 description: >-
-  Слоти 250 мс увімкнулися на mainnet Solana на епосі 1037, 18 вересня 2026. Що змінює SIMD-0525
-  для підтверджень, епох і чому швидший слот не означає більшу пропускну здатність.
+  Слоти Solana 250 мс на mainnet з епохи 1037, 18 вересня 2026. Що змінює SIMD-0525 для
+  підтверджень — і чому пропускна здатність не зростає.
 keywords:
   - Solana 250ms slots
   - SIMD-0525
@@ -15,6 +15,7 @@ teaser: >-
   Епоха 1037 активувала слоти 250 мс – третій крок від 400 мс до 200 мс. Гаманці спритніші;
   пропускна здатність не стрибає. Залишився один крок.
 image: /content/media/solana-250ms-slots-card.png
+image_alt: 'Слоти Solana 250 мс: блоки щільніше пакуються вздовж темної шкали часу'
 ---
 
 18 вересня 2026 року Solana mainnet перейшла в **епоху 1037** і почала виробляти
@@ -26,7 +27,7 @@ image: /content/media/solana-250ms-slots-card.png
  нього ще немає.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/solana-250ms-slots-card.png" alt="Ілюстрація стиснення часу слота Solana до 250 мілісекунд: блоки щільніше пакуються вздовж темної шкали часу" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/solana-250ms-slots-card.png" alt="Слоти Solana 250 мс: блоки щільніше пакуються вздовж темної шкали часу" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>Слоти 250 мс тепер задають такт mainnet. Останній запланований крок – 200 мс, лише якщо skip rate лишається здоровим.</figcaption>
 </figure>
 
@@ -109,8 +110,8 @@ image: /content/media/solana-250ms-slots-card.png
 
 ## Того ж тижня, суміжні оновлення
 
-Ще два оновлення з [Agave 4.2](./agave-4-2-release-august-2026.html)
- приземлилися того ж тижня. **Transaction v1** активувався на епосі 1035
+ Ще два оновлення з [Agave 4.2](./agave-4-2-release-august-2026.html)
+ запрацювали того ж тижня. **Transaction v1** активувався на епосі 1035
  15 вересня: максимум транзакції зріс з 1 232 до 4 096 байт. **Agave 4.3**
  вийшов на mainnet 18 вересня з повним кодом
  [Alpenglow](./alpenglow-consensus-status-july-2026.html) іще за закритим

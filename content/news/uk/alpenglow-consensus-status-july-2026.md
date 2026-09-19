@@ -1,14 +1,21 @@
 ---
 title: 'Alpenglow наближається до mainnet: де зараз найбільша зміна консенсусу Solana'
+seo_title: 'Alpenglow: наступне оновлення консенсусу Solana'
 date: '2026-07-15'
 tag: Consensus
 description: >-
-  Стан оновлення консенсусу Alpenglow у липні 2026: Votor, фіналізація ~150 мс, кінець ончейн
-  vote-транзакцій, таймінг testnet і що зміниться на mainnet.
+  Alpenglow у липні 2026: Votor, фіналізація ~150 мс і кінець ончейн vote-транзакцій. Що вже
+  йшло в реліз, що ще чекає, і що це означає для стейкерів.
+keywords:
+  - Alpenglow
+  - Votor
+  - Solana consensus
+  - 150ms finality
 teaser: >-
   Консенсус Votor розгортається через Agave: testnet цього літа, mainnet наприкінці 2026 року. Що
   входить у реліз, що відкладено, і що зміниться для валідаторів.
 image: /content/media/alpenglow-consensus-card.png
+image_alt: 'Консенсус Alpenglow: валідатори узгоджують блок за мить'
 ---
 
 Alpenglow є найбільшою зміною в тому, як Solana узгоджує блоки, від моменту запуску мережі.
@@ -16,7 +23,7 @@ Alpenglow є найбільшою зміною в тому, як Solana узго
  на testnet очікується цього літа, mainnet після тестування спільноти та аудитів безпеки.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/alpenglow-consensus-card.png" alt="Ілюстрація консенсусу Alpenglow: валідатори узгоджують блок за мить" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/alpenglow-consensus-card.png" alt="Консенсус Alpenglow: валідатори узгоджують блок за мить" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>Alpenglow замінює ончейн vote-транзакції на Votor: фіналізація за мить, а не за кілька секунд.</figcaption>
 </figure>
 
@@ -55,7 +62,7 @@ Alpenglow замінює це новим протоколом голосуван
 - **Вересень 2025:** голосування валідаторів, ~98% «за», один із найсильніших мандатів в історії Solana.
 - **Травень 2026:** Alpenglow запущено на community test cluster, вперше з зовнішніми валідаторами.
 - **Липень 2026:** фінальні feature flags змерджено в Agave; testnet цього літа, mainnet після аудитів; більшість оцінок вказує на кінець 2026 року.
-- **31 липня / серпень 2026:** Agave 4.2 виходить із feature-complete Alpenglow для тест-кластерів; активація консенсусу на mainnet цілиться на Agave 4.3 у жовтні 2026.
+- **31 липня / серпень 2026:** Agave 4.2 виходить із feature-complete Alpenglow для тест-кластерів; активація консенсусу на mainnet тоді цілилася на Agave 4.3 у жовтні 2026 (термін пізніше зсунувся – див. оновлення вище).
 
       
 

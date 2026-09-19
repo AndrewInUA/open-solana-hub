@@ -27,6 +27,7 @@ event:
 teaser: Two days in Belgrade, my first Solana summit. I went mainly for the
   networking – and I did not think it would be this easy.
 image: /content/media/summit-serbia-2026-card.jpg
+image_alt: 'Solana Summit Serbia 2026 in Belgrade at the Sava Congress Center'
 ---
 
 Until the last week of August, Solana lived for me behind a screen: a validator to keep in shape, a

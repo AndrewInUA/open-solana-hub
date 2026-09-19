@@ -1,25 +1,32 @@
 ---
 title: 'Agave 4.2: cheaper rent, larger transactions, faster slots – Alpenglow on deck'
+seo_title: 'Agave 4.2: cheaper rent, larger txs, faster slots'
 date: '2026-08-03'
 tag: Clients
 description: >-
-  Agave 4.2 ships cheaper rent, larger transactions, and 200ms slots. Alpenglow code is
-  feature-complete for test clusters, with mainnet activation targeted for Agave 4.3 in October
-  2026.
+  Agave 4.2: about 90% cheaper rent, 4,096-byte transactions, and staged slot-time cuts. Alpenglow
+  is in the binary; the consensus flip is still ahead.
+keywords:
+  - Agave 4.2
+  - SIMD-0437
+  - SIMD-0296
+  - SIMD-0525
+  - Alpenglow
 teaser: >-
-  Anza's August release cuts rent ~90%, raises max tx size to 4096 bytes, and targets 200ms slots.
-  Full Alpenglow code ships for testing; mainnet consensus flip waits for 4.3.
+  Anza's August release cuts rent ~90%, raises max tx size to 4096 bytes, and starts the slot-time
+  cuts. Full Alpenglow code ships for testing; the consensus flip is still gated.
 image: /content/media/agave-4-2-card.png
+image_alt: 'Agave 4.2: cheaper rent, larger transactions, and faster slots'
 ---
 
 Anza shipped **Agave 4.2**, the next release of Solana's primary validator client.
  Three feature-gated upgrades are headed for mainnet activation starting the week of August 17, 2026:
  a deep cut to on-chain rent, larger transactions, and shorter slot times. The same release carries
  the complete [Alpenglow](./alpenglow-consensus-status-july-2026.html) consensus code –
- ready for community testing, but not activated on mainnet until Agave 4.3.
+ ready for community testing, but not switched on for mainnet in 4.2.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/agave-4-2-card.png" alt="Editorial illustration for Agave 4.2: cheaper rent, larger transactions, and faster slots" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/agave-4-2-card.png" alt="Agave 4.2: cheaper rent, larger transactions, and faster slots" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>Agave 4.2: cheaper rent, larger transactions, and a faster clock – with Alpenglow still waiting in the wings.</figcaption>
 </figure>
 
@@ -47,8 +54,8 @@ Anza shipped **Agave 4.2**, the next release of Solana's primary validator clien
       
 
 Agave 4.2 is the first public release with the full Alpenglow codebase. Validators can run it on the
- community test cluster while researchers review the consensus surface. Mainnet activation is expected
- in **Agave 4.3**, currently targeted for October 2026 – not in 4.2 itself.
+ community test cluster while researchers review the consensus surface. In August the plan was
+ **Agave 4.3** in October 2026. That date later slipped – see the update above.
 
       
 
@@ -69,7 +76,7 @@ Alongside the release, Anza opened an Alpenglow security competition with a priz
 
 Plan an Agave 4.2 upgrade window before the August 17 activation week. Watch skip rates as slot times
  step down, and use the test cluster if you want early Alpenglow practice. Operators who stay current
- will matter more as 4.3 approaches – follow public operator channels for client-version notes.
+ will matter more as later Alpenglow gates approach – follow public operator channels for client-version notes.
 
       
 
@@ -89,8 +96,8 @@ No restaking or wallet migration. The practical signal is operator readiness: pr
 
 Cheaper rent changes product economics for account-heavy apps. Transaction `v1` unlocks
  larger payloads in one atomic call – worth adopting when you need the headroom. Indexers that decode
- raw transaction bytes need to recognize the new layout. Design for 200ms slots, but treat Alpenglow
- finality (~150ms) as a 4.3-era assumption, not a 4.2 one.
+ raw transaction bytes need to recognize the new layout. Design for shorter slots, but treat Alpenglow
+ finality (~150ms) as still ahead – not a 4.2 switch.
 
       
 
@@ -106,7 +113,7 @@ Wallets and apps should feel snappier as slots shorten, and creating token accou
 <div class="callout">
 <strong>In one sentence</strong>
         Agave 4.2 makes Solana cheaper and faster this August, and stages the full Alpenglow consensus code
-        for a later 4.3 mainnet flip – not an instant consensus switch.
+        for a later mainnet flip – not an instant consensus switch.
 </div>
 
       

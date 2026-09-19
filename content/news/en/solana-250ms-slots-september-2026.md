@@ -4,8 +4,8 @@ seo_title: 'Solana 250ms slots are live on mainnet'
 date: '2026-09-19'
 tag: Consensus
 description: >-
-  Solana 250ms slots went live on mainnet at epoch 1037 on September 18, 2026. What SIMD-0525
-  changes for confirmations, epochs, and why faster slots do not mean more capacity.
+  Solana 250ms slots went live on mainnet at epoch 1037 on 18 September 2026. What SIMD-0525
+  changes for confirmations — and why throughput does not jump.
 keywords:
   - Solana 250ms slots
   - SIMD-0525
@@ -15,6 +15,7 @@ teaser: >-
   Epoch 1037 activated 250ms slots – the third cut from 400ms toward 200ms. Wallets feel snappier;
   throughput does not jump. One step remains.
 image: /content/media/solana-250ms-slots-card.png
+image_alt: 'Solana 250ms slots: glowing blocks packing tighter along a dark timeline'
 ---
 
 On September 18, 2026, Solana mainnet crossed into **epoch 1037** and started
@@ -25,7 +26,7 @@ On September 18, 2026, Solana mainnet crossed into **epoch 1037** and started
  behind feature gates. One step remains – 200ms – and it has no mainnet date yet.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/solana-250ms-slots-card.png" alt="Editorial illustration of Solana slot times compressing to 250 milliseconds, with glowing blocks packing tighter along a dark timeline" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/solana-250ms-slots-card.png" alt="Solana 250ms slots: glowing blocks packing tighter along a dark timeline" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>250ms slots are now the mainnet clock. The last planned step is 200ms, only if skip rates stay healthy.</figcaption>
 </figure>
 

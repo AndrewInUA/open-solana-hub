@@ -1,14 +1,21 @@
 ---
 title: Solana gets on-chain governance, and your stake is now a vote
+seo_title: 'Solana on-chain governance: your stake is a vote'
 date: '2026-07-08'
 tag: Governance
 description: >-
-  Solana Governance Proposals (SGPs) launched on July 2, 2026. How on-chain governance works, what
-  staker sovereignty means, and why your choice of validator now carries a vote.
+  Solana Governance Proposals (SGPs) went live on 2 July 2026. How on-chain votes work, what staker
+  sovereignty means, and why your validator now carries a vote.
+keywords:
+  - Solana Governance Proposals
+  - SGP
+  - on-chain governance
+  - staker sovereignty
 teaser: >-
   Solana Governance Proposals went live on July 2. Stake-weighted votes are now on-chain, and
   delegators can override their validator's position.
 image: /content/media/sgp-governance-card.png
+image_alt: 'Solana on-chain governance: a stake-weighted vote on a public ledger'
 ---
 
 On July 2, 2026, the Solana Foundation activated **Solana Governance Proposals (SGPs)**,
@@ -16,7 +23,7 @@ On July 2, 2026, the Solana Foundation activated **Solana Governance Proposals (
  get a recorded, stake-weighted vote instead of informal consensus. If you delegate SOL, you can also vote yourself.
 
 <figure class="cms-figure cms-figure-hero">
-  <img src="/content/media/sgp-governance-card.png" alt="Editorial illustration of Solana on-chain governance: a stake-weighted vote recorded on a public ledger" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <img src="/content/media/sgp-governance-card.png" alt="Solana on-chain governance: a stake-weighted vote on a public ledger" width="1280" height="720" decoding="async" fetchpriority="high" />
   <figcaption>SGPs put the vote on-chain. Your stake has weight – and you can override your validator.</figcaption>
 </figure>
 

@@ -97,12 +97,43 @@ function escapeHtml(s) {
 // Posts with an `image` get a large Twitter/OG card; the rest fall back to the logo.
 function socialCard(post) {
   if (!post.image) {
-    return { image: `${SITE}/assets/open-solana-hub-logo.png`, card: "summary" };
+    return {
+      image: `${SITE}/assets/open-solana-hub-logo.png`,
+      card: "summary",
+      alt: "Open Solana Hub",
+      width: 512,
+      height: 512,
+      type: "image/png",
+    };
   }
   const src = post.image.startsWith("http")
     ? post.image
     : `${SITE}${post.image.startsWith("/") ? "" : "/"}${post.image}`;
-  return { image: src, card: "summary_large_image" };
+  const lower = post.image.toLowerCase();
+  const type = lower.endsWith(".jpg") || lower.endsWith(".jpeg") ? "image/jpeg" : "image/png";
+  return {
+    image: src,
+    card: "summary_large_image",
+    alt: post.imageAlt || post.title,
+    width: post.imageWidth || 1280,
+    height: post.imageHeight || 720,
+    type,
+  };
+}
+
+function socialImageMetas(social) {
+  const lines = [
+    `  <meta property="og:image" content="${escapeHtml(social.image)}" />`,
+    `  <meta property="og:image:type" content="${social.type}" />`,
+    `  <meta property="og:image:width" content="${social.width}" />`,
+    `  <meta property="og:image:height" content="${social.height}" />`,
+  ];
+  if (social.alt) {
+    const alt = escapeHtml(social.alt);
+    lines.push(`  <meta property="og:image:alt" content="${alt}" />`);
+    lines.push(`  <meta name="twitter:image:alt" content="${alt}" />`);
+  }
+  return lines.join("\n");
 }
 
 function parseDate(raw) {
@@ -183,6 +214,9 @@ function parseEvent(data) {
 
 function articleTagMetas(post) {
   const lines = [`  <meta property="article:section" content="${escapeHtml(post.tag)}" />`];
+  if (post.keywords.length) {
+    lines.push(`  <meta name="keywords" content="${escapeHtml(post.keywords.join(", "))}" />`);
+  }
   for (const k of post.keywords) {
     lines.push(`  <meta property="article:tag" content="${escapeHtml(k)}" />`);
   }
@@ -194,10 +228,16 @@ function articleJsonLd(post, { url, lang }) {
   const data = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
-    headline: post.title,
+    headline: post.seoTitle || post.title,
     description: post.description,
     url,
-    image: social.image,
+    image: {
+      "@type": "ImageObject",
+      url: social.image,
+      width: social.width,
+      height: social.height,
+      caption: social.alt || post.title,
+    },
     datePublished: post.date.iso,
     dateModified: post.date.iso,
     inLanguage: lang,
@@ -212,6 +252,10 @@ function articleJsonLd(post, { url, lang }) {
       "@type": "Organization",
       name: "Open Solana Hub",
       url: `${SITE}/`,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE}/assets/open-solana-hub-logo.png`,
+      },
     },
   };
   if (post.keywords.length) data.keywords = post.keywords;
@@ -267,6 +311,9 @@ function readPosts(lang) {
         teaser: String(data.teaser || data.description || ""),
         tag: String(data.tag || "Ecosystem"),
         image: data.image ? String(data.image) : "",
+        imageAlt: data.image_alt ? String(data.image_alt) : "",
+        imageWidth: Number(data.image_width) || 0,
+        imageHeight: Number(data.image_height) || 0,
         keywords: parseKeywords(data),
         event: parseEvent(data),
         date,
@@ -310,15 +357,16 @@ function renderArticleEn(post) {
   <link rel="alternate" hreflang="x-default" href="${url}" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="en_US" />
-  <meta property="og:title" content="${titleEsc}" />
+  <meta property="og:locale:alternate" content="uk_UA" />
+  <meta property="og:title" content="${seoTitleEsc}" />
   <meta property="og:description" content="${descEsc}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:site_name" content="Open Solana Hub" />
-  <meta property="og:image" content="${social.image}" />
+${socialImageMetas(social)}
   <meta property="article:published_time" content="${date.iso}" />
 ${articleTagMetas(post)}
   <meta name="twitter:card" content="${social.card}" />
-  <meta name="twitter:title" content="${titleEsc}" />
+  <meta name="twitter:title" content="${seoTitleEsc}" />
   <meta name="twitter:description" content="${descEsc}" />
   <meta name="twitter:image" content="${social.image}" />
   <script type="application/ld+json">
@@ -437,15 +485,16 @@ function renderArticleUk(post) {
   <link rel="alternate" hreflang="x-default" href="${enUrl}" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="uk_UA" />
-  <meta property="og:title" content="${titleEsc}" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:title" content="${seoTitleEsc}" />
   <meta property="og:description" content="${descEsc}" />
   <meta property="og:url" content="${url}" />
   <meta property="og:site_name" content="Open Solana Hub" />
-  <meta property="og:image" content="${social.image}" />
+${socialImageMetas(social)}
   <meta property="article:published_time" content="${date.iso}" />
 ${articleTagMetas(post)}
   <meta name="twitter:card" content="${social.card}" />
-  <meta name="twitter:title" content="${titleEsc}" />
+  <meta name="twitter:title" content="${seoTitleEsc}" />
   <meta name="twitter:description" content="${descEsc}" />
   <meta name="twitter:image" content="${social.image}" />
   <script type="application/ld+json">
@@ -539,7 +588,8 @@ ${articleTagMetas(post)}
 
 function newsThumb(post) {
   if (!post.image) return "";
-  return `          <img class="news-card-thumb" src="${escapeHtml(post.image)}" alt="" width="320" height="180" loading="lazy" decoding="async" />
+  const alt = escapeHtml(post.imageAlt || post.title);
+  return `          <img class="news-card-thumb" src="${escapeHtml(post.image)}" alt="${alt}" width="320" height="180" loading="lazy" decoding="async" />
 `;
 }
 

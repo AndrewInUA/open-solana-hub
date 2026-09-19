@@ -402,6 +402,13 @@ collections:
           hint: "1200×630. Used for the Twitter/X and Telegram link preview. Falls back to the logo.",
         }
       - {
+          label: Image alt text,
+          name: image_alt,
+          widget: string,
+          required: false,
+          hint: "Describe the picture for Google and screen readers. Also used as og:image:alt.",
+        }
+      - {
           label: Body,
           name: body,
           widget: markdown,
@@ -513,6 +520,13 @@ collections:
           widget: image,
           required: false,
           hint: "1200×630. Прев’ю для посилання у Twitter/X і Telegram. За замовчуванням – лого.",
+        }
+      - {
+          label: Alt-текст зображення,
+          name: image_alt,
+          widget: string,
+          required: false,
+          hint: "Опис картинки для Google і скрінрідерів. Також йде в og:image:alt.",
         }
       - {
           label: Body,
