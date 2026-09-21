@@ -1148,7 +1148,9 @@ function paintTelegramSteps() {
   steps.innerHTML = "";
   if (telegramHandoffKey) {
     steps.append(
-      document.createTextNode("One tap links this public key. Epoch notes stay on.")
+      document.createTextNode(
+        "One tap links this public key. Watch up to 5 wallets. One note when a new epoch starts."
+      )
     );
     return;
   }

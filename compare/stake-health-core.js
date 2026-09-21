@@ -102,10 +102,10 @@
 
   const TELEGRAM_CTA = {
     kicker: "Telegram",
-    headline: "Get epoch checkups in Telegram",
+    headline: "Keep watch in Telegram",
     body:
-      "Same last-epoch picture and OK / Watch / Risk notes when a new Solana epoch starts. Public key only – we never move SOL.",
-    steps: "/start → /wallet → /status",
+      "This page is the checkup. Telegram watches up to 5 wallets and sends one note when a new epoch starts. Public key only.",
+    steps: "Look up, then Get notes. Or send a public key in the bot.",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
     fallback: "Telegram bot coming – ask for the link."
