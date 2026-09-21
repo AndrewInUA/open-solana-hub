@@ -1190,14 +1190,13 @@
     return isPubkey(key) && /^[A-Za-z0-9_-]{1,64}$/.test(key);
   }
 
-  /** Deep-link that pre-fills /start with a public key. Use t.me for ?start= (Telegram’s documented form). */
+  /** Deep-link that pre-fills /start with a public key. Stay on telegram.me – t.me times out on some networks. */
   function telegramStartUrl(botUrl, pubkey) {
     const username = telegramBotUsername(safeTelegramBotUrl(botUrl));
+    const base = `https://${TELEGRAM_BOT_HOST}/${username}`;
     const key = String(pubkey || "").trim();
-    if (!isTelegramStartPayload(key)) {
-      return `https://${TELEGRAM_BOT_HOST}/${username}`;
-    }
-    return `https://t.me/${username}?start=${encodeURIComponent(key)}`;
+    if (!isTelegramStartPayload(key)) return base;
+    return `${base}?start=${encodeURIComponent(key)}`;
   }
 
   function rangePct(min, max) {
