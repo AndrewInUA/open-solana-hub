@@ -230,6 +230,18 @@ function profileHref(vote) {
   return u.pathname + u.search;
 }
 
+function applyVtLink(vote) {
+  const open = $("vt-open");
+  if (!open) return;
+  if (vote) {
+    open.href = profileHref(vote);
+    open.textContent = "Open this validator";
+  } else {
+    open.href = "./index.html";
+    open.textContent = "Open Validator Transparency";
+  }
+}
+
 function explorerHref(key) {
   return `https://explorer.solana.com/address/${encodeURIComponent(key)}`;
 }
@@ -755,6 +767,7 @@ function renderFullStakeStory(view) {
       validatorLinks.append(el("p", "muted", "More validators are on the stake cards below."));
     }
     $("your-validator")?.classList.toggle("hidden", !votes.length);
+    applyVtLink(votes[0]?.vote || null);
   }
   focusFullStakeStory();
 }
@@ -959,6 +972,7 @@ function hideResults() {
   $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
   setTelegramHandoff("");
+  applyVtLink(null);
 }
 
 function fillFiatSelect() {
@@ -1138,7 +1152,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is this operator’s profile: voting, stability, and fee history.";
+    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is Validator Transparency: this operator’s voting, stability, and fee history. Telegram sends a separate note if the cut goes up. A lower cut is on that history, not a ping.";
   ul.append(moneyNote);
 }
 
@@ -1149,7 +1163,7 @@ function paintTelegramSteps() {
   if (telegramHandoffKey) {
     steps.append(
       document.createTextNode(
-        "One tap links this public key. Watch up to 5 wallets. One note when a new epoch starts."
+        "One tap links this public key. Watch up to 5 wallets. One note when a new epoch starts. A raise is a separate note."
       )
     );
     return;
@@ -1206,10 +1220,22 @@ function fillTelegramCta() {
   const headline = $("telegram-headline");
   const body = $("telegram-body");
   const fallback = $("telegram-fallback");
+  const example = $("telegram-example");
   if (kicker) kicker.textContent = TELEGRAM_CTA.kicker;
   if (headline) headline.textContent = TELEGRAM_CTA.headline;
   if (body) body.textContent = TELEGRAM_CTA.body;
   if (fallback) fallback.textContent = TELEGRAM_CTA.fallback;
+  if (example && TELEGRAM_CTA.raiseExample) {
+    example.innerHTML = "";
+    example.append(
+      document.createTextNode(
+        "A raise is its own Telegram message, not inside the epoch checkup. Example: "
+      )
+    );
+    const em = document.createElement("em");
+    em.textContent = TELEGRAM_CTA.raiseExample;
+    example.append(em);
+  }
   applyTelegramLink(TELEGRAM_BOT_URL);
   fetch("/api/telegram-info", { cache: "no-store" })
     .then(res => (res.ok ? res.json() : null))

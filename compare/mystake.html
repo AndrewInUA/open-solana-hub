@@ -572,14 +572,28 @@
       <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
       <h2 id="telegram-headline">Keep watch in Telegram</h2>
       <p class="lead" id="telegram-body">
-        This page is the checkup. Telegram watches up to 5 wallets, sends one note when a new epoch starts, and a separate note if the validator raises its cut. Public key only.
+        This page is the checkup. Telegram watches up to 5 wallets, sends one note when a new epoch starts, and a separate note if the validator raises its cut. A lower cut is on Your validator – no ping. Public key only.
       </p>
       <p class="muted" id="telegram-steps" style="margin:0 0 14px">
         <strong>Look up, then Get notes. Or send a public key in the bot.</strong>
       </p>
+      <p class="muted" id="telegram-example" style="margin:0 0 14px">
+        A raise is its own Telegram message, not inside the epoch checkup. Example: <em>AndrewInUA raised the validator's cut: 0% → 8%.</em>
+      </p>
       <div class="row">
         <a class="copy-btn" id="telegram-open" href="https://telegram.me/stake_health_bot" target="_blank" rel="noopener noreferrer">Open @stake_health_bot</a>
         <p class="muted hidden" id="telegram-fallback" style="margin:0">Telegram bot coming – ask for the link.</p>
+      </div>
+    </div>
+
+    <div class="card" id="vt-card">
+      <div class="verdict-kicker">Your validator</div>
+      <h2>Fee history is on Validator Transparency</h2>
+      <p class="lead">
+        Stake health is the checkup. Validator Transparency is the operator profile: today’s cut, whether it moved, voting, and stability. Telegram pings a raise. A lower cut stays on that history – no extra ping.
+      </p>
+      <div class="row">
+        <a class="copy-btn secondary" id="vt-open" href="./index.html">Open Validator Transparency</a>
       </div>
     </div>
 
@@ -634,7 +648,7 @@
         <li data-tone="watch"><strong>👀 Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li data-tone="risk"><strong>⚠️ Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is this operator’s profile: voting, stability, and fee history.</li>
+        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is Validator Transparency: this operator’s voting, stability, and fee history. Telegram sends a separate note if the cut goes up. A lower cut is on that history, not a ping.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
