@@ -14,8 +14,8 @@
  *
  * Health:
  *   Join each vote account to `/api/rpc`, `/api/ratings`, and `/api/snapshots`
- *   and score OK / Watch / Risk in the same voice as the Hub. Your validator
- *   is the operator profile: voting, stability, and fee history.
+ *   and score OK / Watch / Risk in the same voice as the Hub. Fee history is
+ *   on this page. Your validator is the operator profile: voting and stability.
  */
 
 const {
@@ -60,7 +60,7 @@ const {
 const THEME_KEY = "vtd-theme";
 const FIAT_KEY = "vtd-fiat";
 const RATE_CACHE_KEY = "vtd-sol-fiat";
-const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v3";
+const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v4";
 
 function apiBase() {
   const h = window.location.hostname;

@@ -108,7 +108,7 @@
     notesHow:
       "After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. A lower cut is not a ping.",
     steps: "Look up, then Get notes. Or send a public key in the bot.",
-    raiseExample: "AndrewInUA raised the validator's cut: 0% → 8%.",
+    raiseExample: "Your validator raised the cut: 0% → 8%.",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
     fallback: "Telegram bot coming – ask for the link."
@@ -354,7 +354,7 @@
   }
 
   const EN_DASH = "–";
-  const FEE_HISTORY_SHOW = 8;
+  const FEE_HISTORY_SHOW = 40;
 
   function compactFeeEvents(raw) {
     if (!Array.isArray(raw)) return [];
