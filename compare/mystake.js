@@ -39,6 +39,7 @@ const {
   pickName,
   stabilityFromHistory,
   compactOverlay,
+  feeHistoryFromOverlay,
   buildHealthView,
   loadSolFiatRates,
   solWithFiat: solWithFiatCore,
@@ -59,7 +60,7 @@ const {
 const THEME_KEY = "vtd-theme";
 const FIAT_KEY = "vtd-fiat";
 const RATE_CACHE_KEY = "vtd-sol-fiat";
-const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v2";
+const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v3";
 
 function apiBase() {
   const h = window.location.hostname;
@@ -224,21 +225,104 @@ function setBusy(busy) {
   $("status-line")?.classList.toggle("busy", !!busy);
 }
 
-function profileHref(vote) {
+function profileHref(vote, hash) {
   const u = new URL("./index.html", window.location.href);
   u.searchParams.set("vote", vote);
-  return u.pathname + u.search;
+  if (hash) u.hash = hash;
+  return u.pathname + u.search + u.hash;
 }
 
 function applyVtLink(vote) {
   const open = $("vt-open");
   if (!open) return;
   if (vote) {
-    open.href = profileHref(vote);
+    open.href = profileHref(vote, "what-changed-card");
     open.textContent = "Open this validator";
   } else {
     open.href = "./index.html";
     open.textContent = "Open Validator Transparency";
+  }
+}
+
+function resetVtCard() {
+  applyVtLink(null);
+  const headline = $("vt-headline");
+  const lead = $("vt-lead");
+  const hist = $("vt-history");
+  if (headline) headline.textContent = "Fee history";
+  if (lead) {
+    lead.textContent =
+      "Today’s cut and whether it moved. Telegram pings a raise. A lower cut stays here – no extra ping.";
+  }
+  if (hist) hist.innerHTML = "";
+}
+
+function renderFeeHistory(view) {
+  const hist = $("vt-history");
+  const headline = $("vt-headline");
+  const lead = $("vt-lead");
+  if (!hist) return;
+  hist.innerHTML = "";
+  const rows = view?.rows || [];
+  const votes = [];
+  const seen = new Set();
+  for (const row of rows) {
+    const vote = row?.acc?.vote;
+    if (!vote || seen.has(vote)) continue;
+    seen.add(vote);
+    votes.push({
+      vote,
+      name: row.health?.name || row.overlay?.name || shortKey(vote),
+      overlay: row.overlay,
+      health: row.health
+    });
+  }
+  if (!votes.length) {
+    resetVtCard();
+    return;
+  }
+  applyVtLink(votes[0].vote);
+  if (headline) headline.textContent = "Fee history";
+  if (lead) {
+    lead.textContent =
+      votes.length === 1
+        ? "Today’s cut and whether it moved. Telegram pings a raise. A lower cut stays here – no extra ping."
+        : "Each operator’s cut. Telegram pings a raise. A lower cut stays here – no extra ping.";
+  }
+  for (const v of votes) {
+    const pack = feeHistoryFromOverlay({
+      ...(v.overlay || {}),
+      name: v.name,
+      vote: v.vote,
+      commission: v.health?.commission ?? v.overlay?.commission
+    });
+    const block = el("div", "fee-history-block");
+    if (votes.length > 1) block.append(el("h3", "", v.name));
+    if (pack.nowLine) block.append(el("p", "fee-history-now", pack.nowLine));
+    if (pack.lines.length) {
+      block.append(el("p", "muted", pack.headline));
+      const ul = el("ul", "fee-history-list");
+      for (const line of pack.lines) {
+        const li = el("li", line.tone ? `tone-${line.tone}` : "", line.text);
+        if (line.tone) li.dataset.tone = line.tone;
+        ul.append(li);
+      }
+      block.append(ul);
+      if (pack.truncated) {
+        block.append(el("p", "muted", "Older moves are on Validator Transparency."));
+      }
+    } else {
+      block.append(el("p", "muted", pack.headline));
+      if (
+        pack.emptyLine &&
+        pack.emptyLine !== pack.headline &&
+        !/^Unchanged /.test(pack.headline) &&
+        !/^No stored /.test(pack.headline)
+      ) {
+        block.append(el("p", "muted", pack.emptyLine));
+      }
+    }
+    hist.append(block);
   }
 }
 
@@ -581,7 +665,8 @@ async function loadOverlay(vote) {
       snapPack.meta,
       status,
       commission
-    )
+    ),
+    feeEvents: snapPack.meta?.all_time?.commission_change_events
   });
   writeOverlayCache(vote, out);
   return out;
@@ -972,7 +1057,7 @@ function hideResults() {
   $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
   setTelegramHandoff("");
-  applyVtLink(null);
+  resetVtCard();
 }
 
 function fillFiatSelect() {
@@ -1003,6 +1088,7 @@ function paintLookup(accounts, pack, overlays) {
   lastView = view;
   renderOverall(view.overall);
   renderStakes(view.rows, pack);
+  renderFeeHistory(view);
   focusFullStakeStory();
   return view.rows;
 }
@@ -1152,7 +1238,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is Validator Transparency: this operator’s voting, stability, and fee history. Telegram sends a separate note if the cut goes up. A lower cut is on that history, not a ping.";
+    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. Telegram sends a separate note if the cut goes up. A lower cut stays on that list, not a ping.";
   ul.append(moneyNote);
 }
 

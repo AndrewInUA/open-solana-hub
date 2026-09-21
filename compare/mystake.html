@@ -493,6 +493,15 @@
     .epoch-reward-list li { margin: 4px 0; font-variant-numeric: tabular-nums; }
     .epoch-reward-heading { margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--heading); }
     .epoch-reward-list li.epoch-reward-empty { color: var(--text3); }
+    #vt-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--heading); }
+    .fee-history-block { margin: 0 0 14px; }
+    .fee-history-block:last-child { margin-bottom: 12px; }
+    .fee-history-block h3 { margin: 0 0 6px; font-size: 16px; color: var(--heading); }
+    .fee-history-now { margin: 0 0 6px; font-size: 15px; font-weight: 600; color: var(--heading); }
+    .fee-history-list { margin: 6px 0 0; padding-left: 18px; color: var(--text); font-size: 13px; font-variant-numeric: tabular-nums; }
+    .fee-history-list li { margin: 4px 0; }
+    .fee-history-list li[data-tone="ok"] { color: var(--stat-green); }
+    .fee-history-list li[data-tone="watch"] { color: #e67e22; }
     .footer {
       margin-top: 8px;
       padding: 4px 2px 0;
@@ -540,7 +549,7 @@
       <p class="lead">
         For people who already delegated. Paste the wallet that owns the stake – or a single stake account –
         to see how much you have staked and what you earned last epoch.
-        <strong>Your validator</strong> shows this operator’s voting, stability, and fee history.
+        <strong>Your validator</strong> is the operator profile. Fee history is on this page.
         A checkup in plain English.
       </p>
       <div class="row" style="margin-bottom:12px">
@@ -588,10 +597,11 @@
 
     <div class="card" id="vt-card">
       <div class="verdict-kicker">Your validator</div>
-      <h2>Fee history is on Validator Transparency</h2>
-      <p class="lead">
-        Stake health is the checkup. Validator Transparency is the operator profile: today’s cut, whether it moved, voting, and stability. Telegram pings a raise. A lower cut stays on that history – no extra ping.
+      <h2 id="vt-headline">Fee history</h2>
+      <p class="lead" id="vt-lead">
+        Today’s cut and whether it moved. Telegram pings a raise. A lower cut stays here – no extra ping.
       </p>
+      <div id="vt-history"></div>
       <div class="row">
         <a class="copy-btn secondary" id="vt-open" href="./index.html">Open Validator Transparency</a>
       </div>
@@ -625,7 +635,7 @@
       <div id="full-stake-story-accounts"></div>
       <p class="muted" id="full-stake-story-note"></p>
       <div class="full-story" id="your-validator">
-        <p class="muted" id="your-validator-line">Your validator opens this operator’s profile: voting, stability, and fee history.</p>
+        <p class="muted" id="your-validator-line">Your validator opens this operator’s profile: voting and stability. Fee history is on this page.</p>
         <div class="row" id="your-validator-links"></div>
       </div>
     </div>
@@ -648,7 +658,7 @@
         <li data-tone="watch"><strong>👀 Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li data-tone="risk"><strong>⚠️ Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Your validator is Validator Transparency: this operator’s voting, stability, and fee history. Telegram sends a separate note if the cut goes up. A lower cut is on that history, not a ping.</li>
+        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. Telegram sends a separate note if the cut goes up. A lower cut stays on that list, not a ping.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –

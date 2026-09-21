@@ -351,6 +351,26 @@
     };
   }
 
+  const EN_DASH = "–";
+  const FEE_HISTORY_SHOW = 8;
+
+  function compactFeeEvents(raw) {
+    if (!Array.isArray(raw)) return [];
+    const out = [];
+    for (const e of raw) {
+      const from = Number(e?.from);
+      const to = Number(e?.to);
+      if (!Number.isFinite(from) || !Number.isFinite(to) || from === to) continue;
+      out.push({
+        from,
+        to,
+        captured_at: e.captured_at || e.capturedAt || null
+      });
+      if (out.length >= 40) break;
+    }
+    return out;
+  }
+
   function compactOverlay(o) {
     if (!o) return null;
     return {
@@ -361,7 +381,78 @@
       votingPct: o.votingPct,
       votingHistory: o.votingHistory || null,
       apyMedian: o.apyMedian,
-      stability: o.stability || { score: null }
+      stability: o.stability || { score: null },
+      feeEvents: compactFeeEvents(o.feeEvents)
+    };
+  }
+
+  function formatFeeDate(iso) {
+    if (!iso) return "";
+    try {
+      return new Date(iso).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC"
+      });
+    } catch {
+      return "";
+    }
+  }
+
+  function feeHistoryFromOverlay(overlay) {
+    const commission = Number(overlay?.commission);
+    const changeCount = Number(overlay?.stability?.commissionChanges);
+    const events = compactFeeEvents(overlay?.feeEvents)
+      .slice()
+      .sort((a, b) => String(b.captured_at || "").localeCompare(String(a.captured_at || "")));
+    const lines = events.slice(0, FEE_HISTORY_SHOW).map(e => {
+      const raised = e.to > e.from;
+      const date = formatFeeDate(e.captured_at);
+      return {
+        raised,
+        tone: raised ? "watch" : "ok",
+        from: e.from,
+        to: e.to,
+        text: date
+          ? `${date} ${EN_DASH} ${e.from}% → ${e.to}%`
+          : `${e.from}% → ${e.to}%`
+      };
+    });
+    const hasCommission = Number.isFinite(commission);
+    const nowLine = hasCommission
+      ? `Today’s cut: ${commission}%.`
+      : overlay
+        ? "Today’s cut is still loading."
+        : "";
+    const knownChanges = Number.isFinite(changeCount) ? changeCount : events.length;
+    let headline = "Fee history";
+    if (events.length || knownChanges > 0) {
+      const n = Math.max(knownChanges, events.length);
+      headline = n === 1 ? "One recorded cut change." : `${n} recorded cut changes.`;
+    } else if (hasCommission) {
+      headline = `Unchanged at ${commission}%.`;
+    } else if (overlay) {
+      headline = "No stored fee history yet.";
+    }
+    let emptyLine = "";
+    if (!lines.length) {
+      if (!overlay) emptyLine = "Look up a wallet to see this operator’s cut here.";
+      else if (knownChanges > 0) emptyLine = "Dates for those moves are on Validator Transparency.";
+      else emptyLine = "No recorded cut changes in stored snapshots.";
+    }
+    return {
+      name: overlay?.name || null,
+      vote: overlay?.vote || null,
+      commission: hasCommission ? commission : null,
+      changeCount: knownChanges,
+      headline,
+      nowLine,
+      emptyLine,
+      lines,
+      truncated:
+        events.length > FEE_HISTORY_SHOW ||
+        (Number.isFinite(changeCount) && changeCount > events.length)
     };
   }
 
@@ -1418,6 +1509,8 @@
     pickName,
     stabilityFromHistory,
     compactOverlay,
+    compactFeeEvents,
+    feeHistoryFromOverlay,
     scoreStake,
     lastSumFrom,
     finiteEpoch,

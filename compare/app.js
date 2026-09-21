@@ -1095,6 +1095,19 @@ function renderWhatChanged(summary) {
     if (epochWrap) epochWrap.hidden = true;
     if (epochList) epochList.innerHTML = "";
   }
+
+  scrollToChangeHistoryIfRequested();
+}
+
+function scrollToChangeHistoryIfRequested() {
+  const raw = String(window.location.hash || "").replace(/^#/, "");
+  const id = raw.split("&")[0];
+  if (id !== "what-changed-card" && id !== "change-history") return;
+  const card = document.getElementById("what-changed-card");
+  if (!card || card.style.display === "none") return;
+  requestAnimationFrame(() => {
+    card.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 let changeHistoryExportCtx = null;
