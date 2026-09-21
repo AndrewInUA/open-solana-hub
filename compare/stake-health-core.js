@@ -1259,10 +1259,7 @@
 
   function compareUrl(vote) {
     const u = new URL(COMPARE_PAGE);
-    if (vote) {
-      u.searchParams.set("vote", vote);
-      u.hash = "what-changed-card";
-    }
+    if (vote) u.searchParams.set("vote", vote);
     return u.toString();
   }
 

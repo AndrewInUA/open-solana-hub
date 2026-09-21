@@ -245,7 +245,7 @@ function applyVtLink(vote) {
   openAway(open);
   if (vote) {
     open.href = profileHref(vote, "what-changed-card");
-    open.textContent = "Open this validator";
+    open.textContent = "Detailed history";
   } else {
     open.href = "./index.html";
     open.textContent = "Open Validator Transparency";
@@ -876,7 +876,7 @@ function renderFullStakeStory(view) {
     for (const v of shown) {
       const a = document.createElement("a");
       a.className = shown.length === 1 ? "copy-btn secondary" : "copy-btn secondary";
-      a.href = profileHref(v.vote, "what-changed-card");
+      a.href = profileHref(v.vote);
       a.textContent = votes.length === 1 ? "Your validator" : `Your validator – ${v.name}`;
       openAway(a);
       validatorLinks.append(a);
@@ -936,7 +936,7 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
   if (acc.vote && showValidatorLink) {
     const a = document.createElement("a");
     a.className = "validator-link";
-    a.href = profileHref(acc.vote, "what-changed-card");
+    a.href = profileHref(acc.vote);
     a.textContent = `Your validator – ${health.name || shortKey(acc.vote)}`;
     openAway(a);
     signalsBlock.append(a);
