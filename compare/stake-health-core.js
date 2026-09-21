@@ -1184,6 +1184,22 @@
     return `https://${TELEGRAM_BOT_HOST}/${telegramBotUsername(raw)}`;
   }
 
+  /** Telegram /start payloads: 1–64 chars, A-Za-z0-9_-. Solana pubkeys fit. */
+  function isTelegramStartPayload(value) {
+    const key = String(value || "").trim();
+    return isPubkey(key) && /^[A-Za-z0-9_-]{1,64}$/.test(key);
+  }
+
+  /** Deep-link that pre-fills /start with a public key. Use t.me for ?start= (Telegram’s documented form). */
+  function telegramStartUrl(botUrl, pubkey) {
+    const username = telegramBotUsername(safeTelegramBotUrl(botUrl));
+    const key = String(pubkey || "").trim();
+    if (!isTelegramStartPayload(key)) {
+      return `https://${TELEGRAM_BOT_HOST}/${username}`;
+    }
+    return `https://t.me/${username}?start=${encodeURIComponent(key)}`;
+  }
+
   function rangePct(min, max) {
     if (!Number.isFinite(min) || !Number.isFinite(max)) return "";
     const digits = Number.isInteger(min) && Number.isInteger(max) ? 0 : 1;
@@ -1433,6 +1449,8 @@
     telegramBotUrl,
     isTelegramBotUrl,
     safeTelegramBotUrl,
+    isTelegramStartPayload,
+    telegramStartUrl,
     summarizeRecentPicture,
     howToReadLines,
     loadSolFiatRates

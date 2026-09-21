@@ -52,7 +52,8 @@ const {
   telegramBotUrl,
   telegramBotUsername,
   isTelegramBotUrl,
-  safeTelegramBotUrl
+  safeTelegramBotUrl,
+  telegramStartUrl
 } = window.StakeHealth;
 
 const THEME_KEY = "vtd-theme";
@@ -76,6 +77,8 @@ function $(id) {
 let fiatRates = null;
 let lastView = null;
 let rewardsPending = false;
+let telegramBaseUrl = TELEGRAM_BOT_URL;
+let telegramHandoffKey = "";
 
 const HUB_ORIGIN = "https://www.opensolanahub.com";
 
@@ -955,6 +958,7 @@ function hideResults() {
   $("verdict-amounts")?.classList.add("hidden");
   $("verdict-money-story")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
+  setTelegramHandoff("");
 }
 
 function fillFiatSelect() {
@@ -1025,6 +1029,7 @@ async function loadLookup({ wallet, stake }) {
     );
     const share = $("share-url");
     if (share) share.value = shareUrl(wallet || pack.wallet, stake);
+    setTelegramHandoff(wallet || pack.wallet || stake);
     if (!accounts.some(a => a.vote)) {
       await enrichP;
       return;
@@ -1137,46 +1142,71 @@ function fillHowToRead() {
   ul.append(moneyNote);
 }
 
+function paintTelegramSteps() {
+  const steps = $("telegram-steps");
+  if (!steps) return;
+  steps.innerHTML = "";
+  if (telegramHandoffKey) {
+    steps.append(
+      document.createTextNode("One tap links this public key. Epoch notes stay on.")
+    );
+    return;
+  }
+  const strong = document.createElement("strong");
+  strong.textContent = TELEGRAM_CTA.steps;
+  steps.append(strong);
+}
+
+function telegramHandoffLabel() {
+  if (!telegramHandoffKey) return `Open @${telegramBotUsername(telegramBaseUrl)}`;
+  const stake = String($("stake-input")?.value || "").trim();
+  const wallet = String($("wallet-input")?.value || "").trim();
+  if (telegramHandoffKey === stake && telegramHandoffKey !== wallet) {
+    return "Get notes for this stake";
+  }
+  return "Get notes for this wallet";
+}
+
 function applyTelegramLink(url) {
-  const safe = safeTelegramBotUrl(url);
+  telegramBaseUrl = safeTelegramBotUrl(url);
+  const openHref = telegramStartUrl(telegramBaseUrl, telegramHandoffKey);
   const open = $("telegram-open");
   const fallback = $("telegram-fallback");
   const nav = $("nav-telegram");
   const card = $("telegram-card");
   card?.classList.remove("hidden");
   if (open) {
-    open.href = safe;
+    open.href = openHref;
     open.target = "_blank";
     open.rel = "noopener noreferrer";
     open.removeAttribute("hidden");
     open.classList.remove("hidden");
-    open.textContent = `Open @${telegramBotUsername(safe)}`;
+    open.textContent = telegramHandoffLabel();
   }
   if (nav) {
-    nav.href = safe;
+    nav.href = telegramBaseUrl;
     nav.target = "_blank";
     nav.rel = "noopener noreferrer";
     nav.removeAttribute("hidden");
     nav.classList.remove("hidden");
   }
+  paintTelegramSteps();
   fallback?.classList.add("hidden");
+}
+
+function setTelegramHandoff(key) {
+  telegramHandoffKey = isPubkey(key) ? String(key).trim() : "";
+  applyTelegramLink(telegramBaseUrl);
 }
 
 function fillTelegramCta() {
   const kicker = $("telegram-kicker");
   const headline = $("telegram-headline");
   const body = $("telegram-body");
-  const steps = $("telegram-steps");
   const fallback = $("telegram-fallback");
   if (kicker) kicker.textContent = TELEGRAM_CTA.kicker;
   if (headline) headline.textContent = TELEGRAM_CTA.headline;
   if (body) body.textContent = TELEGRAM_CTA.body;
-  if (steps) {
-    steps.innerHTML = "";
-    const strong = document.createElement("strong");
-    strong.textContent = TELEGRAM_CTA.steps;
-    steps.append(strong, document.createTextNode(" – public key only. We never move SOL."));
-  }
   if (fallback) fallback.textContent = TELEGRAM_CTA.fallback;
   applyTelegramLink(TELEGRAM_BOT_URL);
   fetch("/api/telegram-info", { cache: "no-store" })
