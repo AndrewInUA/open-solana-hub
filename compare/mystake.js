@@ -264,6 +264,24 @@ function resetVtCard() {
   if (hist) hist.innerHTML = "";
 }
 
+function appendFeeRows(parent, title, rows, intro) {
+  if (!rows?.length && !intro) return;
+  if (title) parent.append(el("p", "fee-history-heading", title));
+  if (intro) parent.append(el("p", "muted", intro));
+  if (!rows?.length) return;
+  const ul = el("ul", "fee-history-pattern");
+  for (const row of rows) {
+    const li = el("li", row.tone ? `tone-${row.tone}` : "");
+    if (row.tone) li.dataset.tone = row.tone;
+    li.append(
+      el("span", "fee-history-label", row.label || ""),
+      el("span", "fee-history-text", row.text || "")
+    );
+    ul.append(li);
+  }
+  parent.append(ul);
+}
+
 function renderFeeHistory(view) {
   const hist = $("vt-history");
   const headline = $("vt-headline");
@@ -326,9 +344,22 @@ function renderFeeHistory(view) {
         !/^Unchanged /.test(pack.headline) &&
         !/^No stored /.test(pack.headline)
       ) {
-        block.append(el("p", "muted", pack.emptyLine));
+        appendFeeRows(block, "Recorded changes", [
+          { label: "Change log", tone: "ok", text: pack.emptyLine }
+        ]);
+      } else if (pack.emptyLine && /^Unchanged /.test(pack.headline)) {
+        appendFeeRows(block, "Recorded changes", [
+          { label: "Change log", tone: "ok", text: pack.emptyLine }
+        ]);
       }
     }
+    appendFeeRows(block, "Pattern over tracking period", pack.pattern);
+    appendFeeRows(
+      block,
+      "Epoch voting (live RPC)",
+      pack.votingLines,
+      pack.votingSummary
+    );
     hist.append(block);
   }
 }

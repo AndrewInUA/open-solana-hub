@@ -443,6 +443,60 @@
       else if (knownChanges > 0) emptyLine = "Dates for those moves are on Validator Transparency.";
       else emptyLine = "No recorded cut changes in stored snapshots.";
     }
+    const sample = Number(overlay?.stability?.sample);
+    const delinquent = Number(overlay?.stability?.delinquent);
+    const score = Number(overlay?.stability?.score);
+    const pattern = [];
+    if (hasCommission) {
+      pattern.push({
+        label: "Commission pattern",
+        tone: knownChanges > 0 ? "watch" : commission >= 50 ? "risk" : "ok",
+        text:
+          knownChanges === 0
+            ? commission >= 100
+              ? "Unchanged at 100% – validator keeps all rewards; stakers earn nothing"
+              : `Unchanged at ${commission}% across stored snapshots`
+            : `${knownChanges} recorded cut change${knownChanges === 1 ? "" : "s"} – currently ${commission}%`
+      });
+    }
+    if (overlay && Number.isFinite(sample) && sample > 0) {
+      const del = Number.isFinite(delinquent) ? delinquent : 0;
+      pattern.push({
+        label: "Delinquency in snapshots",
+        tone: del === 0 ? "ok" : "watch",
+        text:
+          del === 0
+            ? `No delinquent days in ${sample.toLocaleString("en-US")} stored snapshots`
+            : `${del} delinquent snapshot day${del === 1 ? "" : "s"} out of ${sample.toLocaleString("en-US")}`
+      });
+    }
+    if (overlay && Number.isFinite(score)) {
+      pattern.push({
+        label: "Stability score",
+        tone: score >= 85 ? "ok" : score >= 50 ? "watch" : "risk",
+        text: `${score}/100 from stored snapshots`
+      });
+    }
+    const vh = overlay?.votingHistory;
+    const votingLines = [];
+    let votingSummary = "";
+    if (vh && Number(vh.count) > 0) {
+      const avg = Number(vh.avg5);
+      votingSummary = Number.isFinite(avg)
+        ? `Last ${Math.min(5, Number(vh.count))} finished epochs ~${avg}% avg. In-progress epoch excluded.`
+        : `${vh.count} finished epochs in the live RPC window.`;
+      const epochs = Array.isArray(vh.epochs) ? vh.epochs.slice().reverse() : [];
+      for (const e of epochs) {
+        const pct = Number(e?.pct);
+        const epoch = Number(e?.epoch);
+        if (!Number.isFinite(epoch) || !Number.isFinite(pct)) continue;
+        votingLines.push({
+          label: `Epoch ${epoch}`,
+          tone: pct >= 95 ? "ok" : pct >= 85 ? "watch" : "risk",
+          text: `~${pct.toFixed(1)}% voting consistency`
+        });
+      }
+    }
     return {
       name: overlay?.name || null,
       vote: overlay?.vote || null,
@@ -452,6 +506,9 @@
       nowLine,
       emptyLine,
       lines,
+      pattern,
+      votingSummary,
+      votingLines,
       truncated:
         events.length > FEE_HISTORY_SHOW ||
         (Number.isFinite(changeCount) && changeCount > events.length)

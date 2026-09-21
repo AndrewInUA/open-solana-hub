@@ -1099,14 +1099,27 @@ function renderWhatChanged(summary) {
   scrollToChangeHistoryIfRequested();
 }
 
+function wantsChangeHistoryHash() {
+  const id = String(window.location.hash || "").replace(/^#/, "").split("&")[0];
+  return id === "what-changed-card" || id === "change-history";
+}
+
+function revealChangeHistoryLoading() {
+  if (!wantsChangeHistoryHash()) return;
+  const card = document.getElementById("what-changed-card");
+  if (!card) return;
+  card.style.display = "block";
+  requestAnimationFrame(() => {
+    card.scrollIntoView({ behavior: "auto", block: "start" });
+  });
+}
+
 function scrollToChangeHistoryIfRequested() {
-  const raw = String(window.location.hash || "").replace(/^#/, "");
-  const id = raw.split("&")[0];
-  if (id !== "what-changed-card" && id !== "change-history") return;
+  if (!wantsChangeHistoryHash()) return;
   const card = document.getElementById("what-changed-card");
   if (!card || card.style.display === "none") return;
   requestAnimationFrame(() => {
-    card.scrollIntoView({ behavior: "smooth", block: "start" });
+    card.scrollIntoView({ behavior: "auto", block: "start" });
   });
 }
 
@@ -3384,7 +3397,27 @@ async function main() {
   };
   const shareInput = document.getElementById("share-url");
   if (shareInput) shareInput.value = getShareLink();
-  renderSystemSignals(await fetchSystemSignals());
+
+  const liveP = USE_LIVE
+    ? fetchLive(CURRENT.voteKey)
+    : Promise.resolve({
+        commissionHistory: Array(10).fill(0),
+        uptimeLast5EpochsPct: 99.2,
+        jito: true,
+        status: "healthy",
+        nodePubkey: null,
+        epochCreditsLen: 8,
+        epochConsistencySeries: [88, 92, 95, 97, 99, 98, 100, 99, 97, 98]
+      });
+  const ratingsP = fetchRatings(CURRENT.voteKey).catch(err => {
+    console.warn("ratings failed:", err);
+    return null;
+  });
+  const snapsP = loadSnapshotsFromDB(CURRENT.voteKey);
+  fetchSystemSignals()
+    .then(renderSystemSignals)
+    .catch(() => renderSystemSignals(null));
+  revealChangeHistoryLoading();
 
   const copyBtn = document.getElementById("copy-btn");
   const copyBtnDefault = "Copy URL";
@@ -3580,17 +3613,7 @@ async function main() {
 
   let live;
   try {
-    live = USE_LIVE
-      ? await fetchLive(CURRENT.voteKey)
-      : {
-          commissionHistory: Array(10).fill(0),
-          uptimeLast5EpochsPct: 99.2,
-          jito: true,
-          status: "healthy",
-          nodePubkey: null,
-          epochCreditsLen: 8,
-          epochConsistencySeries: [88, 92, 95, 97, 99, 98, 100, 99, 97, 98]
-        };
+    live = await liveP;
   } catch (err) {
     console.error("fetchLive:", err);
     live = {
@@ -3668,13 +3691,31 @@ async function main() {
     window.renderEpochChart([]);
   }
 
-  let ratings = null;
-  try {
-    ratings = await fetchRatings(CURRENT.voteKey);
+  snapsP.then(snapshotPack => {
+    const earlyStability = computeStability({
+      live,
+      ratings: null,
+      poolsCount: null,
+      snaps: snapshotPack.snapshots,
+      snapshotMeta: snapshotPack.meta
+    });
+    renderWhatChanged(
+      computeWhatChanged({
+        snaps: snapshotPack.snapshots,
+        live,
+        stability: earlyStability,
+        snapshotMeta: snapshotPack.meta
+      })
+    );
+  }).catch(err => {
+    console.warn("change history preload failed:", err);
+  });
+
+  const ratings = await ratingsP;
+  if (ratings) {
     renderRatings(ratings);
     applyValidatorDisplayName(ratings);
-  } catch (e) {
-    console.warn("ratings failed:", e);
+  } else {
     applyValidatorDisplayName(null);
   }
 
@@ -3696,9 +3737,7 @@ async function main() {
 
   renderUpsideSignals({ live, latestCom, uptimeNum, poolsCount, apyMedian });
 
-  const { snapshots: snaps, meta: snapshotMeta } = await loadSnapshotsFromDB(
-    CURRENT.voteKey
-  );
+  const { snapshots: snaps, meta: snapshotMeta } = await snapsP;
   const stability = computeStability({ live, ratings, poolsCount, snaps, snapshotMeta });
   renderStability(stability);
   renderDelegatorSnapshotStrip({
