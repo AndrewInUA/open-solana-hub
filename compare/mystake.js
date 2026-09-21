@@ -1272,11 +1272,7 @@ function paintTelegramSteps() {
   if (!steps) return;
   steps.innerHTML = "";
   if (telegramHandoffKey) {
-    steps.append(
-      document.createTextNode(
-        "One tap links this public key. Watch up to 5 wallets. After a new epoch, the next morning you get the checkup. A raise is a separate note."
-      )
-    );
+    steps.append(document.createTextNode("One tap links this public key."));
     return;
   }
   const strong = document.createElement("strong");
@@ -1339,9 +1335,7 @@ function fillTelegramCta() {
   if (example && TELEGRAM_CTA.raiseExample) {
     example.innerHTML = "";
     example.append(
-      document.createTextNode(
-        "A raise is its own Telegram message, not inside the epoch checkup. Example: "
-      )
+      document.createTextNode("Example: ")
     );
     const em = document.createElement("em");
     em.textContent = TELEGRAM_CTA.raiseExample;
