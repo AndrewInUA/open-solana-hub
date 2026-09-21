@@ -232,9 +232,16 @@ function profileHref(vote, hash) {
   return u.pathname + u.search + u.hash;
 }
 
+function openAway(a) {
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  return a;
+}
+
 function applyVtLink(vote) {
   const open = $("vt-open");
   if (!open) return;
+  openAway(open);
   if (vote) {
     open.href = profileHref(vote, "what-changed-card");
     open.textContent = "Open this validator";
@@ -846,6 +853,7 @@ function renderFullStakeStory(view) {
       a.className = shown.length === 1 ? "copy-btn secondary" : "copy-btn secondary";
       a.href = profileHref(v.vote, "what-changed-card");
       a.textContent = votes.length === 1 ? "Your validator" : `Your validator – ${v.name}`;
+      openAway(a);
       validatorLinks.append(a);
     }
     if (votes.length > 3) {
@@ -905,6 +913,7 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
     a.className = "validator-link";
     a.href = profileHref(acc.vote, "what-changed-card");
     a.textContent = `Your validator – ${health.name || shortKey(acc.vote)}`;
+    openAway(a);
     signalsBlock.append(a);
   }
   const signals = el("div", "signals");
