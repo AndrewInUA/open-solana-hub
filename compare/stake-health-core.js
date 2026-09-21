@@ -104,7 +104,9 @@
     kicker: "Telegram",
     headline: "Keep watch in Telegram",
     body:
-      "This page is the checkup. Telegram watches up to 5 wallets, sends one note when a new epoch starts, and a separate note if the validator raises its cut. A lower cut is on Your validator – no ping. Public key only.",
+      "This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. A lower cut is not a ping – that stays on fee history. Public key only.",
+    notesHow:
+      "After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. A lower cut is not a ping.",
     steps: "Look up, then Get notes. Or send a public key in the bot.",
     raiseExample: "AndrewInUA raised the validator's cut: 0% → 8%.",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,

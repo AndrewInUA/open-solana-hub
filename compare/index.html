@@ -1085,6 +1085,13 @@
       color: var(--text2);
     }
 
+    .what-changed-watch-note {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text2);
+    }
+
     .what-changed-actions {
       display: flex;
       flex-wrap: wrap;
@@ -2556,6 +2563,7 @@
           <a id="landing-example-link" href="#">Open AndrewInUA</a>
           <span> · </span>
           <a href="./mystake.html">Already staked? See how your stake is doing</a>
+          <span> · fee history on that page, Telegram notes a raise</span>
         </p>
         <div id="landing-system-signals" class="last-updated" style="margin-top:14px">System signals: …</div>
       </div>
@@ -2952,6 +2960,9 @@
       </div>
       <p id="what-changed-headline" class="what-changed-headline">Checking snapshot history…</p>
       <p id="what-changed-sub" class="what-changed-sub"></p>
+      <p class="what-changed-watch-note">
+        Fee history is public here. <a href="./mystake.html">Stake health</a> Telegram sends a separate note if this cut goes up. A lower cut is not a ping.
+      </p>
       <div id="what-changed-export-wrap" class="what-changed-actions" hidden>
         <button type="button" id="what-changed-copy-btn" class="copy-btn what-changed-export-btn">Copy summary</button>
         <button type="button" id="what-changed-csv-btn" class="copy-btn what-changed-export-btn" style="background:var(--surface2);color:var(--text);border:1px solid var(--border)">Download CSV</button>
@@ -3030,7 +3041,7 @@
             <div class="pill pill-ok">Done: Directory on home – search by name or vote key (<a href="./index.html#directory-section">open home</a>)</div>
             <div class="pill pill-ok">Done: First-glance KPI strip + richer directory &amp; pickers (context before you open a profile)</div>
             <div class="pill pill-ok">Done: Change history exports – copy summary and daily snapshot CSV</div>
-            <div class="pill pill-ok">Done: Stake health – plain-language checkup for people who already staked (<a href="./mystake.html">open</a>)</div>
+            <div class="pill pill-ok">Done: Stake health – checkup, fee history, Telegram raise notes (<a href="./mystake.html">open</a>)</div>
             <div class="pill">Next: Per-epoch detail page</div>
             <div class="pill">Next: Delinquency alerts &amp; proactive signals</div>
             <div class="pill">Next: Network-wide change signals (directory &amp; compare views)</div>

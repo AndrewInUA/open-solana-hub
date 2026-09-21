@@ -1257,7 +1257,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. Telegram sends a separate note if the cut goes up. A lower cut stays on that list, not a ping.";
+    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A lower cut stays on this list, not a ping.";
   ul.append(moneyNote);
 }
 
@@ -1268,7 +1268,7 @@ function paintTelegramSteps() {
   if (telegramHandoffKey) {
     steps.append(
       document.createTextNode(
-        "One tap links this public key. Watch up to 5 wallets. One note when a new epoch starts. A raise is a separate note."
+        "One tap links this public key. Watch up to 5 wallets. After a new epoch, the next morning you get the checkup. A raise is a separate note."
       )
     );
     return;
