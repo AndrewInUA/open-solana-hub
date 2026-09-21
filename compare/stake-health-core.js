@@ -1225,8 +1225,30 @@
 
   function compareUrl(vote) {
     const u = new URL(COMPARE_PAGE);
-    if (vote) u.searchParams.set("vote", vote);
+    if (vote) {
+      u.searchParams.set("vote", vote);
+      u.hash = "what-changed-card";
+    }
     return u.toString();
+  }
+
+  function feeHistoriesFromRows(rows) {
+    const packs = [];
+    const seen = new Set();
+    for (const row of rows || []) {
+      const vote = row?.acc?.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      packs.push(
+        feeHistoryFromOverlay({
+          ...(row.overlay || {}),
+          name: row.health?.name || row.overlay?.name || null,
+          vote,
+          commission: row.health?.commission ?? row.overlay?.commission
+        })
+      );
+    }
+    return packs;
   }
 
   /** Wallet / stake / single vote for Stake story deep-links. Never dumps every vote. */
@@ -1511,6 +1533,7 @@
     compactOverlay,
     compactFeeEvents,
     feeHistoryFromOverlay,
+    feeHistoriesFromRows,
     scoreStake,
     lastSumFrom,
     finiteEpoch,

@@ -844,7 +844,7 @@ function renderFullStakeStory(view) {
     for (const v of shown) {
       const a = document.createElement("a");
       a.className = shown.length === 1 ? "copy-btn secondary" : "copy-btn secondary";
-      a.href = profileHref(v.vote);
+      a.href = profileHref(v.vote, "what-changed-card");
       a.textContent = votes.length === 1 ? "Your validator" : `Your validator – ${v.name}`;
       validatorLinks.append(a);
     }
@@ -897,7 +897,7 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
   if (acc.vote && showValidatorLink) {
     const a = document.createElement("a");
     a.className = "validator-link";
-    a.href = profileHref(acc.vote);
+    a.href = profileHref(acc.vote, "what-changed-card");
     a.textContent = `Your validator – ${health.name || shortKey(acc.vote)}`;
     signalsBlock.append(a);
   }
@@ -926,6 +926,25 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
     );
   }
   if (signals.childNodes.length) signalsBlock.append(signals);
+  if (showValidatorLink && acc.vote) {
+    const pack = feeHistoryFromOverlay({
+      ...(overlay || {}),
+      name: health.name,
+      vote: acc.vote,
+      commission: health.commission
+    });
+    if (pack.lines.length) {
+      const ul = el("ul", "fee-history-list");
+      for (const line of pack.lines.slice(0, 4)) {
+        const li = el("li", line.tone ? `tone-${line.tone}` : "", line.text);
+        if (line.tone) li.dataset.tone = line.tone;
+        ul.append(li);
+      }
+      signalsBlock.append(ul);
+    } else if (pack.headline) {
+      signalsBlock.append(el("p", "muted", pack.headline));
+    }
+  }
   if (signalsBlock.childNodes.length > 1) article.append(signalsBlock);
 
     if (!compact) {
