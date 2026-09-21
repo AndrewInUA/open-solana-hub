@@ -104,7 +104,7 @@
     kicker: "Telegram",
     headline: "Keep watch in Telegram",
     body:
-      "This page is the checkup. Telegram watches up to 5 wallets and sends one note when a new epoch starts. Public key only.",
+      "This page is the checkup. Telegram watches up to 5 wallets, sends one note when a new epoch starts, and a separate note if the validator raises its cut. Public key only.",
     steps: "Look up, then Get notes. Or send a public key in the bot.",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,

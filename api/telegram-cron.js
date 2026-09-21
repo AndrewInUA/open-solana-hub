@@ -1,11 +1,12 @@
 /**
- * Epoch digest cron.
+ * Daily Telegram jobs: epoch checkup when a new epoch starts, plus a
+ * separate note if a linked validator raised its commission.
  *
  * GET/POST /api/telegram-cron
  * Vercel cron hits this on a schedule. Also callable with
  * Authorization: Bearer $CRON_SECRET (or TELEGRAM_CRON_SECRET).
  *
- * Query: ?force=1 to send even if the epoch has not changed (ops/debug).
+ * Query: ?force=1 to send the epoch checkup even if the epoch has not changed.
  */
 const digest = require("../lib/telegram-digest");
 
@@ -42,8 +43,10 @@ module.exports = async function telegramCron(req, res) {
   const force = url.searchParams.get("force") === "1";
 
   try {
-    const result = await digest.runEpochDigest({ force });
-    json(res, result.ok ? 200 : 503, result);
+    const epoch = await digest.runEpochDigest({ force });
+    const cuts = await digest.runCommissionWatch();
+    const ok = epoch.ok !== false && cuts.ok !== false;
+    json(res, ok ? 200 : 503, { ok, epoch, cuts });
   } catch (err) {
     console.error("telegram cron", err);
     json(res, 500, { ok: false, error: err.message || "cron failed" });
