@@ -27,6 +27,7 @@ const {
   OVERLAY_TTL_MS,
   HOW_TO_READ,
   TELEGRAM_CTA,
+  FEE_HISTORY_LEAD,
   TELEGRAM_BOT_URL,
   shortKey,
   fmtSol,
@@ -258,8 +259,7 @@ function resetVtCard() {
   const hist = $("vt-history");
   if (headline) headline.textContent = "Fee history";
   if (lead) {
-    lead.textContent =
-      "Today’s cut and whether it moved. Telegram pings a raise. A lower cut stays here – no extra ping.";
+    lead.textContent = FEE_HISTORY_LEAD;
   }
   if (hist) hist.innerHTML = "";
 }
@@ -311,8 +311,8 @@ function renderFeeHistory(view) {
   if (lead) {
     lead.textContent =
       votes.length === 1
-        ? "Today’s cut and whether it moved. Telegram pings a raise. A lower cut stays here – no extra ping."
-        : "Each operator’s cut. Telegram pings a raise. A lower cut stays here – no extra ping.";
+        ? FEE_HISTORY_LEAD
+        : "Each operator’s cut. A raise shrinks what you keep from then on. Telegram pings a raise. A lower cut stays here – no extra ping.";
   }
   for (const v of votes) {
     const pack = feeHistoryFromOverlay({
@@ -353,13 +353,7 @@ function renderFeeHistory(view) {
         ]);
       }
     }
-    appendFeeRows(block, "Pattern over tracking period", pack.pattern);
-    appendFeeRows(
-      block,
-      "Epoch voting (live RPC)",
-      pack.votingLines,
-      pack.votingSummary
-    );
+    appendFeeRows(block, "What this means for you", pack.meaning);
     hist.append(block);
   }
 }

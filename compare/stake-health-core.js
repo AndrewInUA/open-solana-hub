@@ -114,6 +114,9 @@
     fallback: "Telegram bot coming – ask for the link."
   };
 
+  const FEE_HISTORY_LEAD =
+    "This cut is the validator's share of inflation rewards. A raise shrinks what you keep from then on. Telegram pings a raise. A lower cut stays here – no extra ping.";
+
   function shortKey(k) {
     if (!k) return "–";
     return k.length > 12 ? `${k.slice(0, 4)}…${k.slice(-4)}` : k;
@@ -443,59 +446,32 @@
       else if (knownChanges > 0) emptyLine = "Dates for those moves are on Validator Transparency.";
       else emptyLine = "No recorded cut changes in stored snapshots.";
     }
-    const sample = Number(overlay?.stability?.sample);
-    const delinquent = Number(overlay?.stability?.delinquent);
-    const score = Number(overlay?.stability?.score);
-    const pattern = [];
-    if (hasCommission) {
-      pattern.push({
-        label: "Commission pattern",
-        tone: knownChanges > 0 ? "watch" : commission >= 50 ? "risk" : "ok",
+    const keep = stakerKeepLine(commission);
+    const meaning = [];
+    if (hasCommission && keep) {
+      meaning.push({
+        label: "What you keep",
+        tone: commission >= 50 ? "risk" : commission > 10 ? "watch" : "ok",
+        text: `${keep.charAt(0).toUpperCase()}${keep.slice(1)}.`
+      });
+    }
+    if (overlay) {
+      meaning.push({
+        label: "If it goes up",
+        tone: "watch",
         text:
-          knownChanges === 0
-            ? commission >= 100
-              ? "Unchanged at 100% – validator keeps all rewards; stakers earn nothing"
-              : `Unchanged at ${commission}% across stored snapshots`
-            : `${knownChanges} recorded cut change${knownChanges === 1 ? "" : "s"} – currently ${commission}%`
+          hasCommission && commission >= 100
+            ? "This cut is already 100%. There is nothing higher – you already earn nothing from inflation."
+            : "A higher cut takes more of your rewards from then on. Telegram sends a separate note."
       });
-    }
-    if (overlay && Number.isFinite(sample) && sample > 0) {
-      const del = Number.isFinite(delinquent) ? delinquent : 0;
-      pattern.push({
-        label: "Delinquency in snapshots",
-        tone: del === 0 ? "ok" : "watch",
+      meaning.push({
+        label: "If it goes down",
+        tone: "ok",
         text:
-          del === 0
-            ? `No delinquent days in ${sample.toLocaleString("en-US")} stored snapshots`
-            : `${del} delinquent snapshot day${del === 1 ? "" : "s"} out of ${sample.toLocaleString("en-US")}`
+          hasCommission && commission <= 0
+            ? "This cut is already 0%. There is nothing lower. A raise is the one that changes what you keep."
+            : "You keep more. That stays on this list – no extra ping."
       });
-    }
-    if (overlay && Number.isFinite(score)) {
-      pattern.push({
-        label: "Stability score",
-        tone: score >= 85 ? "ok" : score >= 50 ? "watch" : "risk",
-        text: `${score}/100 from stored snapshots`
-      });
-    }
-    const vh = overlay?.votingHistory;
-    const votingLines = [];
-    let votingSummary = "";
-    if (vh && Number(vh.count) > 0) {
-      const avg = Number(vh.avg5);
-      votingSummary = Number.isFinite(avg)
-        ? `Last ${Math.min(5, Number(vh.count))} finished epochs ~${avg}% avg. In-progress epoch excluded.`
-        : `${vh.count} finished epochs in the live RPC window.`;
-      const epochs = Array.isArray(vh.epochs) ? vh.epochs.slice().reverse() : [];
-      for (const e of epochs) {
-        const pct = Number(e?.pct);
-        const epoch = Number(e?.epoch);
-        if (!Number.isFinite(epoch) || !Number.isFinite(pct)) continue;
-        votingLines.push({
-          label: `Epoch ${epoch}`,
-          tone: pct >= 95 ? "ok" : pct >= 85 ? "watch" : "risk",
-          text: `~${pct.toFixed(1)}% voting consistency`
-        });
-      }
     }
     return {
       name: overlay?.name || null,
@@ -506,9 +482,7 @@
       nowLine,
       emptyLine,
       lines,
-      pattern,
-      votingSummary,
-      votingLines,
+      meaning,
       truncated:
         events.length > FEE_HISTORY_SHOW ||
         (Number.isFinite(changeCount) && changeCount > events.length)
@@ -1568,6 +1542,7 @@
     toneBadge,
     HOW_TO_READ,
     TELEGRAM_CTA,
+    FEE_HISTORY_LEAD,
     DEFAULT_TELEGRAM_BOT_USERNAME,
     TELEGRAM_BOT_URL,
     shortKey,
