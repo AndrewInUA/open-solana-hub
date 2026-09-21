@@ -1222,6 +1222,7 @@
     if (wallet) u.searchParams.set("wallet", wallet);
     if (stake) u.searchParams.set("stake", stake);
     if (opts.story) u.hash = "full-stake-story";
+    else if (opts.fee) u.hash = "vt-card";
     return u.toString();
   }
 

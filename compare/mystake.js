@@ -854,14 +854,20 @@ function renderFullStakeStory(view) {
     $("your-validator")?.classList.toggle("hidden", !votes.length);
     applyVtLink(votes[0]?.vote || null);
   }
-  focusFullStakeStory();
+  focusLookupHash();
 }
 
-function focusFullStakeStory() {
+function focusLookupHash() {
   const hash = String(window.location.hash || "").replace(/^#/, "");
-  if (hash !== "full-stake-story" && hash !== "stake-story") return;
+  const id =
+    hash === "full-stake-story" || hash === "stake-story"
+      ? "full-stake-story"
+      : hash === "vt-card" || hash === "fee-history"
+        ? "vt-card"
+        : "";
+  if (!id) return;
   requestAnimationFrame(() => {
-    $("full-stake-story")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    $(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -1108,7 +1114,7 @@ function paintLookup(accounts, pack, overlays) {
   renderOverall(view.overall);
   renderStakes(view.rows, pack);
   renderFeeHistory(view);
-  focusFullStakeStory();
+  focusLookupHash();
   return view.rows;
 }
 
