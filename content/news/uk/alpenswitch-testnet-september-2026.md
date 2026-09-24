@@ -1,16 +1,16 @@
 ---
 title: 'Alpenswitch на публічному testnet: Solana репетирує перехід на Alpenglow'
-seo_title: 'Alpenswitch ставить Alpenglow на публічний testnet'
+seo_title: 'Alpenglow на публічному testnet Solana: що таке Alpenswitch'
 date: '2026-09-24'
 tag: Consensus
 description: >-
-  Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що оголосила Anza,
-  що означає позначка 28 вересня в календарі, і що зміниться для валідаторів.
+  Alpenswitch цього тижня переводить публічний testnet Solana на Alpenglow: фіналізація близько
+  150 мс. 28 вересня – не запуск на mainnet.
 keywords:
   - Alpenswitch
-  - Alpenglow
-  - SIMD-0384
-  - public testnet
+  - Alpenglow testnet
+  - фіналізація Solana 150 мс
+  - публічний testnet Solana
 teaser: >-
   Публічний testnet цього тижня проходить міграцію з TowerBFT на Alpenglow. У нотатці Anza є ще
   позначка 28 вересня, яку легко прочитати не так. Гаманці на mainnet не змінюються.

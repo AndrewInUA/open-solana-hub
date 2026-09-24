@@ -1,16 +1,16 @@
 ---
 title: 'Alpenswitch is on public testnet: Solana is rehearsing the Alpenglow flip'
-seo_title: 'Alpenswitch puts Alpenglow on public testnet'
+seo_title: 'Alpenglow on Solana public testnet: Alpenswitch explained'
 date: '2026-09-24'
 tag: Consensus
 description: >-
-  Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What Anza announced,
-  what the September 28 calendar mark actually is, and what changes for validators.
+  Alpenswitch is moving Solana public testnet from TowerBFT to Alpenglow this week, toward about
+  150ms finality. September 28 is not an Alpenglow mainnet launch.
 keywords:
   - Alpenswitch
-  - Alpenglow
+  - Alpenglow testnet
+  - Solana 150ms finality
   - SIMD-0384
-  - public testnet
 teaser: >-
   Public testnet is running the TowerBFT-to-Alpenglow migration this week. Anza's note also
   carries a September 28 mark that is easy to misread. Wallets on mainnet do not change.
