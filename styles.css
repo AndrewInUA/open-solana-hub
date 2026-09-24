@@ -885,7 +885,7 @@ html[data-theme="light"] .btn-primary {
   background: none;
 }
 
-.callout strong {
+.callout strong:first-of-type {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--heading);

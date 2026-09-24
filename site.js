@@ -77,11 +77,21 @@
     link.setAttribute("rel", rel.join(" "));
   }
 
+  function wantsNewTab(link) {
+    return link.dataset.newTab === "on";
+  }
+
   function applyLinkTarget(link) {
     if (!link || link.dataset.newTab === "off") return;
     var href = (link.getAttribute("href") || "").trim();
     if (!href || href === "#") return;
     if (link.hasAttribute("download")) return;
+
+    if (wantsNewTab(link)) {
+      link.setAttribute("target", "_blank");
+      setExternalRel(link);
+      return;
+    }
 
     if (isDashboardLink(href)) {
       if (isInsideDashboard()) {
@@ -141,6 +151,14 @@
       var href = (link.getAttribute("href") || "").trim();
       if (!href || href === "#" || href.charAt(0) === "#") return;
       if (link.hasAttribute("download")) return;
+
+      if (wantsNewTab(link)) {
+        if (link.getAttribute("target") !== "_blank") {
+          e.preventDefault();
+          window.open(link.href, "_blank", "noopener,noreferrer");
+        }
+        return;
+      }
 
       if (isDashboardLink(href)) {
         if (isInsideDashboard()) {

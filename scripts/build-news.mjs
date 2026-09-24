@@ -392,7 +392,7 @@ ${articleTagMetas(post)}
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css?v=8" />
   <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
-  <script src="../site.js?v=6" defer></script>
+  <script src="../site.js?v=7" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -522,7 +522,7 @@ ${articleTagMetas(post)}
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../styles.css?v=8" />
   <link rel="icon" href="../../assets/open-solana-hub-logo.png" type="image/png" />
-  <script src="../../site.js?v=6" defer></script>
+  <script src="../../site.js?v=7" defer></script>
 </head>
 <body>
   <header class="site-header">

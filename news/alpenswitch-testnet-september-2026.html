@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Alpenswitch is moving Solana public testnet from TowerBFT to Alpenglow this week, toward about 150ms finality. September 28 is not an Alpenglow mainnet launch." />
+  <title>Alpenglow on Solana public testnet: Alpenswitch explained | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/news/alpenswitch-testnet-september-2026.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="uk_UA" />
+  <meta property="og:title" content="Alpenglow on Solana public testnet: Alpenswitch explained" />
+  <meta property="og:description" content="Alpenswitch is moving Solana public testnet from TowerBFT to Alpenglow this week, toward about 150ms finality. September 28 is not an Alpenglow mainnet launch." />
+  <meta property="og:url" content="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="720" />
+  <meta property="og:image:alt" content="Alpenswitch: a dark cluster crossing from stacked confirmations into one short agreement pulse" />
+  <meta name="twitter:image:alt" content="Alpenswitch: a dark cluster crossing from stacked confirmations into one short agreement pulse" />
+  <meta property="article:published_time" content="2026-09-24" />
+  <meta property="article:section" content="Consensus" />
+  <meta name="keywords" content="Alpenswitch, Alpenglow testnet, Solana 150ms finality, SIMD-0384" />
+  <meta property="article:tag" content="Alpenswitch" />
+  <meta property="article:tag" content="Alpenglow testnet" />
+  <meta property="article:tag" content="Solana 150ms finality" />
+  <meta property="article:tag" content="SIMD-0384" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Alpenglow on Solana public testnet: Alpenswitch explained" />
+  <meta name="twitter:description" content="Alpenswitch is moving Solana public testnet from TowerBFT to Alpenglow this week, toward about 150ms finality. September 28 is not an Alpenglow mainnet launch." />
+  <meta name="twitter:image" content="https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "Alpenglow on Solana public testnet: Alpenswitch explained",
+    "description": "Alpenswitch is moving Solana public testnet from TowerBFT to Alpenglow this week, toward about 150ms finality. September 28 is not an Alpenglow mainnet launch.",
+    "url": "https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html",
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png",
+      "width": 1280,
+      "height": 720,
+      "caption": "Alpenswitch: a dark cluster crossing from stacked confirmations into one short agreement pulse"
+    },
+    "datePublished": "2026-09-24",
+    "dateModified": "2026-09-24",
+    "inLanguage": "en",
+    "articleSection": "Consensus",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Open Solana Hub",
+      "url": "https://www.opensolanahub.com/"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Andrii (AndrewInUA)",
+      "url": "https://andrewinua.com/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Open Solana Hub",
+      "url": "https://www.opensolanahub.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.opensolanahub.com/assets/open-solana-hub-logo.png"
+      }
+    },
+    "keywords": [
+      "Alpenswitch",
+      "Alpenglow testnet",
+      "Solana 150ms finality",
+      "SIMD-0384"
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css?v=8" />
+  <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
+  <script src="../site.js?v=7" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="../index.html" class="brand-logo-link" aria-label="Open Solana Hub">
+          <img src="../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="40" height="40" />
+        </a>
+        <a href="../index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Solana in simple terms</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Main">
+        <a href="../index.html">Home</a>
+        <a href="../basics.html">Basics</a>
+        <a href="../stay-safe.html">Stay safe</a>
+        <a href="../first-steps.html">First steps</a>
+        <a href="../ecosystem.html">Ecosystem</a>
+        <a href="../glossary.html">Glossary</a>
+        <a href="../compare-validators.html">Validator assessment</a>
+        <a href="./index.html" class="active">News</a>
+        <a href="../about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Language">
+          <a href="../uk/news/alpenswitch-testnet-september-2026.html" lang="uk" hreflang="uk">UA</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./alpenswitch-testnet-september-2026.html" class="active" lang="en" hreflang="en">EN</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Toggle theme">☀</button>
+        <a class="btn btn-primary" href="../compare/">Assess validators</a>
+        <a class="btn btn-primary" href="../compare/mystake.html">Stake health</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+      <a class="article-back" href="./index.html">← All Solana news</a>
+      <h1>Alpenswitch is on public testnet: Solana is rehearsing the move to its new consensus, Alpenglow</h1>
+      <div class="article-meta">
+        <time datetime="2026-09-24">September 24, 2026</time>
+        <span class="news-tag">Consensus</span>
+      </div>
+<div class="article-share">
+        <a class="article-share-x" href="https://x.com/intent/tweet?text=Alpenglow%20on%20Solana%20public%20testnet%3A%20Alpenswitch%20explained&amp;url=https%3A%2F%2Fwww.opensolanahub.com%2Fnews%2Falpenswitch-testnet-september-2026.html&amp;via=Andrew_In_UA"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>Share on X</span></a>
+        <button type="button" class="article-share-copy" data-share-url="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" data-label="Copy link" data-copied="Copied"><span data-share-label>Copy link</span></button>
+      </div>
+      <p class="prose-lead">This week Solana&#39;s <strong>public testnet</strong> is running the migration that moves a cluster
+ from TowerBFT to Alpenglow. Anza said on September 22 that Alpenglow is coming to
+ testnet this week, and that the rehearsal uses the same procedure later planned for
+ devnet and mainnet-beta. A community cluster has already run Alpenglow for more than
+ four months and practiced the switch. This is not a mainnet launch.</p>
+<figure class="cms-figure cms-figure-hero">
+  <img src="/content/media/alpenswitch-testnet-card.png" alt="Alpenswitch: a dark cluster crossing from stacked confirmations into one short agreement pulse" width="1280" height="720" decoding="async" fetchpriority="high" />
+  <figcaption>Public testnet is where the migration gets exercised. Mainnet still agrees on blocks with TowerBFT.</figcaption>
+</figure>
+
+<h2>Two names for one change</h2>
+<p><strong>Alpenglow</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a>)
+ is the consensus upgrade. It replaces TowerBFT with a voting protocol called
+ <strong>Votor</strong>. Votes move off the ledger into direct messages between validators.
+ The target is finality in about <strong>150 milliseconds</strong>, down from about
+ <strong>12.8 seconds</strong> on the TowerBFT path – the time it takes for confirmations to
+ stack across 32 slots.</p>
+<p><strong>Alpenswitch</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
+ is the migration procedure. At a migration boundary the
+ cluster flips from TowerBFT to Alpenglow. If that flip fails, it falls back to
+ TowerBFT. Public testnet is exercising that handoff now. Devnet and mainnet-beta
+ are meant to run the same procedure later, each on its own schedule.</p>
+<p>How Votor, the Validator Admission Ticket, and the still-closed mainnet gate
+ looked in July is in the
+ <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Alpenglow status note</a>.</p>
+<h2>What Anza announced</h2>
+<p>On September 22 Anza said Alpenglow is coming to public testnet this week. The
+ note was specific about the procedure: testnet runs the same migration that
+ devnet and mainnet-beta will run later. The community cluster has already been
+ on Alpenglow for more than four months and has rehearsed that handoff.</p>
+<p>Read the testnet move as <strong>underway this week</strong>. The public tracker can still
+ list it as pending while operators get ready. There is no finished &quot;it flipped
+ at epoch N&quot; time to report yet.</p>
+<p>The first pass is <strong>Agave 4.3 only</strong>. Firedancer and Frankendancer do not support
+ this Alpenglow testnet migration, so operators on those clients need Agave for
+ the rehearsal. Later clusters will set their own client mix.</p>
+<p>The same Anza schedule has a second date, and that is the line people are
+ mixing up with this testnet news. <strong>September 28</strong> is listed as a tentative day
+ to turn on Agave 4.3 feature gates on mainnet. It sits on the release calendar
+ beside the testnet announcement. It is a different item.</p>
+<div class="callout">
+<strong>What that September 28 mark means</strong>
+Agave 4.3 is already installed on mainnet. It arrived on September 18 with the
+ Alpenglow code inside and the switch still off. A feature gate is that switch:
+ the software can sit on a validator before one ability is turned on.
+September 28 is the tentative day on that calendar for opening some of those
+ switches. It does not move mainnet onto Alpenglow. Operator notes still aim the
+ consensus flip at a later release. Until the Alpenglow gate actually opens,
+ mainnet keeps finalizing blocks with TowerBFT. How this client line got here
+ is in the
+ <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Agave 4.2 note</a>.
+</div>
+
+<h2>Finality and the clock are different levers</h2>
+<p><a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">250ms slots</a> went live on mainnet at
+ epoch 1037. That change shortened the slot, the window a leader has to produce
+ a block. It did not change how long the network waits before a block is
+ irreversible. Alpenglow is the other lever: how validators agree that a block
+ can no longer be undone. A faster clock and faster finality both change how
+ apps feel. They are separate switches.</p>
+<div class="article-analogy">
+<strong>In plain terms</strong>
+Finality is the moment a bank transfer becomes irreversible. TowerBFT is waiting
+ through a stack of confirmations before the bank will treat the payment as done.
+ Votor is a short, direct round of agreement among the validators who have to
+ sign off – one conversation, where the old path was a pile of receipts.
+</div>
+
+<p>Once Alpenglow is actually live on a cluster, apps on that cluster can feel
+ finality much sooner. Execution does not change: the SVM, transaction formats,
+ and fees stay as they are. Rotor, the later data-propagation piece, is not part
+ of this testnet pass.</p>
+<h2>What it means for…</h2>
+<h3>Validators</h3>
+<p>This rehearsal wants <strong>Agave 4.3</strong>. Read Anza&#39;s operator notes before the testnet
+ gate, and do not assume Firedancer or Frankendancer can take this first
+ migration. The community cluster already practiced the switch; public testnet is
+ the formal pass of that same migration. The September 28 mark above may open
+ some Agave 4.3 gates on mainnet. It is not the day mainnet moves to Alpenglow.</p>
+<h3>Delegators</h3>
+<p>This consensus change should not create any extra hassle for you. The stake you
+ already delegated stays with the same validator during the testnet rehearsal and
+ when mainnet switches later.</p>
+<h3>Builders</h3>
+<p>Nothing in this week&#39;s testnet pass requires a mainnet program or wallet change.
+ Do not ship mainnet UX that assumes ~150ms finality. On mainnet, finalized still
+ means the TowerBFT wait. On a cluster that has completed Alpenswitch,
+ confirmation and finality draw together, and vote transactions leave blocks, so
+ indexers should re-baseline counts <strong>after</strong> that cluster has actually migrated,
+ not on a calendar date. Slot duration and finality stay separate: keep the
+ current slot time from the
+ <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">250ms slots</a> change, and do not treat
+ 150ms as a new slot length.</p>
+<h3>Everyone else</h3>
+<p>If you hold or send SOL on mainnet, you do not configure anything, and this week
+ does not make transfers finalize in 150ms. If you use apps pointed at public
+ testnet, they can start to feel final much sooner once that cluster&#39;s migration
+ is in effect. Wallets do not need a new flow on either cluster.</p>
+<div class="callout">
+<strong>In one sentence</strong>
+        Public testnet is rehearsing Alpenswitch, the move from TowerBFT to Alpenglow.
+        The September 28 line on Anza's schedule is a possible day for other Agave 4.3
+        switches. Mainnet has not moved to Alpenglow.
+</div>
+
+<p>Sources:
+ <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer" data-new-tab="on">Solana – Alpenglow</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a> ·
+ <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer" data-new-tab="on">CoinDesk – public testnet finality test</a> ·
+ <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer" data-new-tab="on">ForkLog – activation on testnet</a></p>
+
+<div class="article-share article-share-end">
+        <a class="article-share-x" href="https://x.com/intent/tweet?text=Alpenglow%20on%20Solana%20public%20testnet%3A%20Alpenswitch%20explained&amp;url=https%3A%2F%2Fwww.opensolanahub.com%2Fnews%2Falpenswitch-testnet-september-2026.html&amp;via=Andrew_In_UA"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>Share on X</span></a>
+        <button type="button" class="article-share-copy" data-share-url="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" data-label="Copy link" data-copied="Copied"><span data-share-label>Copy link</span></button>
+      </div>
+      <div class="path-row">
+        <a class="btn btn-primary" href="./index.html">More Solana news</a>
+        <a class="btn btn-ghost" href="../ecosystem.html">How staking works</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="../index.html" class="footer-logo-link" aria-label="Open Solana Hub">
+        <img src="../assets/open-solana-hub-logo.svg" alt="" width="40" height="40" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="../index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Built by AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency</a>
+      <a href="./index.html">Solana news</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="footer-note">Education only – not financial advice.</p>
+  </footer>
+</body>
+</html>
