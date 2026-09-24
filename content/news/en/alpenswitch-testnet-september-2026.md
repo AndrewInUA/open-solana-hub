@@ -31,14 +31,14 @@ This week Solana's **public testnet** is running the migration that moves a clus
 
 ## Two names for one change
 
-**Alpenglow** ([SIMD-0326](https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md))
+**Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a>)
  is the consensus upgrade. It replaces TowerBFT with a voting protocol called
  **Votor**. Votes move off the ledger into direct messages between validators.
  The target is finality in about **150 milliseconds**, down from about
  **12.8 seconds** on the TowerBFT path – the time it takes for confirmations to
  stack across 32 slots.
 
-**Alpenswitch** ([SIMD-0384](https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md))
+**Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a>)
  is the migration procedure. At a migration boundary the
  cluster flips from TowerBFT to Alpenglow. If that flip fails, it falls back to
  TowerBFT. Public testnet is exercising that handoff now. Devnet and mainnet-beta
@@ -147,8 +147,8 @@ If you hold or send SOL on mainnet, you do not configure anything, and this week
 </div>
 
 Sources:
- [Solana – Alpenglow](https://solana.com/upgrades/alpenglow) ·
- [SIMD-0326](https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md) ·
- [SIMD-0384](https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md) ·
- [CoinDesk – public testnet finality test](https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds) ·
- [ForkLog – activation on testnet](https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/)
+ <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer">Solana – Alpenglow</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a> ·
+ <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer">CoinDesk – public testnet finality test</a> ·
+ <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer">ForkLog – activation on testnet</a>

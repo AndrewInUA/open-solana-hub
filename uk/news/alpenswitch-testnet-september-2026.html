@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що означають дві назви, що насправді стоїть за 28 вересня, і що зміниться для валідаторів." />
+  <meta name="description" content="Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що оголосила Anza, що означає позначка 28 вересня в календарі, і що зміниться для валідаторів." />
   <title>Alpenswitch ставить Alpenglow на публічний testnet | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/uk/news/alpenswitch-testnet-september-2026.html" />
@@ -15,7 +15,7 @@
   <meta property="og:locale" content="uk_UA" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:title" content="Alpenswitch ставить Alpenglow на публічний testnet" />
-  <meta property="og:description" content="Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що означають дві назви, що насправді стоїть за 28 вересня, і що зміниться для валідаторів." />
+  <meta property="og:description" content="Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що оголосила Anza, що означає позначка 28 вересня в календарі, і що зміниться для валідаторів." />
   <meta property="og:url" content="https://www.opensolanahub.com/uk/news/alpenswitch-testnet-september-2026.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png" />
@@ -33,14 +33,14 @@
   <meta property="article:tag" content="public testnet" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Alpenswitch ставить Alpenglow на публічний testnet" />
-  <meta name="twitter:description" content="Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що означають дві назви, що насправді стоїть за 28 вересня, і що зміниться для валідаторів." />
+  <meta name="twitter:description" content="Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що оголосила Anza, що означає позначка 28 вересня в календарі, і що зміниться для валідаторів." />
   <meta name="twitter:image" content="https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "headline": "Alpenswitch ставить Alpenglow на публічний testnet",
-    "description": "Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що означають дві назви, що насправді стоїть за 28 вересня, і що зміниться для валідаторів.",
+    "description": "Цього тижня Alpenswitch переводить публічний testnet Solana на Alpenglow. Що оголосила Anza, що означає позначка 28 вересня в календарі, і що зміниться для валідаторів.",
     "url": "https://www.opensolanahub.com/uk/news/alpenswitch-testnet-september-2026.html",
     "image": {
       "@type": "ImageObject",
@@ -148,13 +148,13 @@
 </figure>
 
 <h2>Дві назви однієї зміни</h2>
-<p><strong>Alpenglow</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md">SIMD-0326</a>)
+<p><strong>Alpenglow</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a>)
  – це оновлення консенсусу. Alpenglow замінює TowerBFT протоколом голосування
  <strong>Votor</strong>. Голоси більше не потрапляють у блок як транзакції: валідатори
  надсилають їх одне одному напряму. Орієнтир за фіналізацією – близько
  <strong>150 мілісекунд</strong> замість приблизно <strong>12,8 секунди</strong> на шляху TowerBFT. Саме
  стільки займає накопичення підтверджень протягом 32 слотів.</p>
-<p><strong>Alpenswitch</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md">SIMD-0384</a>)
+<p><strong>Alpenswitch</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a>)
  – це сама процедура переходу. На межі міграції кластер перемикається з TowerBFT
  на Alpenglow. Якщо перемикання зривається, кластер лишається на TowerBFT.
  Публічний testnet відпрацьовує цей перехід зараз. Devnet і mainnet-beta мають
@@ -162,25 +162,31 @@
 <p>Як у липні виглядали Votor, Validator Admission Ticket і ще закритий gate на
  mainnet – у
  <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">нотатці про статус Alpenglow</a>.</p>
-<h2>Що означає «цього тижня»</h2>
-<p>Оголошення Anza запустило активацію на публічному testnet. На момент публікації
- це міграція, <strong>яка триває цього тижня</strong>, а не завершене перемикання з точною
- годиною. Трекер ще може позначати перехід на testnet як pending, поки оператори
- до нього готуються. Писати «увімкнулося на епосі N» для цього оновлення зарано.</p>
-<p>На цьому першому запуску працює <strong>лише Agave 4.3</strong>. Firedancer і Frankendancer
- цю testnet-міграцію Alpenglow не підтримують. Операторам на цих клієнтах для
- репетиції потрібен Agave. На цьому тесті набір клієнтів ще не повний. Які
- клієнти будуть на devnet і mainnet, вирішуватиметься окремо.</p>
+<h2>Що оголосила Anza</h2>
+<p>22 вересня Anza повідомила, що Alpenglow виходить на публічний testnet цього
+ тижня. У нотатці прямо сказано про процедуру: testnet проходить ту саму міграцію,
+ яку пізніше пройдуть devnet і mainnet-beta. Кластер спільноти вже понад чотири
+ місяці працює на Alpenglow і репетирував цей перехід.</p>
+<p>Міграцію на testnet варто читати як <strong>таку, що триває цього тижня</strong>. Публічний
+ трекер ще може позначати її як pending, поки оператори готуються. Завершеного
+ часу на кшталт «перемкнулося на епосі N» поки немає.</p>
+<p>Перший прохід – <strong>лише Agave 4.3</strong>. Firedancer і Frankendancer цю testnet-міграцію
+ Alpenglow не підтримують, тож операторам на цих клієнтах для репетиції потрібен
+ Agave. Пізніші кластери самі оберуть свій набір клієнтів.</p>
+<p>У тому самому розкладі Anza є друга дата, і саме її плутають із новиною про
+ testnet. <strong>28 вересня</strong> стоїть як орієнтовний день, коли на mainnet увімкнуть
+ feature gates Agave 4.3. Ця дата лежить у календарі релізу поруч з оголошенням
+ про testnet. Це інший пункт.</p>
 <div class="callout">
-<strong>Що насправді означає 28 вересня</strong>
- Agave 4.3 на mainnet уже стоїть. Клієнт вийшов 18 вересня: код Alpenglow у
- ньому є, а перемикач ще вимкнений. Feature gate – це і є той перемикач. Софт
- може вже стояти на валідаторі, а одну з можливостей увімкнуть пізніше.
-28 вересня в календарі Anza – орієнтовний день, коли на mainnet можуть відкрити
- частину таких перемикачів Agave 4.3. Це дата в розкладі софту. Вона не переводить
- mainnet на Alpenglow. Операторські нотатки й далі відкладають саме це перемикання
- консенсусу на пізніший реліз. Поки gate Alpenglow справді не відкриють, mainnet
- фіналізує блоки через TowerBFT. Як клієнтна лінія дійшла сюди – у
+<strong>Що означає позначка 28 вересня</strong>
+Agave 4.3 на mainnet уже встановлений. Він вийшов 18 вересня: код Alpenglow
+ усередині є, а перемикач ще вимкнений. Feature gate – це і є той перемикач:
+ софт може вже стояти на валідаторі, а одну можливість увімкнуть пізніше.
+28 вересня – орієнтовний день у тому календарі, коли відкриють частину цих
+ перемикачів. Він не переводить mainnet на Alpenglow. Операторські нотатки й
+ далі відкладають перемикання консенсусу на пізніший реліз. Поки gate Alpenglow
+ справді не відкриють, mainnet фіналізує блоки через TowerBFT. Як клієнтна лінія
+ дійшла сюди – у
  <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">нотатці про Agave 4.2</a>.
 </div>
 
@@ -207,9 +213,9 @@
 <p>Для цієї репетиції потрібен <strong>Agave 4.3</strong>. Перш ніж на testnet відкриється gate,
  прочитайте нотатки Anza для операторів. Firedancer і Frankendancer цей перший
  перехід не проходять. Кластер спільноти вже тренував перемикання; публічний
- testnet – офіційний прогін тієї самої міграції. 28 вересня можуть відкрити
- частину gates Agave 4.3 на mainnet. Це не день, коли mainnet переходить на
- Alpenglow.</p>
+ testnet – офіційний прогін тієї самої міграції. Позначка 28 вересня вище може
+ відкрити частину gates Agave 4.3 на mainnet. Це не день, коли mainnet переходить
+ на Alpenglow.</p>
 <h3>Делегаторів</h3>
 <p>Повторно делегувати стейк чи міняти гаманець не потрібно. Стейк на mainnet-beta
  і далі живе під TowerBFT. Орієнтир той самий, що й за інших оновлень клієнта:
@@ -234,16 +240,16 @@
 <div class="callout">
 <strong>Коротко</strong>
         Публічний testnet репетирує Alpenswitch – перехід із TowerBFT на Alpenglow.
-        Mainnet цього переходу ще не зробив. 28 вересня – можливий день для інших
-        перемикачів Agave 4.3, не для запуску Alpenglow.
+        Рядок 28 вересня в розкладі Anza – можливий день для інших перемикачів
+        Agave 4.3. Mainnet на Alpenglow ще не перейшов.
 </div>
 
 <p>Джерела:
- <a href="https://solana.com/upgrades/alpenglow">Solana – Alpenglow</a> ·
- <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md">SIMD-0326</a> ·
- <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md">SIMD-0384</a> ·
- <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds">CoinDesk – тест фіналізації на публічному testnet</a> ·
- <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/">ForkLog – активація на testnet</a></p>
+ <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer">Solana – Alpenglow</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a> ·
+ <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer">CoinDesk – тест фіналізації на публічному testnet</a> ·
+ <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer">ForkLog – активація на testnet</a></p>
 
 <div class="article-share article-share-end">
         <a class="article-share-x" href="https://x.com/intent/tweet?text=Alpenswitch%20%D1%81%D1%82%D0%B0%D0%B2%D0%B8%D1%82%D1%8C%20Alpenglow%20%D0%BD%D0%B0%20%D0%BF%D1%83%D0%B1%D0%BB%D1%96%D1%87%D0%BD%D0%B8%D0%B9%20testnet&amp;url=https%3A%2F%2Fwww.opensolanahub.com%2Fuk%2Fnews%2Falpenswitch-testnet-september-2026.html&amp;via=Andrew_In_UA"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>Поділитися в X</span></a>
