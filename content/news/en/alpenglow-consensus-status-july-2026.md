@@ -29,12 +29,12 @@ Alpenglow is the largest change to how Solana agrees on blocks since the network
 
 <div class="callout">
 <strong>September 2026 update</strong>
-        <a href="./agave-4-2-release-august-2026.html">Agave 4.2</a> shipped the complete Alpenglow codebase
+        <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">Agave 4.2</a> shipped the complete Alpenglow codebase
         for test clusters. Agave 4.3 reached mainnet on September 18 with the Alpenglow feature gate
         still closed; operator notes now point to a later 4.4-era activation, not a 4.3 flip.
         Public testnet is the current rehearsal:
-        <a href="./alpenswitch-testnet-september-2026.html">Alpenswitch is migrating Alpenglow onto public testnet this week</a>.
-        Separately, <a href="./solana-250ms-slots-september-2026.html">250ms slots are live</a> as of epoch 1037.
+        <a href="./alpenswitch-testnet-september-2026.html" target="_blank" rel="noopener noreferrer">Alpenswitch is migrating Alpenglow onto public testnet this week</a>.
+        Separately, <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots are live</a> as of epoch 1037.
 </div>
 
       

@@ -161,7 +161,7 @@
  are meant to run the same procedure later, each on its own schedule.</p>
 <p>How Votor, the Validator Admission Ticket, and the still-closed mainnet gate
  looked in July is in the
- <a href="./alpenglow-consensus-status-july-2026.html">Alpenglow status note</a>.</p>
+ <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">Alpenglow status note</a>.</p>
 <h2>What &quot;this week&quot; means</h2>
 <p>Anza&#39;s announcement started activation on public testnet. At publish time, read
  the migration as <strong>underway this week</strong>, not as a finished flip with a recorded
@@ -173,18 +173,20 @@
  rehearsal. That is a client-diversity gap for this test. Later clusters set
  their own client mix.</p>
 <div class="callout">
-<strong>September 28 is not the Alpenglow launch</strong>
-Anza's schedule lists September 28 as a tentative date for turning on
- <strong>Agave 4.3 feature gates on mainnet</strong>. That is a release milestone.
- It is not a confirmed Alpenglow mainnet activation. Alpenglow is not live on
- mainnet. When Agave 4.3 reached mainnet on September 18, the Alpenglow feature
- gate stayed closed. See the
- <a href="./agave-4-2-release-august-2026.html">Agave 4.2 note</a> for how that
- client line got here.
+<strong>What September 28 actually is</strong>
+Agave 4.3 is already installed on mainnet. It arrived on September 18 with the
+ Alpenglow code inside and the switch still off. A feature gate is that switch:
+ the software can sit on a validator before one ability is turned on.
+September 28 is a tentative day on Anza's calendar for opening some of those
+ Agave 4.3 switches on mainnet. It is a software date. It does not move mainnet
+ onto Alpenglow. Operator notes still aim that consensus flip at a later release.
+ Until the Alpenglow gate actually opens, mainnet keeps finalizing blocks with
+ TowerBFT. How this client line got here is in the
+ <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">Agave 4.2 note</a>.
 </div>
 
 <h2>Finality and the clock are different levers</h2>
-<p><a href="./solana-250ms-slots-september-2026.html">250ms slots</a> went live on mainnet at
+<p><a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots</a> went live on mainnet at
  epoch 1037. That change shortened the slot, the window a leader has to produce
  a block. It did not change how long the network waits before a block is
  irreversible. Alpenglow is the other lever: how validators agree that a block
@@ -207,8 +209,8 @@ Finality is the moment a bank transfer becomes irreversible. TowerBFT is waiting
 <p>This rehearsal wants <strong>Agave 4.3</strong>. Read Anza&#39;s operator notes before the testnet
  gate, and do not assume Firedancer or Frankendancer can take this first
  migration. The community cluster already practiced the switch; public testnet is
- the formal pass of that same migration. September 28 on the mainnet feature
- schedule is not your Alpenglow cutover date.</p>
+ the formal pass of that same migration. September 28 may open some Agave 4.3
+ gates on mainnet. It is not the day mainnet moves to Alpenglow.</p>
 <h3>Delegators</h3>
 <p>No restake and no wallet migration. Stake on mainnet-beta is still under
  TowerBFT. The useful signal matches other client upgrades: prefer operators who
@@ -222,7 +224,7 @@ Finality is the moment a bank transfer becomes irreversible. TowerBFT is waiting
  indexers should re-baseline counts <strong>after</strong> that cluster has actually migrated,
  not on a calendar date. Slot duration and finality stay separate: keep the
  current slot time from the
- <a href="./solana-250ms-slots-september-2026.html">250ms slots</a> change, and do not treat
+ <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots</a> change, and do not treat
  150ms as a new slot length.</p>
 <h3>Everyone else</h3>
 <p>If you hold or send SOL on mainnet, you do not configure anything, and this week
@@ -232,7 +234,8 @@ Finality is the moment a bank transfer becomes irreversible. TowerBFT is waiting
 <div class="callout">
 <strong>In one sentence</strong>
         Public testnet is rehearsing Alpenswitch, the move from TowerBFT to Alpenglow.
-        Mainnet has not switched, and September 28 is not that launch.
+        Mainnet has not made that move. September 28 is a possible day for other
+        Agave 4.3 switches, not the Alpenglow launch.
 </div>
 
 <p>Sources:

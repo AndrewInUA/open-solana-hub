@@ -46,7 +46,7 @@ This week Solana's **public testnet** is running the migration that moves a clus
 
 How Votor, the Validator Admission Ticket, and the still-closed mainnet gate
  looked in July is in the
- [Alpenglow status note](./alpenglow-consensus-status-july-2026.html).
+ <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">Alpenglow status note</a>.
 
 ## What "this week" means
 
@@ -62,19 +62,21 @@ The first pass is **Agave 4.3 only**. Firedancer and Frankendancer do not suppor
  their own client mix.
 
 <div class="callout">
-<strong>September 28 is not the Alpenglow launch</strong>
-Anza's schedule lists September 28 as a tentative date for turning on
- <strong>Agave 4.3 feature gates on mainnet</strong>. That is a release milestone.
- It is not a confirmed Alpenglow mainnet activation. Alpenglow is not live on
- mainnet. When Agave 4.3 reached mainnet on September 18, the Alpenglow feature
- gate stayed closed. See the
- <a href="./agave-4-2-release-august-2026.html">Agave 4.2 note</a> for how that
- client line got here.
+<strong>What September 28 actually is</strong>
+Agave 4.3 is already installed on mainnet. It arrived on September 18 with the
+ Alpenglow code inside and the switch still off. A feature gate is that switch:
+ the software can sit on a validator before one ability is turned on.
+September 28 is a tentative day on Anza's calendar for opening some of those
+ Agave 4.3 switches on mainnet. It is a software date. It does not move mainnet
+ onto Alpenglow. Operator notes still aim that consensus flip at a later release.
+ Until the Alpenglow gate actually opens, mainnet keeps finalizing blocks with
+ TowerBFT. How this client line got here is in the
+ <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">Agave 4.2 note</a>.
 </div>
 
 ## Finality and the clock are different levers
 
-[250ms slots](./solana-250ms-slots-september-2026.html) went live on mainnet at
+<a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots</a> went live on mainnet at
  epoch 1037. That change shortened the slot, the window a leader has to produce
  a block. It did not change how long the network waits before a block is
  irreversible. Alpenglow is the other lever: how validators agree that a block
@@ -101,8 +103,8 @@ Once Alpenglow is actually live on a cluster, apps on that cluster can feel
 This rehearsal wants **Agave 4.3**. Read Anza's operator notes before the testnet
  gate, and do not assume Firedancer or Frankendancer can take this first
  migration. The community cluster already practiced the switch; public testnet is
- the formal pass of that same migration. September 28 on the mainnet feature
- schedule is not your Alpenglow cutover date.
+ the formal pass of that same migration. September 28 may open some Agave 4.3
+ gates on mainnet. It is not the day mainnet moves to Alpenglow.
 
 ### Delegators
 
@@ -120,7 +122,7 @@ Nothing in this week's testnet pass requires a mainnet program or wallet change.
  indexers should re-baseline counts **after** that cluster has actually migrated,
  not on a calendar date. Slot duration and finality stay separate: keep the
  current slot time from the
- [250ms slots](./solana-250ms-slots-september-2026.html) change, and do not treat
+ <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots</a> change, and do not treat
  150ms as a new slot length.
 
 ### Everyone else
@@ -133,7 +135,8 @@ If you hold or send SOL on mainnet, you do not configure anything, and this week
 <div class="callout">
 <strong>In one sentence</strong>
         Public testnet is rehearsing Alpenswitch, the move from TowerBFT to Alpenglow.
-        Mainnet has not switched, and September 28 is not that launch.
+        Mainnet has not made that move. September 28 is a possible day for other
+        Agave 4.3 switches, not the Alpenglow launch.
 </div>
 
 Sources:
