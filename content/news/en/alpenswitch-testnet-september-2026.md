@@ -119,9 +119,6 @@ This consensus change should not create any extra hassle for you. The stake you
  already delegated stays with the same validator during the testnet rehearsal and
  when mainnet switches later.
 
-The reasons to move stake are the ordinary ones: the validator raises commission,
- or their performance gets worse. Alpenglow does not add a new rule on top of that.
-
 ### Builders
 
 Nothing in this week's testnet pass requires a mainnet program or wallet change.
