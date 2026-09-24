@@ -152,9 +152,10 @@
 <p><strong>Alpenglow</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a>)
  – це оновлення консенсусу. Alpenglow замінює TowerBFT протоколом голосування
  <strong>Votor</strong>. Голоси більше не потрапляють у блок як транзакції: валідатори
- надсилають їх одне одному напряму. Орієнтир за фіналізацією – близько
- <strong>150 мілісекунд</strong> замість приблизно <strong>12,8 секунди</strong> на шляху TowerBFT. Саме
- стільки займає накопичення підтверджень протягом 32 слотів.</p>
+ надсилають їх одне одному напряму. Орієнтир за фіналізацією – близько <strong>150 мілісекунд</strong>. Цифра, яку й досі
+ називають для TowerBFT, – близько <strong>12,8 секунди</strong>: це 32 слоти на старому
+ такті 400 мс. Зараз слоти 250 мс, тож та сама низка підтверджень займає менше
+ реального часу. Alpenglow доходить до 150 мс не тим, що коротшає слот.</p>
 <p><strong>Alpenswitch</strong> (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
  – це власне процедура переходу. На межі міграції кластер перемикається з TowerBFT
  на Alpenglow. Якщо перемикання зривається, кластер лишається на TowerBFT.
