@@ -31,14 +31,14 @@ image_alt: 'Alpenswitch: темний кластер переходить від
 
 ## Дві назви однієї зміни
 
-**Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a>)
+**Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a>)
  – це оновлення консенсусу. Alpenglow замінює TowerBFT протоколом голосування
  **Votor**. Голоси більше не потрапляють у блок як транзакції: валідатори
  надсилають їх одне одному напряму. Орієнтир за фіналізацією – близько
  **150 мілісекунд** замість приблизно **12,8 секунди** на шляху TowerBFT. Саме
  стільки займає накопичення підтверджень протягом 32 слотів.
 
-**Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a>)
+**Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
  – це сама процедура переходу. На межі міграції кластер перемикається з TowerBFT
  на Alpenglow. Якщо перемикання зривається, кластер лишається на TowerBFT.
  Публічний testnet відпрацьовує цей перехід зараз. Devnet і mainnet-beta мають
@@ -46,7 +46,7 @@ image_alt: 'Alpenswitch: темний кластер переходить від
 
 Як у липні виглядали Votor, Validator Admission Ticket і ще закритий gate на
  mainnet – у
- <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">нотатці про статус Alpenglow</a>.
+ <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">нотатці про статус Alpenglow</a>.
 
 ## Що оголосила Anza
 
@@ -78,12 +78,12 @@ Agave 4.3 на mainnet уже встановлений. Він вийшов 18 �
  далі відкладають перемикання консенсусу на пізніший реліз. Поки gate Alpenglow
  справді не відкриють, mainnet фіналізує блоки через TowerBFT. Як клієнтна лінія
  дійшла сюди – у
- <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">нотатці про Agave 4.2</a>.
+ <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">нотатці про Agave 4.2</a>.
 </div>
 
 ## Фіналізація і годинник – різні важелі
 
-<a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">Слоти 250 мс</a> запрацювали на mainnet з
+<a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Слоти 250 мс</a> запрацювали на mainnet з
  епохи 1037. Та зміна скоротила слот – вікно, в якому лідер збирає блок. Вона не
  змінила, скільки мережа чекає, перш ніж блок стане незворотним. Alpenglow – інший
  важіль: як валідатори домовляються, що блок уже не скасувати. Швидший такт і
@@ -129,7 +129,7 @@ Agave 4.3 на mainnet уже встановлений. Він вийшов 18 �
  зникають із блоків. Індексерам варто оновити базові лічильники **після** реальної
  міграції цього кластера, а не за датою в календарі. Довжина слота і фіналізація –
  різні речі: беріть поточну тривалість слота зі зміни
- <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">слотів 250 мс</a>
+ <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">слотів 250 мс</a>
  і не вважайте 150 мс новою довжиною слота.
 
 ### Звичайних користувачів
@@ -148,8 +148,8 @@ Agave 4.3 на mainnet уже встановлений. Він вийшов 18 �
 </div>
 
 Джерела:
- <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer">Solana – Alpenglow</a> ·
- <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a> ·
- <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a> ·
- <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer">CoinDesk – тест фіналізації на публічному testnet</a> ·
- <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer">ForkLog – активація на testnet</a>
+ <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer" data-new-tab="on">Solana – Alpenglow</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a> ·
+ <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer" data-new-tab="on">CoinDesk – тест фіналізації на публічному testnet</a> ·
+ <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer" data-new-tab="on">ForkLog – активація на testnet</a>

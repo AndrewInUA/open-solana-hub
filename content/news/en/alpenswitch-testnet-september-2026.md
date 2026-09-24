@@ -31,14 +31,14 @@ This week Solana's **public testnet** is running the migration that moves a clus
 
 ## Two names for one change
 
-**Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a>)
+**Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a>)
  is the consensus upgrade. It replaces TowerBFT with a voting protocol called
  **Votor**. Votes move off the ledger into direct messages between validators.
  The target is finality in about **150 milliseconds**, down from about
  **12.8 seconds** on the TowerBFT path – the time it takes for confirmations to
  stack across 32 slots.
 
-**Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a>)
+**Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
  is the migration procedure. At a migration boundary the
  cluster flips from TowerBFT to Alpenglow. If that flip fails, it falls back to
  TowerBFT. Public testnet is exercising that handoff now. Devnet and mainnet-beta
@@ -46,7 +46,7 @@ This week Solana's **public testnet** is running the migration that moves a clus
 
 How Votor, the Validator Admission Ticket, and the still-closed mainnet gate
  looked in July is in the
- <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">Alpenglow status note</a>.
+ <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Alpenglow status note</a>.
 
 ## What Anza announced
 
@@ -78,12 +78,12 @@ September 28 is the tentative day on that calendar for opening some of those
  consensus flip at a later release. Until the Alpenglow gate actually opens,
  mainnet keeps finalizing blocks with TowerBFT. How this client line got here
  is in the
- <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">Agave 4.2 note</a>.
+ <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Agave 4.2 note</a>.
 </div>
 
 ## Finality and the clock are different levers
 
-<a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots</a> went live on mainnet at
+<a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">250ms slots</a> went live on mainnet at
  epoch 1037. That change shortened the slot, the window a leader has to produce
  a block. It did not change how long the network waits before a block is
  irreversible. Alpenglow is the other lever: how validators agree that a block
@@ -129,7 +129,7 @@ Nothing in this week's testnet pass requires a mainnet program or wallet change.
  indexers should re-baseline counts **after** that cluster has actually migrated,
  not on a calendar date. Slot duration and finality stay separate: keep the
  current slot time from the
- <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer">250ms slots</a> change, and do not treat
+ <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">250ms slots</a> change, and do not treat
  150ms as a new slot length.
 
 ### Everyone else
@@ -147,8 +147,8 @@ If you hold or send SOL on mainnet, you do not configure anything, and this week
 </div>
 
 Sources:
- <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer">Solana – Alpenglow</a> ·
- <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer">SIMD-0326</a> ·
- <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer">SIMD-0384</a> ·
- <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer">CoinDesk – public testnet finality test</a> ·
- <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer">ForkLog – activation on testnet</a>
+ <a href="https://solana.com/upgrades/alpenglow" target="_blank" rel="noopener noreferrer" data-new-tab="on">Solana – Alpenglow</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a> ·
+ <a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a> ·
+ <a href="https://www.coindesk.com/tech/2026/09/23/solana-starts-testing-upgrade-that-could-cut-finality-from-12-8-seconds-to-150-milliseconds" target="_blank" rel="noopener noreferrer" data-new-tab="on">CoinDesk – public testnet finality test</a> ·
+ <a href="https://forklog.com/en/alpenglow-begins-activation-phase-in-solana-testnet/" target="_blank" rel="noopener noreferrer" data-new-tab="on">ForkLog – activation on testnet</a>
