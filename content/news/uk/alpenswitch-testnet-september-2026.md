@@ -35,10 +35,11 @@ image_alt: 'Alpenswitch: темний кластер переходить від
 **Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a>)
  – це оновлення консенсусу. Alpenglow замінює TowerBFT протоколом голосування
  **Votor**. Голоси більше не потрапляють у блок як транзакції: валідатори
- надсилають їх одне одному напряму. Орієнтир за фіналізацією – близько **150 мілісекунд**. Цифра, яку й досі
- називають для TowerBFT, – близько **12,8 секунди**: це 32 слоти на старому
- такті 400 мс. Зараз слоти 250 мс, тож та сама низка підтверджень займає менше
- реального часу. Alpenglow доходить до 150 мс не тим, що коротшає слот.
+ надсилають їх одне одному напряму. Орієнтир за фіналізацією – близько
+ **150 мілісекунд**. Для TowerBFT і досі часто називають близько **12,8 секунди**,
+ але ця цифра зі старішого, повільнішого такту слотів. Зараз такт mainnet
+ швидший. Alpenglow виходить на 150 мілісекунд тим, що валідатори інакше
+ домовляються, а не тим, що прискорюється годинник.
 
 **Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
  – це власне процедура переходу. На межі міграції кластер перемикається з TowerBFT

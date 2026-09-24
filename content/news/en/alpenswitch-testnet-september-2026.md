@@ -34,10 +34,10 @@ This week Solana's **public testnet** is running the migration that moves a clus
 **Alpenglow** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0326-alpenglow.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0326</a>)
  is the consensus upgrade. It replaces TowerBFT with a voting protocol called
  **Votor**. Votes move off the ledger into direct messages between validators.
- The target is finality in about **150 milliseconds**. The TowerBFT number
- people still quote is about **12.8 seconds**: 32 slots on the old 400ms clock.
- Slots are 250ms now, so that same stack takes less real time. Alpenglow does
- not get to 150ms by shortening the slot.
+ The target is finality in about **150 milliseconds**. TowerBFT is often quoted
+ at about **12.8 seconds**, and that quote belongs to an older, slower slot
+ clock. Mainnet's clock is faster now. Alpenglow reaches 150 milliseconds by
+ changing how validators agree, not by speeding up that clock.
 
 **Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
  is the migration procedure. At a migration boundary the
