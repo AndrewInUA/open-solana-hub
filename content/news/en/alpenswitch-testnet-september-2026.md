@@ -115,9 +115,9 @@ This rehearsal wants **Agave 4.3**. Read Anza's operator notes before the testne
 
 ### Delegators
 
-This consensus change does not give you a task. The stake you already delegated
- stays with that same validator through the testnet rehearsal and through the
- later switch on mainnet. You do not move it because the voting protocol changed.
+This consensus change should not create any extra hassle for you. The stake you
+ already delegated stays with the same validator during the testnet rehearsal and
+ when mainnet switches later.
 
 The reasons to move stake are the ordinary ones: the validator raises commission,
  or their performance gets worse. Alpenglow does not add a new rule on top of that.
