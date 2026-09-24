@@ -1,5 +1,5 @@
 ---
-title: 'Alpenswitch is on public testnet: Solana is rehearsing the Alpenglow flip'
+title: 'Alpenswitch is on public testnet: Solana is rehearsing the move to its new consensus, Alpenglow'
 seo_title: 'Alpenglow on Solana public testnet: Alpenswitch explained'
 date: '2026-09-24'
 tag: Consensus
