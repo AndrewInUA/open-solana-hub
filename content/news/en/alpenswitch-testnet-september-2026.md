@@ -4,16 +4,16 @@ seo_title: 'Alpenswitch puts Alpenglow on public testnet'
 date: '2026-09-24'
 tag: Consensus
 description: >-
-  Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What the two names mean,
-  why September 28 is not a mainnet launch, and what changes for validators.
+  Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What Anza announced,
+  what the September 28 calendar mark actually is, and what changes for validators.
 keywords:
   - Alpenswitch
   - Alpenglow
   - SIMD-0384
   - public testnet
 teaser: >-
-  Public testnet is running the TowerBFT-to-Alpenglow migration this week. Wallets on mainnet do
-  not change, and September 28 is not the launch.
+  Public testnet is running the TowerBFT-to-Alpenglow migration this week. Anza's note also
+  carries a September 28 mark that is easy to misread. Wallets on mainnet do not change.
 image: /content/media/alpenswitch-testnet-card.png
 image_alt: 'Alpenswitch: a dark cluster crossing from stacked confirmations into one short agreement pulse'
 ---
@@ -48,29 +48,36 @@ How Votor, the Validator Admission Ticket, and the still-closed mainnet gate
  looked in July is in the
  <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">Alpenglow status note</a>.
 
-## What "this week" means
+## What Anza announced
 
-Anza's announcement started activation on public testnet. At publish time, read
- the migration as **underway this week**, not as a finished flip with a recorded
- timestamp. The tracker can still list the testnet switch as pending while
- operators move. A line like "it landed at epoch N" is the wrong shape for this
- update.
+On September 22 Anza said Alpenglow is coming to public testnet this week. The
+ note was specific about the procedure: testnet runs the same migration that
+ devnet and mainnet-beta will run later. The community cluster has already been
+ on Alpenglow for more than four months and has rehearsed that handoff.
+
+Read the testnet move as **underway this week**. The public tracker can still
+ list it as pending while operators get ready. There is no finished "it flipped
+ at epoch N" time to report yet.
 
 The first pass is **Agave 4.3 only**. Firedancer and Frankendancer do not support
- this Alpenglow testnet migration. Operators on those clients need Agave for the
- rehearsal. That is a client-diversity gap for this test. Later clusters set
- their own client mix.
+ this Alpenglow testnet migration, so operators on those clients need Agave for
+ the rehearsal. Later clusters will set their own client mix.
+
+The same Anza schedule has a second date, and that is the line people are
+ mixing up with this testnet news. **September 28** is listed as a tentative day
+ to turn on Agave 4.3 feature gates on mainnet. It sits on the release calendar
+ beside the testnet announcement. It is a different item.
 
 <div class="callout">
-<strong>What September 28 actually is</strong>
+<strong>What that September 28 mark means</strong>
 Agave 4.3 is already installed on mainnet. It arrived on September 18 with the
  Alpenglow code inside and the switch still off. A feature gate is that switch:
  the software can sit on a validator before one ability is turned on.
-September 28 is a tentative day on Anza's calendar for opening some of those
- Agave 4.3 switches on mainnet. It is a software date. It does not move mainnet
- onto Alpenglow. Operator notes still aim that consensus flip at a later release.
- Until the Alpenglow gate actually opens, mainnet keeps finalizing blocks with
- TowerBFT. How this client line got here is in the
+September 28 is the tentative day on that calendar for opening some of those
+ switches. It does not move mainnet onto Alpenglow. Operator notes still aim the
+ consensus flip at a later release. Until the Alpenglow gate actually opens,
+ mainnet keeps finalizing blocks with TowerBFT. How this client line got here
+ is in the
  <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">Agave 4.2 note</a>.
 </div>
 
@@ -103,8 +110,8 @@ Once Alpenglow is actually live on a cluster, apps on that cluster can feel
 This rehearsal wants **Agave 4.3**. Read Anza's operator notes before the testnet
  gate, and do not assume Firedancer or Frankendancer can take this first
  migration. The community cluster already practiced the switch; public testnet is
- the formal pass of that same migration. September 28 may open some Agave 4.3
- gates on mainnet. It is not the day mainnet moves to Alpenglow.
+ the formal pass of that same migration. The September 28 mark above may open
+ some Agave 4.3 gates on mainnet. It is not the day mainnet moves to Alpenglow.
 
 ### Delegators
 
@@ -135,8 +142,8 @@ If you hold or send SOL on mainnet, you do not configure anything, and this week
 <div class="callout">
 <strong>In one sentence</strong>
         Public testnet is rehearsing Alpenswitch, the move from TowerBFT to Alpenglow.
-        Mainnet has not made that move. September 28 is a possible day for other
-        Agave 4.3 switches, not the Alpenglow launch.
+        The September 28 line on Anza's schedule is a possible day for other Agave 4.3
+        switches. Mainnet has not moved to Alpenglow.
 </div>
 
 Sources:

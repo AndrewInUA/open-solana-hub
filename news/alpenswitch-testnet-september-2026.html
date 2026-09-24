@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="description" content="Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What the two names mean, why September 28 is not a mainnet launch, and what changes for validators." />
+  <meta name="description" content="Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What Anza announced, what the September 28 calendar mark actually is, and what changes for validators." />
   <title>Alpenswitch puts Alpenglow on public testnet | Open Solana Hub</title>
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <link rel="canonical" href="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" />
@@ -15,7 +15,7 @@
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="uk_UA" />
   <meta property="og:title" content="Alpenswitch puts Alpenglow on public testnet" />
-  <meta property="og:description" content="Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What the two names mean, why September 28 is not a mainnet launch, and what changes for validators." />
+  <meta property="og:description" content="Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What Anza announced, what the September 28 calendar mark actually is, and what changes for validators." />
   <meta property="og:url" content="https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html" />
   <meta property="og:site_name" content="Open Solana Hub" />
   <meta property="og:image" content="https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png" />
@@ -33,14 +33,14 @@
   <meta property="article:tag" content="public testnet" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Alpenswitch puts Alpenglow on public testnet" />
-  <meta name="twitter:description" content="Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What the two names mean, why September 28 is not a mainnet launch, and what changes for validators." />
+  <meta name="twitter:description" content="Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What Anza announced, what the September 28 calendar mark actually is, and what changes for validators." />
   <meta name="twitter:image" content="https://www.opensolanahub.com/content/media/alpenswitch-testnet-card.png" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "headline": "Alpenswitch puts Alpenglow on public testnet",
-    "description": "Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What the two names mean, why September 28 is not a mainnet launch, and what changes for validators.",
+    "description": "Alpenswitch is migrating Alpenglow onto Solana public testnet this week. What Anza announced, what the September 28 calendar mark actually is, and what changes for validators.",
     "url": "https://www.opensolanahub.com/news/alpenswitch-testnet-september-2026.html",
     "image": {
       "@type": "ImageObject",
@@ -162,26 +162,31 @@
 <p>How Votor, the Validator Admission Ticket, and the still-closed mainnet gate
  looked in July is in the
  <a href="./alpenglow-consensus-status-july-2026.html" target="_blank" rel="noopener noreferrer">Alpenglow status note</a>.</p>
-<h2>What &quot;this week&quot; means</h2>
-<p>Anza&#39;s announcement started activation on public testnet. At publish time, read
- the migration as <strong>underway this week</strong>, not as a finished flip with a recorded
- timestamp. The tracker can still list the testnet switch as pending while
- operators move. A line like &quot;it landed at epoch N&quot; is the wrong shape for this
- update.</p>
+<h2>What Anza announced</h2>
+<p>On September 22 Anza said Alpenglow is coming to public testnet this week. The
+ note was specific about the procedure: testnet runs the same migration that
+ devnet and mainnet-beta will run later. The community cluster has already been
+ on Alpenglow for more than four months and has rehearsed that handoff.</p>
+<p>Read the testnet move as <strong>underway this week</strong>. The public tracker can still
+ list it as pending while operators get ready. There is no finished &quot;it flipped
+ at epoch N&quot; time to report yet.</p>
 <p>The first pass is <strong>Agave 4.3 only</strong>. Firedancer and Frankendancer do not support
- this Alpenglow testnet migration. Operators on those clients need Agave for the
- rehearsal. That is a client-diversity gap for this test. Later clusters set
- their own client mix.</p>
+ this Alpenglow testnet migration, so operators on those clients need Agave for
+ the rehearsal. Later clusters will set their own client mix.</p>
+<p>The same Anza schedule has a second date, and that is the line people are
+ mixing up with this testnet news. <strong>September 28</strong> is listed as a tentative day
+ to turn on Agave 4.3 feature gates on mainnet. It sits on the release calendar
+ beside the testnet announcement. It is a different item.</p>
 <div class="callout">
-<strong>What September 28 actually is</strong>
+<strong>What that September 28 mark means</strong>
 Agave 4.3 is already installed on mainnet. It arrived on September 18 with the
  Alpenglow code inside and the switch still off. A feature gate is that switch:
  the software can sit on a validator before one ability is turned on.
-September 28 is a tentative day on Anza's calendar for opening some of those
- Agave 4.3 switches on mainnet. It is a software date. It does not move mainnet
- onto Alpenglow. Operator notes still aim that consensus flip at a later release.
- Until the Alpenglow gate actually opens, mainnet keeps finalizing blocks with
- TowerBFT. How this client line got here is in the
+September 28 is the tentative day on that calendar for opening some of those
+ switches. It does not move mainnet onto Alpenglow. Operator notes still aim the
+ consensus flip at a later release. Until the Alpenglow gate actually opens,
+ mainnet keeps finalizing blocks with TowerBFT. How this client line got here
+ is in the
  <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer">Agave 4.2 note</a>.
 </div>
 
@@ -209,8 +214,8 @@ Finality is the moment a bank transfer becomes irreversible. TowerBFT is waiting
 <p>This rehearsal wants <strong>Agave 4.3</strong>. Read Anza&#39;s operator notes before the testnet
  gate, and do not assume Firedancer or Frankendancer can take this first
  migration. The community cluster already practiced the switch; public testnet is
- the formal pass of that same migration. September 28 may open some Agave 4.3
- gates on mainnet. It is not the day mainnet moves to Alpenglow.</p>
+ the formal pass of that same migration. The September 28 mark above may open
+ some Agave 4.3 gates on mainnet. It is not the day mainnet moves to Alpenglow.</p>
 <h3>Delegators</h3>
 <p>No restake and no wallet migration. Stake on mainnet-beta is still under
  TowerBFT. The useful signal matches other client upgrades: prefer operators who
@@ -234,8 +239,8 @@ Finality is the moment a bank transfer becomes irreversible. TowerBFT is waiting
 <div class="callout">
 <strong>In one sentence</strong>
         Public testnet is rehearsing Alpenswitch, the move from TowerBFT to Alpenglow.
-        Mainnet has not made that move. September 28 is a possible day for other
-        Agave 4.3 switches, not the Alpenglow launch.
+        The September 28 line on Anza's schedule is a possible day for other Agave 4.3
+        switches. Mainnet has not moved to Alpenglow.
 </div>
 
 <p>Sources:
