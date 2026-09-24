@@ -115,11 +115,12 @@ This rehearsal wants **Agave 4.3**. Read Anza's operator notes before the testne
 
 ### Delegators
 
-Your stake stays where it is. This week's rehearsal is on public testnet, so the
- SOL you already delegated on mainnet-beta is still under TowerBFT and does not
- move. The part worth watching is the operator: a validator who says which client
- they run, and how they plan to meet Alpenglow, is easier to read than one who
- goes quiet when the client changes.
+This consensus change does not give you a task. The stake you already delegated
+ stays with that same validator through the testnet rehearsal and through the
+ later switch on mainnet. You do not move it because the voting protocol changed.
+
+The reasons to move stake are the ordinary ones: the validator raises commission,
+ or their performance gets worse. Alpenglow does not add a new rule on top of that.
 
 ### Builders
 
