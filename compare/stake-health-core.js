@@ -104,11 +104,12 @@
     kicker: "Telegram",
     headline: "Keep watch in Telegram",
     body:
-      "This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. A lower cut is not a ping – that stays on fee history. Public key only.",
+      "This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. A lower cut is not a ping – that stays on fee history. A stake already cooling down when you link stays on this page. Public key only.",
     notesHow:
-      "After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. A lower cut is not a ping.",
+      "After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. A lower cut is not a ping.",
     steps: "Look up, then Get notes. Or send a public key in the bot.",
     raiseExample: "Your validator raised the cut: 0% → 8%.",
+    cooldownExample: "This stake is cooling down. 10 SOL stops earning when this epoch ends.",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
     fallback: "Telegram bot coming – ask for the link."
@@ -116,6 +117,9 @@
 
   const FEE_HISTORY_LEAD =
     "This cut is the validator's share of inflation rewards. A raise shrinks what you keep from then on. Telegram pings a raise. A lower cut stays here – no extra ping.";
+
+  const COOLDOWN_LEAD =
+    "It stops earning when this epoch ends. Telegram sends its own note when a watched stake starts cooling down. A stake that was already cooling down when you linked stays on this page.";
 
   function shortKey(k) {
     if (!k) return "–";
@@ -249,7 +253,7 @@
     const deact = Number(deactivationEpoch);
     if (Number.isFinite(act) && Number.isFinite(cur) && act > cur) return "activating";
     if (!deactivationIsOpen(deactivationEpoch)) {
-      if (Number.isFinite(deact) && Number.isFinite(cur) && deact <= cur) return "inactive";
+      if (Number.isFinite(deact) && Number.isFinite(cur) && deact < cur) return "inactive";
       return "deactivating";
     }
     return "active";
@@ -530,7 +534,7 @@
       );
     } else if (acc.status === "inactive") {
       tone = worseTone(tone, "watch");
-      reasons.push("This stake is not active right now.");
+      reasons.push("This stake is inactive. It is not earning.");
     }
 
     if (status === "delinquent") {
@@ -1017,6 +1021,11 @@
     const active = rows.filter(r => r.acc.status === "active");
     const activating = rows.filter(r => r.acc.status === "activating");
     const deactivating = rows.filter(r => r.acc.status === "deactivating");
+    const inactive = rows.filter(r => r.acc.status === "inactive");
+    if (inactive.length && !active.length && !activating.length && !deactivating.length) {
+      if (names.length === 1) return `Your stake on ${names[0]} is inactive.`;
+      return "Your stake is inactive.";
+    }
     if (names.length === 1) {
       const name = names[0];
       if (activating.length && !active.length && !deactivating.length) {
@@ -1254,7 +1263,49 @@
     if (stake) u.searchParams.set("stake", stake);
     if (opts.story) u.hash = "full-stake-story";
     else if (opts.fee) u.hash = "vt-card";
+    else if (opts.cooldown) u.hash = "cooldown-card";
     return u.toString();
+  }
+
+  /**
+   * Stakes that are undelegating right now. The page shows them whenever
+   * they are cooling down. Telegram pings only the start, after a baseline.
+   */
+  function coolingDownFromRows(rows) {
+    const lines = [];
+    for (const row of rows || []) {
+      if (row?.acc?.status !== "deactivating") continue;
+      const name =
+        row.health?.name ||
+        row.acc.validatorName ||
+        (row.acc.vote ? shortKey(row.acc.vote) : "This stake");
+      const sol = Number(row.acc.delegatedSol);
+      const solText = Number.isFinite(sol) ? `${fmtSol(sol)} SOL` : "";
+      lines.push({
+        stake: row.acc.pubkey || null,
+        vote: row.acc.vote || null,
+        name,
+        solText,
+        text: name
+      });
+    }
+    const nameCounts = new Map();
+    for (const line of lines) {
+      nameCounts.set(line.name, (nameCounts.get(line.name) || 0) + 1);
+    }
+    for (const line of lines) {
+      const who =
+        nameCounts.get(line.name) > 1 && line.stake
+          ? `${line.name} · ${shortKey(line.stake)}`
+          : line.name;
+      line.text = line.solText ? `${who} · ${line.solText}` : who;
+    }
+    return {
+      show: lines.length > 0,
+      headline: lines.length > 1 ? "These stakes are cooling down." : "This stake is cooling down.",
+      lead: COOLDOWN_LEAD,
+      lines
+    };
   }
 
   function compareUrl(vote) {
@@ -1540,6 +1591,7 @@
     HOW_TO_READ,
     TELEGRAM_CTA,
     FEE_HISTORY_LEAD,
+    COOLDOWN_LEAD,
     DEFAULT_TELEGRAM_BOT_USERNAME,
     TELEGRAM_BOT_URL,
     shortKey,
@@ -1566,6 +1618,7 @@
     compactFeeEvents,
     feeHistoryFromOverlay,
     feeHistoriesFromRows,
+    coolingDownFromRows,
     scoreStake,
     lastSumFrom,
     finiteEpoch,

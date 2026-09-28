@@ -41,6 +41,7 @@ const {
   stabilityFromHistory,
   compactOverlay,
   feeHistoryFromOverlay,
+  coolingDownFromRows,
   buildHealthView,
   loadSolFiatRates,
   solWithFiat: solWithFiatCore,
@@ -355,6 +356,31 @@ function renderFeeHistory(view) {
     }
     appendFeeRows(block, "What this means for you", pack.meaning);
     hist.append(block);
+  }
+}
+
+function renderCooldown(view) {
+  const card = $("cooldown-card");
+  const headline = $("cooldown-headline");
+  const lead = $("cooldown-lead");
+  const list = $("cooldown-list");
+  if (!card) return;
+  const pack = coolingDownFromRows(view?.rows || []);
+  if (!pack.show) {
+    card.classList.add("hidden");
+    if (list) list.innerHTML = "";
+    return;
+  }
+  card.classList.remove("hidden");
+  if (headline) headline.textContent = pack.headline;
+  if (lead) lead.textContent = pack.lead;
+  if (!list) return;
+  list.innerHTML = "";
+  for (const line of pack.lines) {
+    const li = document.createElement("li");
+    li.dataset.tone = "watch";
+    li.textContent = line.text;
+    list.append(li);
   }
 }
 
@@ -897,7 +923,9 @@ function focusLookupHash() {
       ? "full-stake-story"
       : hash === "vt-card" || hash === "fee-history"
         ? "vt-card"
-        : "";
+        : hash === "cooldown-card" || hash === "cooling-down"
+          ? "cooldown-card"
+          : "";
   if (!id) return;
   requestAnimationFrame(() => {
     $(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1117,6 +1145,7 @@ function hideResults() {
   $("verdict-fiat")?.classList.add("hidden");
   setTelegramHandoff("");
   resetVtCard();
+  $("cooldown-card")?.classList.add("hidden");
 }
 
 function fillFiatSelect() {
@@ -1148,6 +1177,7 @@ function paintLookup(accounts, pack, overlays) {
   renderOverall(view.overall);
   renderStakes(view.rows, pack);
   renderFeeHistory(view);
+  renderCooldown(view);
   focusLookupHash();
   return view.rows;
 }
@@ -1297,7 +1327,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A lower cut stays on this list, not a ping.";
+    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A lower cut stays on this list, not a ping.";
   ul.append(moneyNote);
 }
 
@@ -1374,6 +1404,12 @@ function fillTelegramCta() {
     const em = document.createElement("em");
     em.textContent = TELEGRAM_CTA.raiseExample;
     example.append(em);
+    if (TELEGRAM_CTA.cooldownExample) {
+      example.append(document.createTextNode(" "));
+      const cool = document.createElement("em");
+      cool.textContent = TELEGRAM_CTA.cooldownExample;
+      example.append(cool);
+    }
   }
   applyTelegramLink(TELEGRAM_BOT_URL);
   fetch("/api/telegram-info", { cache: "no-store" })
@@ -1385,6 +1421,53 @@ function fillTelegramCta() {
     .catch(() => {
       applyTelegramLink(TELEGRAM_BOT_URL);
     });
+}
+
+function localDemoMode() {
+  const host = window.location.hostname;
+  if (host !== "localhost" && host !== "127.0.0.1") return "";
+  const demo = new URLSearchParams(window.location.search).get("demo");
+  if (demo === "cooldown" || demo === "inactive") return demo;
+  return "";
+}
+
+function showLocalDemo(mode) {
+  const inactive = mode === "inactive";
+  setStatus(
+    inactive
+      ? "Local sample. This stake finished undelegation. Not a live lookup."
+      : "Local sample. This stake is cooling down. Not a live lookup."
+  );
+  paintLookup(
+    [
+      {
+        pubkey: "Stake11111111111111111111111111111111AAA",
+        vote: "Vote111111111111111111111111111111111AAA",
+        status: inactive ? "inactive" : "deactivating",
+        delegatedSol: 12.5,
+        sol: 12.5,
+        rewards: [{ amountSol: 0.0042, epoch: 841 }],
+        validatorName: "Example validator"
+      }
+    ],
+    { currentEpoch: 842 },
+    new Map([
+      [
+        "Vote111111111111111111111111111111111AAA",
+        {
+          name: "Example validator",
+          status: "healthy",
+          commission: 5,
+          votingPct: 99,
+          stability: { score: 90, sample: 20, delinquent: 0, commissionChanges: 0 },
+          feeEvents: []
+        }
+      ]
+    ])
+  );
+  document.getElementById(inactive ? "verdict-card" : "cooldown-card")?.scrollIntoView({
+    block: "center"
+  });
 }
 
 function boot() {
@@ -1447,6 +1530,12 @@ function boot() {
       share.select();
     }
   });
+
+  const demo = localDemoMode();
+  if (demo) {
+    showLocalDemo(demo);
+    return;
+  }
 
   const q = new URLSearchParams(window.location.search);
   const wallet = (q.get("wallet") || "").trim();

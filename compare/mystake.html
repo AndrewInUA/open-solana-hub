@@ -625,13 +625,13 @@
       <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
       <h2 id="telegram-headline">Keep watch in Telegram</h2>
       <p class="lead" id="telegram-body">
-        This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. A lower cut is not a ping – that stays on fee history. Public key only.
+        This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. A lower cut is not a ping – that stays on fee history. A stake already cooling down when you link stays on this page. Public key only.
       </p>
       <p class="muted" id="telegram-steps" style="margin:0 0 14px">
         <strong>Look up, then Get notes. Or send a public key in the bot.</strong>
       </p>
       <p class="muted" id="telegram-example" style="margin:0 0 14px">
-        Example: <em>Your validator raised the cut: 0% → 8%.</em>
+        Example: <em>Your validator raised the cut: 0% → 8%.</em> <em>This stake is cooling down. 10 SOL stops earning when this epoch ends.</em>
       </p>
       <div class="row">
         <a class="copy-btn" id="telegram-open" href="https://telegram.me/stake_health_bot" target="_blank" rel="noopener noreferrer">Open @stake_health_bot</a>
@@ -655,6 +655,15 @@
       </div>
       <p id="verdict-body"></p>
       <p class="muted" id="verdict-next"></p>
+    </div>
+
+    <div class="card verdict watch hidden" id="cooldown-card">
+      <div class="verdict-kicker">Cooling down</div>
+      <h2 id="cooldown-headline">This stake is cooling down.</h2>
+      <p class="lead" id="cooldown-lead">
+        It stops earning when this epoch ends. Telegram sends its own note when a watched stake starts cooling down. A stake that was already cooling down when you linked stays on this page.
+      </p>
+      <ul class="fee-history-list" id="cooldown-list"></ul>
     </div>
 
     <div class="card" id="vt-card">
@@ -702,7 +711,7 @@
         <li data-tone="watch"><strong>👀 Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li data-tone="risk"><strong>⚠️ Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A lower cut stays on this list, not a ping.</li>
+        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A lower cut stays on this list, not a ping.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
