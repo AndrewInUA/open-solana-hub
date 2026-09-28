@@ -56,8 +56,7 @@ const {
   telegramBotUsername,
   isTelegramBotUrl,
   safeTelegramBotUrl,
-  telegramStartUrl,
-  epochClockFromRpc
+  telegramStartUrl
 } = window.StakeHealth;
 
 const THEME_KEY = "vtd-theme";
@@ -436,11 +435,21 @@ async function fetchEpoch() {
 }
 
 async function fetchEpochClock() {
-  const [info, samples] = await Promise.all([
-    rpcCall("getEpochInfo", []),
-    rpcCall("getRecentPerformanceSamples", [1]).catch(() => null)
-  ]);
-  return epochClockFromRpc(info, samples);
+  const urls = ["/api/epoch-clock"];
+  if (window.location.origin !== HUB_ORIGIN) {
+    urls.push(`${HUB_ORIGIN}/api/epoch-clock`);
+  }
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json?.ok && json.epochRemaining) return json;
+    } catch {
+      /* the public RPC refuses this call from a browser */
+    }
+  }
+  return null;
 }
 
 async function attachRewards(accounts, currentEpoch) {
