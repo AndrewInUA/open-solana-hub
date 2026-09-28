@@ -235,6 +235,45 @@
     return history.avg5;
   }
 
+  function epochRemainingCopy({ epoch, slotsInEpoch, slotIndex, slotSeconds } = {}) {
+    const total = Number(slotsInEpoch);
+    const index = Number(slotIndex);
+    const slotSecs = Number(slotSeconds);
+    if (!Number.isFinite(total) || total <= 0 || !Number.isFinite(index)) return "";
+    if (!Number.isFinite(slotSecs) || slotSecs < 0.05 || slotSecs > 2) return "";
+    const leftSlots = Math.max(0, Math.floor(total - index));
+    const seconds = leftSlots * slotSecs;
+    const where = Number.isFinite(Number(epoch)) ? `epoch ${Math.floor(Number(epoch))}` : "this epoch";
+    if (seconds < 60) return `Less than a minute left in ${where}.`;
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 90) {
+      return minutes === 1
+        ? `About 1 minute left in ${where}.`
+        : `About ${minutes} minutes left in ${where}.`;
+    }
+    const hours = Math.max(1, Math.round(seconds / 3600));
+    return hours === 1
+      ? `About 1 hour left in ${where}.`
+      : `About ${hours} hours left in ${where}.`;
+  }
+
+  function epochClockFromRpc(epochInfo, samples) {
+    const info = epochInfo || {};
+    const sample = Array.isArray(samples) ? samples[0] : null;
+    const numSlots = Number(sample?.numSlots);
+    const period = Number(sample?.samplePeriodSecs);
+    const slotSeconds = numSlots > 0 && period > 0 ? period / numSlots : null;
+    return {
+      epoch: Number(info.epoch),
+      epochRemaining: epochRemainingCopy({
+        epoch: info.epoch,
+        slotsInEpoch: info.slotsInEpoch,
+        slotIndex: info.slotIndex,
+        slotSeconds
+      })
+    };
+  }
+
   function deactivationIsOpen(epoch) {
     if (epoch === null || epoch === undefined || epoch === "") return true;
     try {
@@ -477,6 +516,18 @@
             : "You keep more. That stays on this list – no extra ping."
       });
     }
+    const keptSol = validatorCutSol(overlay?.lastEpochSol, commission);
+    const cutSolLine =
+      keptSol != null && keptSol > 0
+        ? `Last epoch this cut was ${fmtSol(keptSol)} SOL.`
+        : "";
+    if (cutSolLine) {
+      meaning.unshift({
+        label: "Last epoch",
+        tone: hasCommission && commission > 10 ? "watch" : "ok",
+        text: `This cut was ${fmtSol(keptSol)} SOL of that payout.`
+      });
+    }
     return {
       name: overlay?.name || null,
       vote: overlay?.vote || null,
@@ -484,6 +535,7 @@
       changeCount: knownChanges,
       headline,
       nowLine,
+      cutSolLine,
       emptyLine,
       lines,
       meaning,
@@ -1017,11 +1069,60 @@
     return lines;
   }
 
+  function validatorCutSol(receivedSol, commissionPct) {
+    const received = Number(receivedSol);
+    const cut = Number(commissionPct);
+    if (!Number.isFinite(received) || received <= 0) return null;
+    if (!Number.isFinite(cut) || cut <= 0 || cut >= 100) return null;
+    return received * (cut / (100 - cut));
+  }
+
+  function lastEpochReceived(rows, vote) {
+    let sum = 0;
+    let any = false;
+    for (const row of rows || []) {
+      if (row?.acc?.vote !== vote) continue;
+      const n = Number(row?.acc?.rewards?.[0]?.amountSol);
+      if (!Number.isFinite(n)) continue;
+      any = true;
+      sum += n;
+    }
+    return any ? sum : null;
+  }
+
+  function rowName(row) {
+    return row?.health?.name || row?.acc?.validatorName || (row?.acc?.vote ? shortKey(row.acc.vote) : "");
+  }
+
+  function uniqueNames(list) {
+    return [...new Set(list.map(rowName).filter(Boolean))];
+  }
+
   function situationHeadline(rows, names, nameBit) {
     const active = rows.filter(r => r.acc.status === "active");
     const activating = rows.filter(r => r.acc.status === "activating");
     const deactivating = rows.filter(r => r.acc.status === "deactivating");
     const inactive = rows.filter(r => r.acc.status === "inactive");
+    if (deactivating.length && (active.length || activating.length || inactive.length)) {
+      const who = uniqueNames(deactivating);
+      if (who.length === 1) {
+        const stillThere = [...active, ...activating].some(r => rowName(r) === who[0]);
+        return stillThere
+          ? `One stake on ${who[0]} is cooling down.`
+          : `${who[0]} is cooling down.`;
+      }
+      return `${deactivating.length} stakes are cooling down.`;
+    }
+    if (inactive.length && (active.length || activating.length)) {
+      const who = uniqueNames(inactive);
+      if (who.length === 1) {
+        const stillThere = active.some(r => rowName(r) === who[0]);
+        return stillThere
+          ? `One stake on ${who[0]} is inactive.`
+          : `Your stake on ${who[0]} is inactive.`;
+      }
+      return "Part of this stake is inactive.";
+    }
     if (inactive.length && !active.length && !activating.length && !deactivating.length) {
       if (names.length === 1) return `Your stake on ${names[0]} is inactive.`;
       return "Your stake is inactive.";
@@ -1041,6 +1142,22 @@
       return `Your stake is split across ${nameBit}.`;
     }
     return `Your stake is on ${nameBit}.`;
+  }
+
+  function stakeStatusLine(rows) {
+    const active = rows.filter(r => r.acc.status === "active");
+    const activating = rows.filter(r => r.acc.status === "activating");
+    const deactivating = rows.filter(r => r.acc.status === "deactivating");
+    const inactive = rows.filter(r => r.acc.status === "inactive");
+    if (inactive.length && !active.length && !activating.length && !deactivating.length) {
+      return "This stake is inactive. It is not earning.";
+    }
+    if (deactivating.length && !active.length && !activating.length && !inactive.length) {
+      return "It stops earning when this epoch ends.";
+    }
+    if (deactivating.length) return "The cooling-down stake stops earning when this epoch ends.";
+    if (inactive.length) return "The inactive stake is not earning.";
+    return "";
   }
 
   function stakerKeepLine(commission) {
@@ -1123,14 +1240,17 @@
     const lastSum = money.lastEpochSol;
     const commLine = overallCommLine(scored);
     const headline = situationHeadline(delegated, names, nameBit);
+    const statusLine = stakeStatusLine(delegated);
+    const lead = [statusLine, commLine].filter(Boolean).join(" ");
+    const epochLeft = String(pack?.epochRemaining || "").trim();
 
     if (worst === "risk") {
       return {
         tone: "risk",
         kicker: TONE_BADGE.risk,
         headline,
-        body: `${commLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Open Stake story for last epoch, then last epochs' rewards.",
+        body: `${lead} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
+        next: [epochLeft, "Open Stake story for last epoch, then last epochs' rewards."].filter(Boolean).join(" "),
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1142,8 +1262,8 @@
         tone: "watch",
         kicker: TONE_BADGE.watch,
         headline,
-        body: `${commLine} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-        next: "Skim the cards below. Come back after the next epoch if you like a routine.",
+        body: `${lead} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
+        next: [epochLeft, "Skim the cards below. Come back after the next epoch if you like a routine."].filter(Boolean).join(" "),
         lastEpochSol: lastSum,
         totalActiveSol,
         cumulativeSol: money.cumulativeSol,
@@ -1155,9 +1275,10 @@
       tone: "ok",
       kicker: TONE_BADGE.ok,
       headline,
-      body: `${commLine} ${TONE_COPY.ok.body}${idleNote}`.replace(/\s+/g, " ").trim(),
-      next:
-        pack?.currentEpoch != null
+      body: `${lead} ${TONE_COPY.ok.body}${idleNote}`.replace(/\s+/g, " ").trim(),
+      next: epochLeft
+        ? `${epochLeft} Save this page and check again after it ends if you want.`
+        : pack?.currentEpoch != null
           ? `Epoch ${pack.currentEpoch} is in progress. Save this page and check again after it ends if you want.`
           : "Save this page and check again after the next epoch if you want.",
       lastEpochSol: lastSum,
@@ -1326,7 +1447,8 @@
           ...(row.overlay || {}),
           name: row.health?.name || row.overlay?.name || null,
           vote,
-          commission: row.health?.commission ?? row.overlay?.commission
+          commission: row.health?.commission ?? row.overlay?.commission,
+          lastEpochSol: lastEpochReceived(rows, vote)
         })
       );
     }
@@ -1609,6 +1731,8 @@
     votingFromCredits,
     votingHistoryFromCredits,
     deactivationIsOpen,
+    epochRemainingCopy,
+    epochClockFromRpc,
     stakeLifecycle,
     ownerOf,
     parseStakeAccount,

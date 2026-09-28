@@ -56,7 +56,8 @@ const {
   telegramBotUsername,
   isTelegramBotUrl,
   safeTelegramBotUrl,
-  telegramStartUrl
+  telegramStartUrl,
+  epochClockFromRpc
 } = window.StakeHealth;
 
 const THEME_KEY = "vtd-theme";
@@ -320,7 +321,13 @@ function renderFeeHistory(view) {
       ...(v.overlay || {}),
       name: v.name,
       vote: v.vote,
-      commission: v.health?.commission ?? v.overlay?.commission
+      commission: v.health?.commission ?? v.overlay?.commission,
+      lastEpochSol: rows
+        .filter(row => row?.acc?.vote === v.vote)
+        .reduce((sum, row) => {
+          const n = Number(row?.acc?.rewards?.[0]?.amountSol);
+          return Number.isFinite(n) ? sum + n : sum;
+        }, 0)
     });
     const block = el("div", "fee-history-block");
     if (votes.length > 1) block.append(el("h3", "", v.name));
@@ -373,7 +380,10 @@ function renderCooldown(view) {
   }
   card.classList.remove("hidden");
   if (headline) headline.textContent = pack.headline;
-  if (lead) lead.textContent = pack.lead;
+  if (lead) {
+    const left = String(view?.pack?.epochRemaining || "").trim();
+    lead.textContent = left ? `${pack.lead} ${left}` : pack.lead;
+  }
   if (!list) return;
   list.innerHTML = "";
   for (const line of pack.lines) {
@@ -423,6 +433,14 @@ async function rpcCall(method, params) {
 async function fetchEpoch() {
   const info = await rpcCall("getEpochInfo", []);
   return Number(info?.epoch);
+}
+
+async function fetchEpochClock() {
+  const [info, samples] = await Promise.all([
+    rpcCall("getEpochInfo", []),
+    rpcCall("getRecentPerformanceSamples", [1]).catch(() => null)
+  ]);
+  return epochClockFromRpc(info, samples);
 }
 
 async function attachRewards(accounts, currentEpoch) {
@@ -1187,8 +1205,11 @@ async function loadLookup({ wallet, stake }) {
   setBusy(true);
   setStatus("Looking up your stake on-chain…");
   const fiatP = fetchSolFiatRates().catch(() => null);
+  const clockP = fetchEpochClock().catch(() => null);
   try {
     const pack = await resolvePositions({ wallet, stake });
+    const clock = await clockP;
+    if (clock?.epochRemaining) pack.epochRemaining = clock.epochRemaining;
     let accounts = pack.accounts || [];
     let overlays = null;
     rewardsPending = needsExtraRewardHistory(accounts);
@@ -1435,22 +1456,31 @@ function showLocalDemo(mode) {
   const inactive = mode === "inactive";
   setStatus(
     inactive
-      ? "Local sample. This stake finished undelegation. Not a live lookup."
-      : "Local sample. This stake is cooling down. Not a live lookup."
+      ? "Local sample. Not a live lookup. This stake is inactive and is not earning."
+      : "Local sample. Not a live lookup. One stake is cooling down. Another is still active. Fee history shows the cut in SOL."
   );
+  const cooling = {
+    pubkey: "Stake11111111111111111111111111111111AAA",
+    vote: "Vote111111111111111111111111111111111AAA",
+    status: inactive ? "inactive" : "deactivating",
+    delegatedSol: 12.5,
+    sol: 12.5,
+    rewards: [{ amountSol: 0.95, epoch: 841 }],
+    validatorName: "Example validator"
+  };
+  const steady = {
+    pubkey: "Stake11111111111111111111111111111111BBB",
+    vote: "Vote111111111111111111111111111111111BBB",
+    status: "active",
+    delegatedSol: 4,
+    sol: 4,
+    rewards: [{ amountSol: 0.02, epoch: 841 }],
+    validatorName: "Steady validator"
+  };
+  const accounts = inactive ? [cooling] : [steady, cooling];
   paintLookup(
-    [
-      {
-        pubkey: "Stake11111111111111111111111111111111AAA",
-        vote: "Vote111111111111111111111111111111111AAA",
-        status: inactive ? "inactive" : "deactivating",
-        delegatedSol: 12.5,
-        sol: 12.5,
-        rewards: [{ amountSol: 0.0042, epoch: 841 }],
-        validatorName: "Example validator"
-      }
-    ],
-    { currentEpoch: 842 },
+    accounts,
+    { currentEpoch: 842, epochRemaining: "About 18 hours left in epoch 842." },
     new Map([
       [
         "Vote111111111111111111111111111111111AAA",
@@ -1462,12 +1492,21 @@ function showLocalDemo(mode) {
           stability: { score: 90, sample: 20, delinquent: 0, commissionChanges: 0 },
           feeEvents: []
         }
+      ],
+      [
+        "Vote111111111111111111111111111111111BBB",
+        {
+          name: "Steady validator",
+          status: "healthy",
+          commission: 0,
+          votingPct: 99,
+          stability: { score: 92, sample: 20, delinquent: 0, commissionChanges: 0 },
+          feeEvents: []
+        }
       ]
     ])
   );
-  document.getElementById(inactive ? "verdict-card" : "cooldown-card")?.scrollIntoView({
-    block: "center"
-  });
+  document.getElementById("verdict-card")?.scrollIntoView({ block: "start" });
 }
 
 function boot() {
