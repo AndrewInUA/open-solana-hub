@@ -37,6 +37,20 @@
     "https://1rpc.io/solana"
   ];
 
+  /** Widely held liquid-staking mints. A wallet token that is not in this list is not called stake. */
+  const LIQUID_STAKE_MINTS = [
+    { mint: "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", symbol: "JitoSOL" },
+    { mint: "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So", symbol: "mSOL" },
+    { mint: "bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1", symbol: "bSOL" },
+    { mint: "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v", symbol: "jupSOL" },
+    { mint: "5oVNBeEEQvYi1cX3ir8Dx5n1P7pdxydbGF2X4TxVusJm", symbol: "INF" },
+    { mint: "BonK1YhkXEGLZzwtcvRTip3gAL9nCeQD7ppZBLXhtTs", symbol: "bonkSOL" },
+    { mint: "he1iusmfkpAdwvxLNGV8Y1iSbj4rUy6yMhEA3fotn9A", symbol: "hSOL" },
+    { mint: "LAinEtNLgpmCP9Rvsf5Hn8W6EhNiKLZQti1xfWMLy6X", symbol: "laineSOL" },
+    { mint: "picobAEvs6w7QEknPce34wAE4gknZA9v5tTonnmHYdX", symbol: "picoSOL" },
+    { mint: "vSoLxydx6akxyMD9XEcPvGYNGq6Nn66oqVb3UkGkei7", symbol: "vSOL" }
+  ];
+
   const FIATS = [
     { code: "USD", symbol: "$", locales: ["en-US"] },
     { code: "EUR", symbol: "€", locales: ["de", "fr", "it", "es", "nl", "pt-PT", "fi", "ie", "at", "be", "el"] },
@@ -1184,24 +1198,92 @@
       : `Validator's cut ${c}%.`;
   }
 
+  function liquidStakeFromTokenAccounts(accounts, solPerTokenByMint = {}) {
+    const known = new Map(LIQUID_STAKE_MINTS.map(row => [row.mint, row.symbol]));
+    const totals = new Map();
+    for (const acc of accounts || []) {
+      if (acc?.symbol && !acc?.account && !acc?.info) {
+        const symbol = String(acc.symbol);
+        const prev = totals.get(symbol) || { symbol, mint: acc.mint || null, amount: 0, solValue: 0, hasSol: false };
+        const amount = Number(acc.amount);
+        if (!Number.isFinite(amount) || amount <= 0) continue;
+        prev.amount += amount;
+        if (acc.mint) prev.mint = acc.mint;
+        if (Number.isFinite(Number(acc.solValue)) && Number(acc.solValue) > 0) {
+          prev.solValue += Number(acc.solValue);
+          prev.hasSol = true;
+        }
+        totals.set(symbol, prev);
+        continue;
+      }
+      const info = acc?.account?.data?.parsed?.info || acc?.info || null;
+      const mint = info?.mint || acc?.mint || "";
+      const symbol = known.get(mint);
+      const amount = Number(info?.tokenAmount?.uiAmount ?? acc?.uiAmount);
+      if (!symbol || !Number.isFinite(amount) || amount <= 0) continue;
+      const prev = totals.get(symbol) || { symbol, mint, amount: 0, solValue: 0, hasSol: false };
+      prev.amount += amount;
+      prev.mint = mint;
+      totals.set(symbol, prev);
+    }
+    return [...totals.values()]
+      .map(row => {
+        const rate = Number(solPerTokenByMint?.[row.mint]);
+        let solValue = row.hasSol ? row.solValue : null;
+        if (!Number.isFinite(solValue) && Number.isFinite(rate) && rate > 0) {
+          solValue = row.amount * rate;
+        }
+        const out = { symbol: row.symbol, amount: row.amount };
+        if (row.mint) out.mint = row.mint;
+        if (Number.isFinite(solValue) && solValue > 0) out.solValue = solValue;
+        return out;
+      })
+      .sort((a, b) => b.amount - a.amount || a.symbol.localeCompare(b.symbol));
+  }
+
+  function joinPlainList(bits) {
+    if (bits.length <= 1) return bits[0] || "";
+    if (bits.length === 2) return `${bits[0]} and ${bits[1]}`;
+    return `${bits.slice(0, -1).join(", ")}, and ${bits[bits.length - 1]}`;
+  }
+
+  function liquidStakeBit(row, rates, code) {
+    const amount = `${fmtSol(row.amount)} ${row.symbol}`;
+    const fiat = fmtFiat(row.solValue, rates, code);
+    return fiat ? `${amount} · ${fiat}` : amount;
+  }
+
+  function liquidStakeLine(holdings, rates, code) {
+    const rows = liquidStakeFromTokenAccounts(holdings);
+    if (!rows.length) return "";
+    const shown = rows.slice(0, 4);
+    const extra = rows.length - shown.length;
+    const bits = shown.map(row => liquidStakeBit(row, rates, code));
+    const list = extra > 0 ? `${bits.join(", ")}, and ${extra} more` : joinPlainList(bits);
+    return `Liquid stake: ${list}.`;
+  }
+
   function scoreOverall(rows, pack) {
     const delegated = rows.filter(r => r.acc.vote);
 
     const totalActiveSol = rows.reduce((s, r) => s + (Number(r.acc.delegatedSol) || 0), 0);
 
     const money = summarizeOverallMoney(rows, pack?.currentEpoch);
+    const liquidStake = liquidStakeFromTokenAccounts(pack?.liquidStake);
 
     if (!rows.length) {
       return {
         tone: "wait",
         kicker: "No stake found",
         headline: "No native stake on this address",
-        body:
-          "We did not find a stake account this address controls. Liquid staking tokens (JitoSOL, mSOL, and similar) will not show here – this page is for native stake only.",
+        body: liquidStake.length
+          ? "We did not find a native stake account on this address. Liquid stake is in its own block."
+          : "We did not find a stake account this address controls. Liquid staking tokens (JitoSOL, mSOL, and similar) will not show here – this page is for native stake only.",
         next: "If you expected a position, check you pasted the wallet that actually created the stake – or paste the stake account itself.",
         lastEpochSol: null,
         totalActiveSol: 0,
         cumulativeSol: null,
+        liquidStake,
         money
       };
     }
@@ -1310,6 +1392,7 @@
       return Number(b.acc.delegatedSol || 0) - Number(a.acc.delegatedSol || 0);
     });
     const overall = scoreOverall(rows, pack);
+    overall.liquidStake = liquidStakeFromTokenAccounts(pack?.liquidStake);
     return { rows, pack, overall };
   }
 
@@ -1634,6 +1717,34 @@
     return HOW_TO_READ.map(item => `${item.label} – ${item.text}`);
   }
 
+  async function loadUsdSpot(fetchJson) {
+    const attempts = [
+      async () => {
+        const gecko = await fetchJson(
+          "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+        );
+        return { usd: Number(gecko?.solana?.usd), source: "CoinGecko" };
+      },
+      async () => {
+        const row = await fetchJson("https://api.coinbase.com/v2/prices/SOL-USD/spot");
+        return { usd: Number(row?.data?.amount), source: "Coinbase" };
+      },
+      async () => {
+        const row = await fetchJson("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
+        return { usd: Number(row?.price), source: "Binance" };
+      }
+    ];
+    for (const attempt of attempts) {
+      try {
+        const hit = await attempt();
+        if (Number.isFinite(hit.usd) && hit.usd > 0) return hit;
+      } catch {
+        /* next price feed */
+      }
+    }
+    return null;
+  }
+
   async function loadSolFiatRates(fetchJsonImpl) {
     const fetchJson = fetchJsonImpl;
     try {
@@ -1656,17 +1767,15 @@
         };
       }
     } catch {
-      /* try USD + FX */
+      /* try a USD spot, then convert */
     }
     try {
-      const geckoUsd = await fetchJson(
-        "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
-      );
-      const usd = Number(geckoUsd?.solana?.usd);
+      const spot = await loadUsdSpot(fetchJson);
+      const usd = spot?.usd;
       if (!Number.isFinite(usd) || usd <= 0) throw new Error("no usd");
       let fx = { ...STATIC_USD_FX };
       let stale = true;
-      let source = "CoinGecko + static FX";
+      let source = `${spot.source} + static FX`;
       try {
         const live = await fetchJson("https://open.er-api.com/v6/latest/USD");
         if (live?.result === "success" && live.rates) {
@@ -1675,7 +1784,7 @@
             if (Number.isFinite(n) && n > 0) fx[f.code] = n;
           }
           stale = false;
-          source = "CoinGecko + exchangerate-api";
+          source = `${spot.source} + exchangerate-api`;
         }
       } catch {
         /* keep static FX */
@@ -1704,6 +1813,7 @@
     REWARD_RPC_CONCURRENCY,
     REWARD_RPC_RETRIES,
     PUBLIC_RPCS,
+    LIQUID_STAKE_MINTS,
     FIATS,
     FIAT_CODES,
     STATIC_USD_FX,
@@ -1760,6 +1870,8 @@
     situationHeadline,
     overallCommLine,
     scoreOverall,
+    liquidStakeFromTokenAccounts,
+    liquidStakeLine,
     buildHealthView,
     solToFiat,
     fmtFiat,

@@ -657,6 +657,15 @@
       <p class="muted" id="verdict-next"></p>
     </div>
 
+    <div class="card hidden" id="liquid-card">
+      <div class="verdict-kicker">Liquid stake</div>
+      <h2 id="liquid-headline">Pool tokens on this wallet.</h2>
+      <p class="lead" id="liquid-lead">
+        Each line is the tokens you hold, and about what that holding is worth.
+      </p>
+      <ul class="fee-history-list" id="liquid-list"></ul>
+    </div>
+
     <div class="card verdict watch hidden" id="cooldown-card">
       <div class="verdict-kicker">Cooling down</div>
       <h2 id="cooldown-headline">This stake is cooling down.</h2>
@@ -714,13 +723,13 @@
         <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A lower cut stays on this list, not a ping.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
-        Native stake only. Liquid-staking tokens do not appear here. Connecting a wallet only reads the public key –
+        The health flag is native stake. Liquid stake is in its own block. Connecting a wallet only reads the public key –
         nothing is signed except the wallet’s own connect prompt, and we never move SOL.
       </p>
     </div>
 
     <div class="footer">
-      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Extra recent payouts appear only when further <code>getInflationReward</code> calls return amounts. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard (Your validator). Approximate fiat uses CoinGecko (SOL price) with an exchangerate-api fallback; rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
+      <div><strong>Sources.</strong> Wallet lookups use the Validator Transparency <code>/api/my-stake</code> endpoint (Helius-backed stake scan + last finished epoch via <code>getInflationReward</code>). A single stake account (or a downed API) falls back to public Solana RPC – some browsers block that RPC, so the wallet field is the reliable path. Extra recent payouts appear only when further <code>getInflationReward</code> calls return amounts. Health overlays use the same <code>/api/rpc</code>, <code>/api/ratings</code>, and <code>/api/snapshots</code> feeds as the compare dashboard (Your validator). Approximate fiat asks the Hub for a SOL price (CoinGecko, then Coinbase or Binance) and converts with exchangerate-api. Rates are cached about 15 minutes and sit next to Approx. / ≈ amounts, never under Signals. Existing <code>?vote=</code> links are unchanged.</div>
       <div><strong>Education only – not financial advice.</strong> This page does not tell you to stake, unstake, or pick a validator. It restates open network and snapshot signals in plain English.</div>
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>

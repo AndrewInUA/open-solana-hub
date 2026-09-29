@@ -122,6 +122,7 @@ function setFiat(code) {
   if (lastView) {
     renderOverall(lastView.overall);
     renderStakes(lastView.rows, lastView.pack);
+    renderLiquid(lastView);
   }
 }
 
@@ -130,16 +131,43 @@ function syncFiatSelect() {
   if (sel && sel.value !== currentFiat()) sel.value = currentFiat();
 }
 
-function readRateCache() {
+function readRateCache(allowStale) {
   try {
     const raw = localStorage.getItem(RATE_CACHE_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
     if (!parsed || !parsed.at || !parsed.perSol) return null;
-    if (Date.now() - Number(parsed.at) > RATE_TTL_MS) return null;
+    const expired = Date.now() - Number(parsed.at) > RATE_TTL_MS;
+    if (expired && !allowStale) return null;
+    if (expired) parsed.stale = true;
     return parsed;
   } catch {
     return null;
   }
+}
+
+async function fetchHubSolFiat() {
+  const urls = ["/api/sol-fiat"];
+  if (window.location.origin !== HUB_ORIGIN) {
+    urls.push(`${HUB_ORIGIN}/api/sol-fiat`);
+  }
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      const json = await res.json();
+      const usd = Number(json?.perSol?.USD);
+      if (!json?.ok || !Number.isFinite(usd) || usd <= 0) continue;
+      return {
+        at: Number(json.at) || Date.now(),
+        perSol: json.perSol,
+        source: json.source || "CoinGecko",
+        stale: !!json.stale
+      };
+    } catch {
+      /* try the next URL */
+    }
+  }
+  return null;
 }
 
 function writeRateCache(pack) {
@@ -162,14 +190,16 @@ async function fetchSolFiatRates() {
     fiatRates = cached;
     return cached;
   }
-  const pack = await loadSolFiatRates(fetchJson);
+  const hub = await fetchHubSolFiat();
+  const pack = hub || (await loadSolFiatRates(fetchJson).catch(() => null));
   if (pack) {
     fiatRates = pack;
     writeRateCache(pack);
     return pack;
   }
-  fiatRates = null;
-  return null;
+  const stale = readRateCache(true);
+  fiatRates = stale;
+  return stale;
 }
 
 function solWithFiat(sol, opts) {
@@ -365,6 +395,29 @@ function renderFeeHistory(view) {
   }
 }
 
+function renderLiquid(view) {
+  const card = $("liquid-card");
+  const list = $("liquid-list");
+  if (!card) return;
+  const rows = view?.overall?.liquidStake || [];
+  if (!rows.length) {
+    card.classList.add("hidden");
+    if (list) list.innerHTML = "";
+    return;
+  }
+  card.classList.remove("hidden");
+  if (!list) return;
+  list.innerHTML = "";
+  for (const row of rows) {
+    const li = document.createElement("li");
+    const fiat = Number.isFinite(Number(row.solValue)) ? solWithFiat(row.solValue).fiat : "";
+    li.textContent = fiat
+      ? `${fmtSol(row.amount)} ${row.symbol} · ${fiat}`
+      : `${fmtSol(row.amount)} ${row.symbol}`;
+    list.append(li);
+  }
+}
+
 function renderCooldown(view) {
   const card = $("cooldown-card");
   const headline = $("cooldown-headline");
@@ -450,6 +503,25 @@ async function fetchEpochClock() {
     }
   }
   return null;
+}
+
+async function fetchLiquidStake(wallet) {
+  if (!isPubkey(wallet)) return [];
+  const urls = [`/api/liquid-stake?wallet=${encodeURIComponent(wallet)}`];
+  if (window.location.origin !== HUB_ORIGIN) {
+    urls.push(`${HUB_ORIGIN}/api/liquid-stake?wallet=${encodeURIComponent(wallet)}`);
+  }
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json?.ok && Array.isArray(json.tokens)) return json.tokens;
+    } catch {
+      /* try the next URL */
+    }
+  }
+  return [];
 }
 
 async function attachRewards(accounts, currentEpoch) {
@@ -794,7 +866,9 @@ function renderOverall(v) {
   }
   card.classList.remove("hidden", "ok", "watch", "risk", "wait");
   card.classList.add(v.tone);
-  $("verdict-kicker").textContent = v.kicker || "Verdict";
+  const badge = v.kicker || "Verdict";
+  const nativeFlag = v.tone === "ok" || v.tone === "watch" || v.tone === "risk";
+  $("verdict-kicker").textContent = nativeFlag ? `Native stake · ${badge}` : badge;
   $("verdict-headline").textContent = v.headline || "";
   const story = $("verdict-money-story");
   const amounts = $("verdict-amounts");
@@ -1173,6 +1247,7 @@ function hideResults() {
   setTelegramHandoff("");
   resetVtCard();
   $("cooldown-card")?.classList.add("hidden");
+  $("liquid-card")?.classList.add("hidden");
 }
 
 function fillFiatSelect() {
@@ -1205,6 +1280,7 @@ function paintLookup(accounts, pack, overlays) {
   renderStakes(view.rows, pack);
   renderFeeHistory(view);
   renderCooldown(view);
+  renderLiquid(view);
   focusLookupHash();
   return view.rows;
 }
@@ -1215,10 +1291,16 @@ async function loadLookup({ wallet, stake }) {
   setStatus("Looking up your stake on-chain…");
   const fiatP = fetchSolFiatRates().catch(() => null);
   const clockP = fetchEpochClock().catch(() => null);
+  const liquidP = isPubkey(wallet) ? fetchLiquidStake(wallet).catch(() => []) : Promise.resolve(null);
   try {
     const pack = await resolvePositions({ wallet, stake });
     const clock = await clockP;
     if (clock?.epochRemaining) pack.epochRemaining = clock.epochRemaining;
+    let liquid = await liquidP;
+    if (!Array.isArray(liquid) && isPubkey(pack.wallet)) {
+      liquid = await fetchLiquidStake(pack.wallet).catch(() => []);
+    }
+    if (Array.isArray(liquid) && liquid.length) pack.liquidStake = liquid;
     let accounts = pack.accounts || [];
     let overlays = null;
     rewardsPending = needsExtraRewardHistory(accounts);
@@ -1244,7 +1326,9 @@ async function loadLookup({ wallet, stake }) {
     setStatus(
       accounts.length
         ? `Found ${accounts.length} stake account${accounts.length === 1 ? "" : "s"}. Reading transparency signals…`
-        : "No native stake on this address."
+        : pack.liquidStake?.length
+          ? "No native stake on this address. Liquid stake is in its own block."
+          : "No native stake on this address."
     );
     const share = $("share-url");
     if (share) share.value = shareUrl(wallet || pack.wallet, stake);
@@ -1457,11 +1541,17 @@ function localDemoMode() {
   const host = window.location.hostname;
   if (host !== "localhost" && host !== "127.0.0.1") return "";
   const demo = new URLSearchParams(window.location.search).get("demo");
-  if (demo === "cooldown" || demo === "inactive") return demo;
+  if (demo === "cooldown" || demo === "inactive" || demo === "liquid") return demo;
   return "";
 }
 
 function showLocalDemo(mode) {
+  if (mode === "liquid") {
+    setStatus("Local sample. Not a live lookup. This address holds JitoSOL. Native stake is scored separately.");
+    paintLookup([], { currentEpoch: 842, liquidStake: [{ symbol: "JitoSOL", amount: 12.5 }] }, null);
+    document.getElementById("verdict-card")?.scrollIntoView({ block: "start" });
+    return;
+  }
   const inactive = mode === "inactive";
   setStatus(
     inactive
