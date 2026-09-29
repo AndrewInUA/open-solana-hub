@@ -789,13 +789,15 @@
     return run;
   }
 
-  function formatRewardEpochLine(row) {
+  function formatRewardEpochLine(row, rates, code) {
     const epoch = Number(row?.epoch);
     const prefix = Number.isFinite(epoch) ? `Epoch ${epoch}` : "Epoch –";
     if (!row?.recorded || !Number.isFinite(Number(row.amountSol))) return null;
     const amount = Number(row.amountSol);
     const signed = amount > 0 ? "+" : "";
-    return `${prefix}  ${signed}${fmtSol(amount)} SOL`;
+    const sol = `${prefix}  ${signed}${fmtSol(amount)} SOL`;
+    const fiat = fmtFiat(Math.abs(amount), rates, code);
+    return fiat ? `${sol} · ${fiat}` : sol;
   }
 
   function normalizeRewardRow(row, epochFallback) {
@@ -983,7 +985,8 @@
         fromActivation,
         recordedCount: run.length,
         epochCount: run.length,
-        windowSize: run.length
+        windowSize: run.length,
+        rewardRows: run
       }),
       incomplete: Boolean(showCumulative && !fromActivation),
       rewardRows: run
@@ -1015,6 +1018,11 @@
     const cumulativeSol = showCumulative
       ? cumParts.reduce((s, p) => s + Number(p.cumulativeSol), 0)
       : null;
+    const rowSets = parts.map(p => p.rewardRows || []).filter(rows => rows.length);
+    const sharedRows =
+      rowSets.length && rowSets.every(rows => epochRangeLabel(rows) === epochRangeLabel(rowSets[0]))
+        ? rowSets[0]
+        : [];
     return {
       activeSol: totalActiveSol,
       lastEpochSol,
@@ -1032,7 +1040,8 @@
         recordedCount,
         epochCount,
         windowSize: epochCount,
-        stakeCount: target.length
+        stakeCount: target.length,
+        rewardRows: sharedRows
       }),
       incomplete: Boolean(showCumulative && !fromActivation)
     };
@@ -1075,7 +1084,7 @@
       const rows = (money.rewardRows || []).filter(r => r.recorded);
       if (rows.length > 1) {
         for (const r of rows) {
-          const line = formatRewardEpochLine(r);
+          const line = formatRewardEpochLine(r, rates, code);
           if (line) lines.push(line);
         }
       }
@@ -1456,9 +1465,17 @@
     return `Approximate ${fiat} from ${rates.source} – ${age}`;
   }
 
+  function epochRangeLabel(rows) {
+    const epochs = (rows || []).map(r => Number(r?.epoch)).filter(Number.isFinite);
+    if (epochs.length < 2) return null;
+    const newest = Math.max(...epochs);
+    const oldest = Math.min(...epochs);
+    return newest === oldest ? `Epoch ${newest}` : `Epochs ${newest}–${oldest}`;
+  }
+
   function rewardsWindowLabel(money) {
     if (!money?.showCumulative) return null;
-    return "Last epochs' rewards";
+    return epochRangeLabel(money.rewardRows) || "Last epochs' rewards";
   }
 
   function mystakeUrl(wallet, stake, opts = {}) {

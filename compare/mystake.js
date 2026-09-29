@@ -925,7 +925,7 @@ function renderFullStakeStory(view) {
   if (titleEl) titleEl.textContent = "Last epochs' rewards";
   if (lead) {
     lead.textContent = hasEpochList
-      ? "Last epoch is the latest payout above. These are last epochs' rewards in a row – not lifetime history."
+      ? `${windowLabel} added together. The lines below are those payouts, at today's price. Not lifetime history.`
       : rewardsPending
         ? "Last epoch is in. Loading last epochs' rewards…"
         : "Last epoch is above. We could not follow an earlier payout in a row after it.";
@@ -964,7 +964,7 @@ function renderFullStakeStory(view) {
     if (rewardRows.length > 1) {
       const list = el("ul", "epoch-reward-list");
       for (const r of rewardRows) {
-        const line = formatRewardEpochLine(r);
+        const line = formatRewardEpochLine(r, fiatRates, currentFiat());
         if (!line) continue;
         list.append(el("li", "", line));
       }
@@ -979,7 +979,8 @@ function renderFullStakeStory(view) {
   }
   if (note) {
     if (hasEpochList) {
-      note.textContent = "Not lifetime history – only last epochs we could follow in a row.";
+      note.textContent =
+        "Not lifetime history. The currency on each line is today's price, so the lines add up to the total.";
     } else if (rewardsPending) {
       note.textContent = "Loading last epochs' rewards – not lifetime history.";
     } else {
