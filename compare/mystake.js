@@ -42,6 +42,7 @@ const {
   compactOverlay,
   feeHistoryFromOverlay,
   coolingDownFromRows,
+  votingStopFromRows,
   buildHealthView,
   loadSolFiatRates,
   solWithFiat: solWithFiatCore,
@@ -49,6 +50,7 @@ const {
   fetchRewardHistory,
   mergeRewardsByEpoch,
   moneyStory,
+  rewardPaceLine,
   summarizeAccountRewards,
   rewardsWindowLabel,
   formatRewardEpochLine,
@@ -414,6 +416,31 @@ function renderLiquid(view) {
     li.textContent = fiat
       ? `${fmtSol(row.amount)} ${row.symbol} · ${fiat}`
       : `${fmtSol(row.amount)} ${row.symbol}`;
+    list.append(li);
+  }
+}
+
+function renderVoting(view) {
+  const card = $("voting-card");
+  const headline = $("voting-headline");
+  const lead = $("voting-lead");
+  const list = $("voting-list");
+  if (!card) return;
+  const pack = votingStopFromRows(view?.rows || []);
+  if (!pack.show) {
+    card.classList.add("hidden");
+    if (list) list.innerHTML = "";
+    return;
+  }
+  card.classList.remove("hidden");
+  if (headline) headline.textContent = pack.headline;
+  if (lead) lead.textContent = pack.lead;
+  if (!list) return;
+  list.innerHTML = "";
+  for (const line of pack.lines) {
+    const li = document.createElement("li");
+    li.dataset.tone = "risk";
+    li.textContent = line.text;
     list.append(li);
   }
 }
@@ -879,6 +906,14 @@ function renderOverall(v) {
     story.textContent = storyText;
     story.classList.toggle("hidden", !storyText);
   }
+  const paceEl = $("verdict-pace");
+  const paceNote = $("verdict-pace-note");
+  const paceText = rewardPaceLine(money?.pace);
+  if (paceEl) {
+    paceEl.textContent = paceText;
+    paceEl.classList.toggle("hidden", !paceText);
+  }
+  paceNote?.classList.toggle("hidden", !paceText);
   if (amounts) {
     amounts.innerHTML = "";
     if (Number.isFinite(Number(v.totalActiveSol)) && v.totalActiveSol > 0) {
@@ -962,6 +997,18 @@ function renderFullStakeStory(view) {
       block.append(rowAmounts);
     }
     if (rewardRows.length > 1) {
+      const pace = repeatAccountMoney ? m.pace : money?.pace;
+      const paceText = rewardPaceLine(pace);
+      if (paceText) {
+        block.append(el("p", "pace-line", paceText));
+        block.append(
+          el(
+            "p",
+            "muted pace-note",
+            "This compares last epoch with the recent ones. The health flag above is the checkup."
+          )
+        );
+      }
       const list = el("ul", "epoch-reward-list");
       for (const r of rewardRows) {
         const line = formatRewardEpochLine(r, fiatRates, currentFiat());
@@ -1027,7 +1074,9 @@ function focusLookupHash() {
         ? "vt-card"
         : hash === "cooldown-card" || hash === "cooling-down"
           ? "cooldown-card"
-          : "";
+          : hash === "voting-card" || hash === "voting"
+            ? "voting-card"
+            : "";
   if (!id) return;
   requestAnimationFrame(() => {
     $(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1083,6 +1132,20 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
             ? "Missing votes"
             : liveStatus,
         liveStatus === "delinquent" ? "risk" : liveStatus === "healthy" ? "ok" : ""
+      )
+    );
+  }
+  if (Number.isFinite(Number(health.voting))) {
+    const voting = Number(health.voting);
+    const stopped =
+      String(liveStatus).toLowerCase() === "delinquent" || voting < 80;
+    signals.append(
+      signalChip(
+        "Recent voting",
+        stopped && String(liveStatus).toLowerCase() === "delinquent"
+          ? "Stopped"
+          : `${voting.toFixed(1)}%`,
+        stopped ? "risk" : voting < 95 ? "watch" : "ok"
       )
     );
   }
@@ -1244,9 +1307,12 @@ function hideResults() {
   $("full-stake-story")?.classList.add("hidden");
   $("verdict-amounts")?.classList.add("hidden");
   $("verdict-money-story")?.classList.add("hidden");
+  $("verdict-pace")?.classList.add("hidden");
+  $("verdict-pace-note")?.classList.add("hidden");
   $("verdict-fiat")?.classList.add("hidden");
   setTelegramHandoff("");
   resetVtCard();
+  $("voting-card")?.classList.add("hidden");
   $("cooldown-card")?.classList.add("hidden");
   $("liquid-card")?.classList.add("hidden");
 }
@@ -1280,6 +1346,7 @@ function paintLookup(accounts, pack, overlays) {
   renderOverall(view.overall);
   renderStakes(view.rows, pack);
   renderFeeHistory(view);
+  renderVoting(view);
   renderCooldown(view);
   renderLiquid(view);
   focusLookupHash();
@@ -1442,7 +1509,7 @@ function fillHowToRead() {
   ul.append(leftover);
   const moneyNote = document.createElement("li");
   moneyNote.textContent =
-    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A lower cut stays on this list, not a ping.";
+    "Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. If voting stops, that is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A validator that stops voting is its own message the next morning. A lower cut stays on this list, not a ping.";
   ul.append(moneyNote);
 }
 
@@ -1525,6 +1592,12 @@ function fillTelegramCta() {
       cool.textContent = TELEGRAM_CTA.cooldownExample;
       example.append(cool);
     }
+    if (TELEGRAM_CTA.votingExample) {
+      example.append(document.createTextNode(" "));
+      const vote = document.createElement("em");
+      vote.textContent = TELEGRAM_CTA.votingExample;
+      example.append(vote);
+    }
   }
   applyTelegramLink(TELEGRAM_BOT_URL);
   fetch("/api/telegram-info", { cache: "no-store" })
@@ -1542,11 +1615,80 @@ function localDemoMode() {
   const host = window.location.hostname;
   if (host !== "localhost" && host !== "127.0.0.1") return "";
   const demo = new URLSearchParams(window.location.search).get("demo");
-  if (demo === "cooldown" || demo === "inactive" || demo === "liquid") return demo;
+  if (demo === "cooldown" || demo === "inactive" || demo === "liquid" || demo === "voting" || demo === "pace") return demo;
   return "";
 }
 
 function showLocalDemo(mode) {
+  if (mode === "pace") {
+    setStatus("Local sample. Not a live lookup. Last epoch paid less than the recent ones.");
+    paintLookup(
+      [
+        {
+          pubkey: "Stake11111111111111111111111111111111AAA",
+          vote: "Vote111111111111111111111111111111111AAA",
+          status: "active",
+          delegatedSol: 12.5,
+          sol: 12.5,
+          rewards: [
+            { amountSol: 0.05, epoch: 841 },
+            { amountSol: 0.1, epoch: 840 },
+            { amountSol: 0.1, epoch: 839 }
+          ],
+          validatorName: "Example validator"
+        }
+      ],
+      { currentEpoch: 842 },
+      new Map([
+        [
+          "Vote111111111111111111111111111111111AAA",
+          {
+            name: "Example validator",
+            status: "healthy",
+            commission: 5,
+            votingPct: 99,
+            stability: { score: 90, sample: 20, delinquent: 0, commissionChanges: 0 },
+            feeEvents: []
+          }
+        ]
+      ])
+    );
+    document.getElementById("verdict-card")?.scrollIntoView({ block: "start" });
+    return;
+  }
+  if (mode === "voting") {
+    setStatus(
+      "Local sample. Not a live lookup. This validator has stopped voting. Rewards are missed while that lasts."
+    );
+    const stopped = {
+      pubkey: "Stake11111111111111111111111111111111AAA",
+      vote: "Vote111111111111111111111111111111111AAA",
+      status: "active",
+      delegatedSol: 12.5,
+      sol: 12.5,
+      rewards: [{ amountSol: 0.95, epoch: 841 }],
+      validatorName: "Example validator"
+    };
+    paintLookup(
+      [stopped],
+      { currentEpoch: 842 },
+      new Map([
+        [
+          "Vote111111111111111111111111111111111AAA",
+          {
+            name: "Example validator",
+            status: "delinquent",
+            commission: 5,
+            votingPct: 99,
+            stability: { score: 40, sample: 20, delinquent: 3, commissionChanges: 0 },
+            feeEvents: []
+          }
+        ]
+      ])
+    );
+    document.getElementById("verdict-card")?.scrollIntoView({ block: "start" });
+    return;
+  }
   if (mode === "liquid") {
     setStatus("Local sample. Not a live lookup. This address holds JitoSOL. Native stake is scored separately.");
     paintLookup([], { currentEpoch: 842, liquidStake: [{ symbol: "JitoSOL", amount: 12.5 }] }, null);

@@ -28,6 +28,8 @@
   const OVERLAY_TTL_MS = 10 * 60 * 1000;
   /** Finished epochs to request in the background. The page only lists payouts we actually got. */
   const MAX_REWARD_HISTORY_EPOCHS = 16;
+  /** Last epoch vs the earlier ones. Inside this band it counts as about the same. */
+  const REWARD_COMPARE_BAND = 0.15;
   /** Keep this small – 16 parallel getInflationReward calls get rate-limited and punch holes in the run. */
   const REWARD_RPC_CONCURRENCY = 3;
   const REWARD_RPC_RETRIES = 3;
@@ -118,12 +120,13 @@
     kicker: "Telegram",
     headline: "Keep watch in Telegram",
     body:
-      "This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. A lower cut is not a ping – that stays on fee history. A stake already cooling down when you link stays on this page. Public key only.",
+      "This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. If a watched validator stops voting, that is its own message the next morning. A lower cut is not a ping – that stays on fee history. A stake already cooling down, or a validator that had already stopped voting when you link, stays on this page. Public key only.",
     notesHow:
-      "After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. A lower cut is not a ping.",
+      "After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. If a watched validator stops voting, that is its own message the next morning. A lower cut is not a ping.",
     steps: "Look up, then Get notes. Or send a public key in the bot.",
     raiseExample: "Your validator raised the cut: 0% → 8%.",
     cooldownExample: "This stake is cooling down. 10 SOL stops earning when this epoch ends.",
+    votingExample: "Voting has stopped. Rewards are missed while that lasts. Your SOL stays in the stake account.",
     username: DEFAULT_TELEGRAM_BOT_USERNAME,
     url: TELEGRAM_BOT_URL,
     fallback: "Telegram bot coming – ask for the link."
@@ -134,6 +137,12 @@
 
   const COOLDOWN_LEAD =
     "It stops earning when this epoch ends. Telegram sends its own note when a watched stake starts cooling down. A stake that was already cooling down when you linked stays on this page.";
+
+  const VOTING_STOP_SENTENCE =
+    "Rewards are missed while that lasts. Your SOL stays in the stake account.";
+
+  const VOTING_STOP_LEAD =
+    "Rewards are missed while the validator is not voting. Your SOL stays in the stake account. Telegram sends its own note the next morning (08:00 UTC) when a watched validator stops voting. A validator that had already stopped when you linked stays on this page.";
 
   function shortKey(k) {
     if (!k) return "–";
@@ -989,7 +998,8 @@
         rewardRows: run
       }),
       incomplete: Boolean(showCumulative && !fromActivation),
-      rewardRows: run
+      rewardRows: run,
+      pace: rewardPace(run)
     };
   }
 
@@ -1034,6 +1044,10 @@
       showCumulative,
       stakeCount: target.length,
       rewardRows: target.length === 1 ? parts[0].rewardRows || [] : [],
+      pace:
+        target.length === 1
+          ? parts[0]?.pace || null
+          : rewardPace(summedRewardRows(parts)),
       windowLabel: rewardsWindowLabel({
         showCumulative,
         fromActivation,
@@ -1074,6 +1088,8 @@
         `Last epoch: ${moneyLine(money.lastEpochSol, rates, code, { signed: true })}`
       );
     }
+    const pace = rewardPaceLine(money.pace);
+    if (pace) lines.push(pace);
     if (
       money.showCumulative &&
       money.cumulativeSol != null &&
@@ -1090,6 +1106,45 @@
       }
     }
     return lines;
+  }
+
+  function summedRewardRows(parts) {
+    const sets = (parts || []).map(p => p.rewardRows || []);
+    if (sets.length < 2 || sets.some(rows => rows.length < 2)) return [];
+    const key = rows => rows.map(r => r.epoch).join(",");
+    if (!sets.every(rows => key(rows) === key(sets[0]))) return [];
+    return sets[0].map((row, i) => ({
+      epoch: row.epoch,
+      recorded: true,
+      amountSol: sets.reduce((sum, rows) => sum + Number(rows[i].amountSol), 0)
+    }));
+  }
+
+  /**
+   * Last finished payout against the earlier ones in the same run.
+   * One earlier epoch is enough. A gap inside 15% stays "same".
+   */
+  function rewardPace(rows) {
+    const recorded = (rows || []).filter(
+      r => r && r.recorded !== false && Number.isFinite(Number(r.amountSol))
+    );
+    if (recorded.length < 2) return null;
+    const last = Number(recorded[0].amountSol);
+    const prior = recorded.slice(1);
+    const avg = prior.reduce((sum, r) => sum + Number(r.amountSol), 0) / prior.length;
+    if (!Number.isFinite(last) || !Number.isFinite(avg)) return null;
+    if (avg <= 0) return last <= 0 ? "same" : "more";
+    const ratio = last / avg;
+    if (ratio >= 1 + REWARD_COMPARE_BAND) return "more";
+    if (ratio <= 1 - REWARD_COMPARE_BAND) return "less";
+    return "same";
+  }
+
+  function rewardPaceLine(pace) {
+    if (pace === "more") return "Last epoch paid more than the recent ones.";
+    if (pace === "less") return "Last epoch paid less than the recent ones.";
+    if (pace === "same") return "Last epoch is in line with the recent ones.";
+    return "";
   }
 
   function validatorCutSol(receivedSol, commissionPct) {
@@ -1330,9 +1385,17 @@
 
     const lastSum = money.lastEpochSol;
     const commLine = overallCommLine(scored);
-    const headline = situationHeadline(delegated, names, nameBit);
+    const voting = votingStopFromRows(delegated);
+    let headline = situationHeadline(delegated, names, nameBit);
+    if (voting.show) {
+      headline =
+        voting.lines.length === 1
+          ? `${voting.lines[0].name} has stopped voting.`
+          : "Voting has stopped.";
+    }
     const statusLine = stakeStatusLine(delegated);
-    const lead = [statusLine, commLine].filter(Boolean).join(" ");
+    const votingLine = voting.show ? `Voting has stopped. ${VOTING_STOP_SENTENCE}` : "";
+    const lead = [statusLine, votingLine, commLine].filter(Boolean).join(" ");
     const epochLeft = String(pack?.epochRemaining || "").trim();
 
     if (worst === "risk") {
@@ -1485,7 +1548,50 @@
     if (opts.story) u.hash = "full-stake-story";
     else if (opts.fee) u.hash = "vt-card";
     else if (opts.cooldown) u.hash = "cooldown-card";
+    else if (opts.voting) u.hash = "voting-card";
     return u.toString();
+  }
+
+  /** Live delinquent, or recent voting under the Risk line (80%). */
+  function votingHasStopped(status, votingPct) {
+    if (String(status || "").toLowerCase() === "delinquent") return true;
+    const voting = Number(votingPct);
+    return Number.isFinite(voting) && voting < 80;
+  }
+
+  /**
+   * Active stakes whose validator has stopped voting. The page shows them
+   * whenever that is true. Telegram pings only the change, after a baseline.
+   */
+  function votingStopFromRows(rows) {
+    const seen = new Set();
+    const lines = [];
+    for (const row of rows || []) {
+      const statusAcc = row?.acc?.status;
+      if (statusAcc !== "active" && statusAcc !== "activating") continue;
+      const vote = row?.acc?.vote;
+      if (!vote || seen.has(vote)) continue;
+      seen.add(vote);
+      const live = String(row?.overlay?.status || row?.health?.status || "").toLowerCase();
+      const voting = row?.health?.voting ?? row?.overlay?.votingPct;
+      if (!votingHasStopped(live, voting)) continue;
+      const name =
+        row.health?.name ||
+        row.acc.validatorName ||
+        shortKey(vote);
+      const pct = Number(voting);
+      const detail =
+        live === "delinquent"
+          ? "not voting right now"
+          : `recent voting ${pct.toFixed(1)}%`;
+      lines.push({ vote, name, text: `${name} · ${detail}` });
+    }
+    return {
+      show: lines.length > 0,
+      headline: "Voting has stopped.",
+      lead: VOTING_STOP_LEAD,
+      lines
+    };
   }
 
   /**
@@ -1841,6 +1947,8 @@
     TELEGRAM_CTA,
     FEE_HISTORY_LEAD,
     COOLDOWN_LEAD,
+    VOTING_STOP_SENTENCE,
+    VOTING_STOP_LEAD,
     DEFAULT_TELEGRAM_BOT_USERNAME,
     TELEGRAM_BOT_URL,
     shortKey,
@@ -1870,6 +1978,8 @@
     feeHistoryFromOverlay,
     feeHistoriesFromRows,
     coolingDownFromRows,
+    votingHasStopped,
+    votingStopFromRows,
     scoreStake,
     lastSumFrom,
     finiteEpoch,
@@ -1884,6 +1994,8 @@
     summarizeOverallMoney,
     moneyStory,
     moneyLines,
+    rewardPace,
+    rewardPaceLine,
     situationHeadline,
     overallCommLine,
     scoreOverall,

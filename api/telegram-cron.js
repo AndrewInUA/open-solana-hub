@@ -1,7 +1,7 @@
 /**
  * Daily Telegram jobs: epoch checkup when a new epoch starts, plus a
- * separate note if a linked validator raised its commission, or if a
- * watched stake starts cooling down.
+ * separate note if a linked validator raised its commission, if a
+ * watched stake starts cooling down, or if a watched validator stops voting.
  *
  * GET/POST /api/telegram-cron
  * Vercel cron hits this on a schedule. Also callable with

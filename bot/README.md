@@ -19,7 +19,7 @@ The bot **never** asks for a seed or private key and **never** moves SOL. It sto
 
 A persistent keyboard (Status, Stake story, Your validator, Turn notes on / off, Currency, Wallet, Help, Stop) sits above the “Write a message…” field after `/start`. Taps map to the same handlers as the slash commands, including the labels with no leading `/` (**Turn notes off** means notes are on now – tap to stop them; **Stake story** opens last epoch on Stake health; **Your validator** opens this operator’s profile). The Telegram **Menu** (`/`) lists the slash commands via `setMyCommands` (registered by `/api/telegram-setup`, and also once per cold start). After a deploy, send `/start` to refresh the keyboard.
 
-A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with epoch notes on gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch payout ≈ fiat, health one-liner, **Stake story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats that turned notes off are skipped.
+A Vercel cron calls `/api/telegram-cron`. When a **new Solana epoch** is detected, each linked chat with epoch notes on gets one short digest (tone, notable change if the previous tone differed, stake total / last-epoch payout ≈ fiat, health one-liner, **Stake story** link to mystake with `?wallet=#full-stake-story`, and **Your validator** when a single vote is known). Chats that turned notes off are skipped. The same morning job sends a separate note if a watched validator stops voting. The first time it sees that validator, that reading is a baseline, not a ping.
 
 ## How website sync is maintained
 

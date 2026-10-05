@@ -399,6 +399,20 @@
       max-width: 680px;
     }
     .money-story:empty { display: none; }
+    .pace-line {
+      margin: 0 0 6px;
+      padding: 10px 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--heading);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .pace-line.hidden,
+    .pace-line:empty { display: none; }
+    .pace-note { margin: 0 0 12px; font-size: 13px; max-width: 680px; }
+    .pace-note.hidden { display: none; }
     .verdict-amounts {
       display: grid;
       gap: 8px;
@@ -625,13 +639,13 @@
       <div class="verdict-kicker" id="telegram-kicker">Telegram</div>
       <h2 id="telegram-headline">Keep watch in Telegram</h2>
       <p class="lead" id="telegram-body">
-        This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. A lower cut is not a ping – that stays on fee history. A stake already cooling down when you link stays on this page. Public key only.
+        This page is the checkup. Telegram watches up to 5 wallets. After a new epoch, the next morning (08:00 UTC) you get the checkup. If the cut went up since last check, a second message follows. If a stake starts cooling down, that is its own message. If a watched validator stops voting, that is its own message the next morning. A lower cut is not a ping – that stays on fee history. A stake already cooling down, or a validator that had already stopped voting when you link, stays on this page. Public key only.
       </p>
       <p class="muted" id="telegram-steps" style="margin:0 0 14px">
         <strong>Look up, then Get notes. Or send a public key in the bot.</strong>
       </p>
       <p class="muted" id="telegram-example" style="margin:0 0 14px">
-        Example: <em>Your validator raised the cut: 0% → 8%.</em> <em>This stake is cooling down. 10 SOL stops earning when this epoch ends.</em>
+        Example: <em>Your validator raised the cut: 0% → 8%.</em> <em>This stake is cooling down. 10 SOL stops earning when this epoch ends.</em> <em>Voting has stopped. Rewards are missed while that lasts. Your SOL stays in the stake account.</em>
       </p>
       <div class="row">
         <a class="copy-btn" id="telegram-open" href="https://telegram.me/stake_health_bot" target="_blank" rel="noopener noreferrer">Open @stake_health_bot</a>
@@ -643,6 +657,8 @@
       <div class="verdict-kicker" id="verdict-kicker">Verdict</div>
       <h2 id="verdict-headline"></h2>
       <p class="money-story hidden" id="verdict-money-story"></p>
+      <p class="pace-line hidden" id="verdict-pace"></p>
+      <p class="muted pace-note hidden" id="verdict-pace-note">This compares last epoch with the recent ones. The health flag above is the checkup.</p>
       <div class="verdict-amounts hidden" id="verdict-amounts"></div>
       <div id="verdict-fiat" class="hidden">
         <div class="fiat-control" id="fiat-control">
@@ -664,6 +680,15 @@
         Each line is the tokens you hold, and about what that holding is worth.
       </p>
       <ul class="fee-history-list" id="liquid-list"></ul>
+    </div>
+
+    <div class="card verdict risk hidden" id="voting-card">
+      <div class="verdict-kicker">Voting</div>
+      <h2 id="voting-headline">Voting has stopped.</h2>
+      <p class="lead" id="voting-lead">
+        Rewards are missed while the validator is not voting. Your SOL stays in the stake account. Telegram sends its own note the next morning (08:00 UTC) when a watched validator stops voting. A validator that had already stopped when you linked stays on this page.
+      </p>
+      <ul class="fee-history-list" id="voting-list"></ul>
     </div>
 
     <div class="card verdict watch hidden" id="cooldown-card">
@@ -720,7 +745,7 @@
         <li data-tone="watch"><strong>👀 Watch</strong> – Something’s a bit off – worth a look, not an emergency.</li>
         <li data-tone="risk"><strong>⚠️ Risk</strong> – This needs attention before you decide anything. Open the validator profile.</li>
         <li>Stake accounts with no validator are leftovers – they are not earning. They do not change the health label at the top.</li>
-        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A lower cut stays on this list, not a ping.</li>
+        <li>Last epoch is the latest payout. Last epochs' rewards lists earlier epochs in a row when we could follow them – not lifetime history. Fee history is on this page. A stake that is cooling down is on this page too. If voting stops, that is on this page too. After a new epoch, Telegram sends the checkup the next morning (08:00 UTC). A raise is a second message. A stake that starts cooling down is its own message. A validator that stops voting is its own message the next morning. A lower cut stays on this list, not a ping.</li>
       </ul>
       <p class="muted" style="margin:12px 0 0">
         The health flag is native stake. Liquid stake is in its own block. Connecting a wallet only reads the public key –
@@ -734,7 +759,7 @@
       <div>Part of <a href="../index.html">Open Solana Hub</a> · <a href="./index.html">Validator Transparency</a> · <a href="../first-steps.html">First steps</a> · <a href="../stay-safe.html">Stay safe</a></div>
     </div>
   </div>
-  <script src="./stake-health-core.js"></script>
-  <script src="./mystake.js"></script>
+  <script src="./stake-health-core.js?v=20261005b"></script>
+  <script src="./mystake.js?v=20261005b"></script>
 </body>
 </html>
