@@ -1,5 +1,5 @@
 ---
-title: 'Solana''s clock just halved: 200ms slots are live, and an epoch now lasts about a day'
+title: 'Solana''s clock finally halved: 200ms slots are live, and an epoch now lasts about a day'
 seo_title: 'How fast is Solana now? 200ms slots, an epoch about a day'
 date: '2026-10-09'
 tag: Consensus
