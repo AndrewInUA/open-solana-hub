@@ -834,7 +834,7 @@ function computeEpochHistoryWindow(live) {
   return {
     title: "Epoch voting (live RPC)",
     intro:
-      "Solana epochs are voting periods (~2 days each), numbered on-chain. This list is live network data – separate from daily snapshots above.",
+      "Solana epochs are voting periods (about a day each), numbered on-chain. This list is live network data – separate from daily snapshots above.",
     items
   };
 }

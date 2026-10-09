@@ -35,9 +35,10 @@ This week Solana's **public testnet** is running the migration that moves a clus
  is the consensus upgrade. It replaces TowerBFT with a voting protocol called
  **Votor**. Votes move off the ledger into direct messages between validators.
  The target is finality in about **150 milliseconds**. TowerBFT is often quoted
- at about **12.8 seconds**, and that quote belongs to an older, slower slot
- clock. Mainnet's clock is faster now. Alpenglow reaches 150 milliseconds by
- changing how validators agree, not by speeding up that clock.
+ at about **12.8 seconds**, and that quote belongs to the original 400ms slot
+ clock. Mainnet's slot is now 200ms, so that same stack of confirmations takes
+ less time on the wall clock. Alpenglow reaches 150 milliseconds by
+ changing how validators agree, not by shortening the slot.
 
 **Alpenswitch** (<a href="https://github.com/solana-foundation/solana-improvement-documents/blob/main/proposals/0384-alpenglow-migration.md" target="_blank" rel="noopener noreferrer" data-new-tab="on">SIMD-0384</a>)
  is the migration procedure. At a migration boundary the
@@ -85,8 +86,10 @@ September 28 is the tentative day on that calendar for opening some of those
 ## Finality and the clock are different levers
 
 <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">250ms slots</a> went live on mainnet at
- epoch 1037. That change shortened the slot, the window a leader has to produce
- a block. It did not change how long the network waits before a block is
+ epoch 1037, and the clock has since moved to
+ <a href="./solana-200ms-slots-october-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">200ms</a> at epoch 1053.
+ Those cuts shortened the slot, the turn a leader has to produce
+ a block. They did not change how long the network waits before a block is
  irreversible. Alpenglow is the other lever: how validators agree that a block
  can no longer be undone. A faster clock and faster finality both change how
  apps feel. They are separate switches.
@@ -129,7 +132,7 @@ Nothing in this week's testnet pass requires a mainnet program or wallet change.
  indexers should re-baseline counts **after** that cluster has actually migrated,
  not on a calendar date. Slot duration and finality stay separate: keep the
  current slot time from the
- <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">250ms slots</a> change, and do not treat
+ <a href="./solana-200ms-slots-october-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">200ms slots</a> change, and do not treat
  150ms as a new slot length.
 
 ### Everyone else

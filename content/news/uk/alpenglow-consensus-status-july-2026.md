@@ -34,7 +34,7 @@ Alpenglow є найбільшою зміною в тому, як Solana узго
         операторські нотатки тепер вказують на пізнішу активацію в районі 4.4, не на перемикання в 4.3.
         Публічний testnet – поточна репетиція:
         <a href="./alpenswitch-testnet-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Alpenswitch цього тижня переводить публічний testnet на Alpenglow</a>.
-        Окремо <a href="./solana-250ms-slots-september-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">слоти 250 мс уже живі</a> з епохи 1037.
+        Окремо такт слота тепер <a href="./solana-200ms-slots-october-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">200 мс</a>, з епохи 1053, 9 жовтня.
 </div>
 
       

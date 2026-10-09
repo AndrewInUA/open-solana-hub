@@ -33,7 +33,8 @@ Anza shipped **Agave 4.2**, the next release of Solana's primary validator clien
 <div class="callout">
 <strong>September 2026 update</strong>
         Transaction v1 went live on September 15. <a href="./solana-250ms-slots-september-2026.html">250ms slots
-        activated at epoch 1037</a> on September 18. Agave 4.3 also reached mainnet that day with Alpenglow
+        activated at epoch 1037</a> on September 18. The last step, <a href="./solana-200ms-slots-october-2026.html">200ms</a>,
+        landed on 9 October at epoch 1053. Agave 4.3 also reached mainnet on September 18 with Alpenglow
         still feature-gated off – operator notes now point to a later 4.4-era flip, not 4.3.
 </div>
 
@@ -45,7 +46,7 @@ Anza shipped **Agave 4.2**, the next release of Solana's primary validator clien
 
 - **90% rent reduction (SIMD-0437):** the storage bond constant falls from 6,960 to 696 lamports per byte, rolled out across five feature gates so the network can watch state growth at each step. A typical SPL token account deposit drops from roughly sixteen cents of SOL to about one and a half – making it far more practical for apps to cover rent for users.
 - **Larger transactions (SIMD-0296):** max transaction size rises from 1,232 to 4,096 bytes via a new transaction `v1` format. Existing `v0` and legacy transactions keep working. Workloads that never fit in one tx – ZK proofs, large multisigs, BLS schemes – can land atomically instead of being stitched across lookups or bundles.
-- **200ms slots (SIMD-0525):** slot time halves from 400ms to 200ms in four 50ms steps. If skip rates climb too high, the network pauses before the next decrement. Users see confirmations sooner; each leader's monopoly window over a block also shrinks.
+- **200ms slots (SIMD-0525):** slot time halves from 400ms to 200ms in four 50ms steps. If skip rates climb too high, the network pauses before the next decrement. Users see confirmations sooner; each leader's monopoly window over a block also shrinks. All four steps have since reached mainnet; the last one, 200ms, landed on 9 October 2026.
 
       
 

@@ -81,10 +81,10 @@ Copy from [`.env.example`](../.env.example). Redeploy after saving.
 This lives in the Hub repo as serverless routes (same Vercel project as the static site):
 
 - `POST /api/telegram` — webhook
-- `GET /api/telegram-cron` — epoch check (see `crons` in [`vercel.json`](../vercel.json), once daily at 08:00 UTC so Hobby deploys succeed; a Solana epoch is ~2 days)
+- `GET /api/telegram-cron` — epoch check (see `crons` in [`vercel.json`](../vercel.json), once daily at 08:00 UTC so Hobby deploys succeed; a Solana epoch is about a day)
 - `GET /api/telegram-setup` — registers the webhook once
 
-Hobby cron is at most once per day; that is still enough (a Solana epoch is ~2 days). The job **initializes** the current epoch on first run without messaging anyone, then sends on the next epoch change. Per-chat `lastEpochNotified` avoids duplicates if a run is retried.
+Hobby cron is at most once per day; that still catches an epoch change, a little after the boundary (a Solana epoch is about a day). The job **initializes** the current epoch on first run without messaging anyone, then sends on the next epoch change. Per-chat `lastEpochNotified` avoids duplicates if a run is retried.
 
 After the first deploy with env vars set:
 
