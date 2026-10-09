@@ -4,8 +4,8 @@ seo_title: 'How fast is Solana now? 200ms slots, an epoch about a day'
 date: '2026-10-09'
 tag: Consensus
 description: >-
-  How fast is Solana now? Slots are 200ms from epoch 1053, 9 October 2026. An epoch
-  lasts about a day. Capacity per second stays the same.
+  Slots are 200ms on mainnet from epoch 1053, 9 October 2026. An epoch lasts
+  about a day. Capacity per second stays the same.
 keywords:
   - how fast is Solana now
   - Solana 200ms slots
