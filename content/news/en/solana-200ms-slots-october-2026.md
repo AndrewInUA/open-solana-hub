@@ -164,7 +164,7 @@ Read `getBlockTime` or the current slot duration whenever you turn slots into
 
 If you hold or send SOL, this is something you feel rather than do. Transfers
  and swaps should confirm a little sooner than they did at 250ms, and apps should
- look less "one beat behind". Your wallet stays as it is. Two clocks are worth
+ look less "one beat behind". Two clocks are worth
  keeping straight: a slot of 200ms, and an epoch of about a day.
 
 <div class="callout">
