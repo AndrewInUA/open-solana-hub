@@ -1,11 +1,11 @@
 ---
 title: 'Solana''s clock just halved: 200ms slots are live, and an epoch now lasts about a day'
-seo_title: 'Solana 200ms slots are live, and epochs now last about a day'
+seo_title: 'Solana 200ms slots are live, epochs last about a day'
 date: '2026-10-09'
 tag: Consensus
 description: >-
-  Solana's slot time is 200ms on mainnet from epoch 1053 on 9 October 2026, half the
-  original 400ms. An epoch now takes about a day. What changes for you, in plain words.
+  Solana 200ms slots are live on mainnet from epoch 1053, 9 October 2026. An epoch
+  now lasts about a day. Capacity per second stays the same.
 keywords:
   - Solana 200ms slots
   - SIMD-0525
