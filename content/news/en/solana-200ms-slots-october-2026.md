@@ -7,11 +7,11 @@ description: >-
   How fast is Solana now? Slots are 200ms from epoch 1053, 9 October 2026. An epoch
   lasts about a day. Capacity per second stays the same.
 keywords:
-  - how fast is Solana
+  - how fast is Solana now
   - Solana 200ms slots
+  - Solana slot time
+  - Solana epoch
   - SIMD-0525
-  - epoch about a day
-  - epoch 1053
 teaser: >-
   Epoch 1053 cut the slot to 200ms, half the original clock. Confirmations arrive sooner,
   staking rewards land about once a day, and the network's capacity per second stays the same.
