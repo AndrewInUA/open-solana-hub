@@ -888,8 +888,12 @@
     const concurrency = options.concurrency || REWARD_RPC_CONCURRENCY;
     const retries = Math.max(1, Number(options.retries) || REWARD_RPC_RETRIES);
     const byEpoch = new Map();
+    function stopNow() {
+      return typeof options.shouldStop === "function" && options.shouldStop();
+    }
     async function loadEpoch(epoch) {
       for (let attempt = 1; attempt <= retries; attempt += 1) {
+        if (stopNow()) return;
         try {
           const result = await rpcCallImpl("getInflationReward", [
             keys,
@@ -903,6 +907,7 @@
           /* retry – a failed RPC is not a missing payout */
         }
       }
+      if (stopNow()) return;
       byEpoch.set(epoch, false);
     }
     function epochHasAmount(epoch) {
@@ -912,6 +917,7 @@
       return list.some((_, idx) => Boolean(normalizeRewardRow(rows[idx], epoch)));
     }
     for (let i = 0; i < epochsNeeded.length; i += concurrency) {
+      if (stopNow()) break;
       const batch = epochsNeeded.slice(i, i + concurrency);
       await Promise.all(batch.map(loadEpoch));
       const hole = union.epochs.find(epoch => {

@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/telegram.js": {
+      "maxDuration": 60
+    }
+  },
   "cleanUrls": false,
   "buildCommand": "npm run build",
   "installCommand": "npm install",
