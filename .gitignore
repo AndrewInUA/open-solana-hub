@@ -4,3 +4,15 @@ node_modules/
 .env
 .env.*
 !.env.example
+
+# Local one-off work (not part of the published site)
+photo-edit/
+video-bounty/
+
+# Brand / logo explorations (site uses open-solana-hub-logo.{png,svg} in git)
+assets/osh-*
+assets/open-solana-hub-icon.svg
+assets/open-solana-hub-logo-lockup*
+assets/open-solana-hub-logo-on-navy.png
+assets/open-solana-hub-logo-titled.png
+assets/open-solana-hub-x-header.png
