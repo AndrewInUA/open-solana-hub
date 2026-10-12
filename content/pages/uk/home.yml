@@ -1,9 +1,11 @@
 hero_title: Solana простими словами і зрозумілою мовою
 hero_lead: >
-  Тут Solana пояснюють без складних термінів: що це за мережа, як працюють гаманці і коли варто
-  стейкати SOL. Якщо ви вже делегуєте – відкрийте [Validator Transparency](../compare/):
-  стабільність, комісія та історія голосування кожного валідатора mainnet, без зайвого маркетингу.
-  Актуальні зміни протоколу – у [новинах Solana](./news/).
+  Пояснюємо Solana простими словами: що це за мережа, як працюють гаманці і коли в гру входить
+  стейкінг. <a href="../compare/" target="_blank" rel="noopener noreferrer" data-new-tab="on">Validator Transparency</a> –
+  крок перед стейком: стабільність, комісія та історія голосування кожного валідатора mainnet.
+  <a href="../compare/mystake.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Stake health</a>
+  далі стежить за стейком, який уже є. <a href="./news/">Новини Solana</a> – про оновлення протоколу,
+  голосування, випуски клієнтів і спільноту.
 hero_image: ''
 hero_image_alt: ''
 hero_caption: ''
