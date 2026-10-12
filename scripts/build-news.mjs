@@ -216,7 +216,7 @@ const X_SHARE_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>';
 
 function shareHtml(post, url, lang, { end = false } = {}) {
-  const intent = `https://x.com/intent/tweet?text=${encodeURIComponent(post.seoTitle || post.title)}&url=${encodeURIComponent(url)}&via=Andrew_In_UA`;
+  const intent = `https://x.com/intent/tweet?text=${encodeURIComponent(post.seoTitle || post.title)}&url=${encodeURIComponent(url)}&via=OpenSolanaHub`;
   const xLabel = lang === "uk" ? "Поділитися в X" : "Share on X";
   const copyLabel = lang === "uk" ? "Копіювати посилання" : "Copy link";
   const copiedLabel = lang === "uk" ? "Скопійовано" : "Copied";
@@ -467,6 +467,7 @@ ${shareHtml(post, url, "en", { end: true })}
       <a href="https://andrewinua.com/" target="_blank" rel="noopener">AndrewInUA validator</a>
       <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
       <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://x.com/OpenSolanaHub" target="_blank" rel="noopener">X</a>
     </div>
     <p class="footer-note">Education only – not financial advice.</p>
   </footer>
@@ -597,6 +598,7 @@ ${shareHtml(post, url, "uk", { end: true })}
       <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
       <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
       <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://x.com/OpenSolanaHub" target="_blank" rel="noopener">X</a>
     </div>
     <p class="footer-note">Лише для навчання – не фінансова порада.</p>
   </footer>
