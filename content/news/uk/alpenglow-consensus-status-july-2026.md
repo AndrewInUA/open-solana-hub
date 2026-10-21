@@ -28,6 +28,12 @@ Alpenglow є найбільшою зміною в тому, як Solana узго
 </figure>
 
 <div class="callout">
+<strong>Оновлення, жовтень 2026</strong>
+        Alpenglow працює на mainnet-beta. Епоха 1064 відкрилася о 13:36 UTC 21 жовтня, і genesis-сертифікат покриває слот 459 652 999.
+        <a href="./alpenglow-mainnet-october-2026.html">Alpenglow виходить на mainnet</a>.
+</div>
+
+<div class="callout">
 <strong>Оновлення, вересень 2026</strong>
         <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Agave 4.2</a> приніс повний код Alpenglow
         для test cluster. Agave 4.3 вийшов на mainnet 18 вересня із закритим feature gate Alpenglow;

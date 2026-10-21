@@ -28,6 +28,12 @@ Alpenglow is the largest change to how Solana agrees on blocks since the network
 </figure>
 
 <div class="callout">
+<strong>October 2026 update</strong>
+        Alpenglow is live on mainnet-beta. Epoch 1064 opened at 13:36 UTC on 21 October, and the genesis certificate covers slot 459,652,999.
+        <a href="./alpenglow-mainnet-october-2026.html">Alpenglow reaches mainnet</a>.
+</div>
+
+<div class="callout">
 <strong>September 2026 update</strong>
         <a href="./agave-4-2-release-august-2026.html" target="_blank" rel="noopener noreferrer" data-new-tab="on">Agave 4.2</a> shipped the complete Alpenglow codebase
         for test clusters. Agave 4.3 reached mainnet on September 18 with the Alpenglow feature gate
