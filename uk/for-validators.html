@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Сповіщення для оператора валідатора. Telegram-бот стежить за vote account у mainnet або testnet і пише, коли змінюється голосування, межа версії Foundation або оголошена адреса." />
+  <title>Для валідаторів – сповіщення оператора | Open Solana Hub</title>
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="https://www.opensolanahub.com/uk/for-validators.html" />
+  <link rel="alternate" hreflang="en" href="https://www.opensolanahub.com/for-validators.html" />
+  <link rel="alternate" hreflang="uk" href="https://www.opensolanahub.com/uk/for-validators.html" />
+  <link rel="alternate" hreflang="x-default" href="https://www.opensolanahub.com/for-validators.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="uk_UA" />
+  <meta property="og:title" content="Для валідаторів – сповіщення оператора | Open Solana Hub" />
+  <meta property="og:description" content="Сповіщення для оператора, який тримає машину. Надішліть vote account і отримаєте повідомлення, коли зміниться голосування, межа версії або оголошена адреса." />
+  <meta property="og:url" content="https://www.opensolanahub.com/uk/for-validators.html" />
+  <meta property="og:site_name" content="Open Solana Hub" />
+  <meta property="og:image" content="https://www.opensolanahub.com/assets/open-solana-hub-logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Для валідаторів – сповіщення оператора" />
+  <meta name="twitter:description" content="Стежить за vote account. Одне повідомлення, коли голосування зупинилось, і одне, коли знову пішло." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css?v=9" />
+  <link rel="icon" href="../assets/open-solana-hub-logo.png" type="image/png" />
+  <script src="../site.js?v=5" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <a href="./index.html" class="brand-logo-link" aria-label="Open Solana Hub">
+          <img src="../assets/open-solana-hub-logo.svg" alt="" class="brand-logo" width="40" height="40" />
+        </a>
+        <a href="./index.html" class="brand-text-link">
+          <span class="brand-text">
+            <span class="brand-title">Open Solana Hub</span>
+            <span class="brand-tag">Про Солану українською</span>
+          </span>
+        </a>
+      </div>
+      <nav class="site-nav" aria-label="Головне">
+        <a href="./index.html">Головна</a>
+        <a href="./basics.html">Основи</a>
+        <a href="./stay-safe.html">Безпека</a>
+        <a href="./first-steps.html">Перші кроки</a>
+        <a href="./ecosystem.html">Екосистема</a>
+        <a href="./glossary.html">Словник</a>
+        <a href="./compare-validators.html">Оцінка валідаторів</a>
+        <a href="./news/">Новини</a>
+        <a href="./about.html">Про проєкт</a>
+      </nav>
+      <div class="header-actions">
+        <nav class="lang-switch" aria-label="Мова">
+          <a href="../for-validators.html" lang="en" hreflang="en">EN</a>
+          <span class="lang-sep" aria-hidden="true">·</span>
+          <a href="./for-validators.html" class="active" lang="uk" hreflang="uk">UA</a>
+        </nav>
+        <button type="button" id="theme-toggle" class="theme-btn" aria-label="Змінити тему">☀</button>
+        <a class="btn btn-primary" href="../compare/">Оцінити валідаторів</a>
+        <a class="btn btn-primary" href="../compare/mystake.html">Як там мій стейк?</a>
+        <a class="btn btn-primary" href="./for-validators.html">Для валідаторів</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article class="prose-panel prose">
+      <h1>Для валідаторів</h1>
+      <p class="prose-lead">Сповіщення для оператора, який тримає машину.</p>
+      <p>Надішліть vote account, а потім ім’я для себе. Для testnet спочатку напишіть слово testnet. Бот стежить за цим vote account і пише в чат, коли змінилось те, на що оператор має зреагувати. Лише публічні дані. Seed і ключ не просить.</p>
+
+      <h2>Про що пише</h2>
+      <ul>
+        <li>Одне повідомлення, коли голосування зупинилось, з причиною, яку показує публічна мережа. Одне, коли знову пішло.</li>
+        <li>Список версій Foundation і скільки лишилось до вищої межі. У рядку є посилання на офіційний список. Check пише, коли клієнт уже закриває кожну опубліковану межу.</li>
+        <li>Адреса, з якої вузол зараз оголошує себе, щоб було видно, яка машина жива.</li>
+        <li>Нотатки про баланс вимкнені, поки їх не ввімкнути. Тоді зміна балансу vote account — окреме повідомлення.</li>
+      </ul>
+
+      <h2>Що роблять кнопки</h2>
+      <ul>
+        <li><strong>Check</strong> читає стеження зараз.</li>
+        <li><strong>Watches</strong> показує, за чим стежить цей чат.</li>
+        <li><strong>Add</strong> просить vote account і ім’я. Той самий vote account з новим ім’ям перейменовує його.</li>
+        <li><strong>Remove</strong> знімає одне стеження або всі.</li>
+        <li><strong>Help</strong> повторює це.</li>
+      </ul>
+
+      <div class="path-row">
+        <a class="btn btn-primary" href="https://t.me/Mainnet_Validator_Alerts_Bot" target="_blank" rel="noopener noreferrer">Відкрити @Mainnet_Validator_Alerts_Bot</a>
+        <a class="btn btn-ghost" href="./index.html">На головну</a>
+      </div>
+    </article>
+  </main>
+
+  <footer class="wrap site-footer">
+    <div class="footer-brand">
+      <a href="./index.html" class="footer-logo-link" aria-label="Open Solana Hub">
+        <img src="../assets/open-solana-hub-logo.svg" alt="" width="40" height="40" />
+      </a>
+      <div class="footer-brand-text">
+        <a href="./index.html" class="footer-title-link"><strong>Open Solana Hub</strong></a>
+        <span>Незалежний освітній проєкт · Створено AndrewInUA</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="../compare/">Validator Transparency</a>
+      <a href="../compare/mystake.html">Як там мій стейк?</a>
+      <a href="./for-validators.html">Для валідаторів</a>
+      <a href="./news/">Новини Solana</a>
+      <a href="https://andrewinua.com/" target="_blank" rel="noopener">Валідатор AndrewInUA</a>
+      <a href="https://github.com/AndrewInUA" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://t.me/AndrewInUA" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://x.com/OpenSolanaHub" target="_blank" rel="noopener">X</a>
+    </div>
+    <p class="footer-note">Лише для навчання – не фінансова порада.</p>
+  </footer>
+</body>
+</html>
