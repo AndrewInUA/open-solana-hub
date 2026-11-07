@@ -220,17 +220,56 @@
     if (!Array.isArray(row)) return null;
     const credits = Number(row[1]);
     const prevCredits = Number(row[2]);
-    if (Number.isFinite(credits) && Number.isFinite(prevCredits)) {
-      return Math.max(0, credits - prevCredits);
+    if (!Number.isSafeInteger(credits) || !Number.isSafeInteger(prevCredits)) return null;
+    if (credits < 0 || prevCredits < 0) return null;
+    return Math.max(0, credits - prevCredits);
+  }
+
+  // Alpenglow writes a u64-max sentinel and a second row for the same epoch
+  // when the credit counter restarts. Neither row is missed voting.
+  function usableEpochCreditRows(credits) {
+    const rows = Array.isArray(credits) ? credits : [];
+    let begin = 0;
+    for (let i = 0; i < rows.length; i += 1) {
+      const epoch = Number(rows[i]?.[0]);
+      if (!Number.isSafeInteger(epoch)) begin = i + 1;
     }
-    return Number.isFinite(credits) ? Math.max(0, credits) : null;
+    const tail = rows.slice(begin);
+    const sane = tail.filter(row => {
+      if (!Array.isArray(row) || row.length < 3) return false;
+      const epoch = Number(row[0]);
+      return Number.isSafeInteger(epoch) && epoch >= 0 && epoch <= 1_000_000 && epochEarnedCredits(row) != null;
+    });
+    const seen = new Set();
+    const kept = [];
+    for (let i = sane.length - 1; i >= 0; i -= 1) {
+      const epoch = Number(sane[i][0]);
+      if (seen.has(epoch)) continue;
+      seen.add(epoch);
+      kept.push(sane[i]);
+    }
+    kept.reverse();
+    return kept;
+  }
+
+  // Alpenglow restarted the credit counter, so later epochs earn thousands of
+  // times more credits than earlier ones. That jump is a new scale, not a slump.
+  function rowsOnCurrentCreditScale(rows) {
+    let start = 0;
+    let prev = null;
+    for (let i = 0; i < rows.length; i += 1) {
+      const earned = epochEarnedCredits(rows[i]);
+      if (prev > 0 && earned >= prev * 100) start = i;
+      if (Number.isFinite(earned)) prev = earned;
+    }
+    return rows.slice(start);
   }
 
   function votingHistoryFromCredits(credits) {
-    const recentRows = Array.isArray(credits) ? credits.slice(-30) : [];
-    const deltas = recentRows.map(epochEarnedCredits).filter(v => Number.isFinite(v));
+    const recentRows = usableEpochCreditRows(credits).slice(-30);
+    const finishedRows = rowsOnCurrentCreditScale(recentRows.length > 1 ? recentRows.slice(0, -1) : []);
+    const deltas = finishedRows.map(epochEarnedCredits).filter(v => Number.isFinite(v));
     const maxD = deltas.length ? Math.max(...deltas, 1) : 1;
-    const finishedRows = recentRows.length > 1 ? recentRows.slice(0, -1) : [];
     const epochs = finishedRows
       .map(row => {
         const epoch = Number(row[0]);
@@ -649,20 +688,8 @@
       }
     }
 
-    if (Number.isFinite(voting)) {
-      if (voting < 80) {
-        tone = worseTone(tone, "risk");
-        reasons.push(
-          `Recent voting consistency is ${voting.toFixed(1)}%, well below a typical healthy range.`
-        );
-      } else if (voting < 95) {
-        tone = worseTone(tone, "watch");
-        reasons.push(
-          `Recent voting consistency is ${voting.toFixed(1)}% – worth a look, not a crisis on its own.`
-        );
-      } else {
-        goods.push(`Recent voting looks steady (${voting.toFixed(1)}%).`);
-      }
+    if (Number.isFinite(voting) && voting >= 95) {
+      goods.push(`Recent voting looks steady (${voting.toFixed(1)}%).`);
     }
 
     if (Number.isFinite(stability?.score) && stability.sample >= 8) {
@@ -1228,6 +1255,19 @@
     return `Your stake is on ${nameBit}.`;
   }
 
+  function extraReasonLine(scored, lead) {
+    const seen = new Set();
+    const lines = [];
+    for (const row of scored || []) {
+      for (const reason of row.health?.reasons || []) {
+        if (!reason || seen.has(reason) || lead.includes(reason)) continue;
+        seen.add(reason);
+        lines.push(reason);
+      }
+    }
+    return lines.join(" ");
+  }
+
   function stakeStatusLine(rows) {
     const active = rows.filter(r => r.acc.status === "active");
     const activating = rows.filter(r => r.acc.status === "activating");
@@ -1402,6 +1442,7 @@
     const statusLine = stakeStatusLine(delegated);
     const votingLine = voting.show ? `Voting has stopped. ${VOTING_STOP_SENTENCE}` : "";
     const lead = [statusLine, votingLine, commLine].filter(Boolean).join(" ");
+    const reasonLine = extraReasonLine(scored, lead);
     const epochLeft = String(pack?.epochRemaining || "").trim();
 
     if (worst === "risk") {
@@ -1409,7 +1450,7 @@
         tone: "risk",
         kicker: TONE_BADGE.risk,
         headline,
-        body: `${lead} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
+        body: `${lead} ${reasonLine} ${TONE_COPY.risk.body}${idleNote}`.replace(/\s+/g, " ").trim(),
         next: [epochLeft, "Open Stake story for last epoch, then last epochs' rewards."].filter(Boolean).join(" "),
         lastEpochSol: lastSum,
         totalActiveSol,
@@ -1422,7 +1463,7 @@
         tone: "watch",
         kicker: TONE_BADGE.watch,
         headline,
-        body: `${lead} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
+        body: `${lead} ${reasonLine} ${TONE_COPY.watch.body}${idleNote}`.replace(/\s+/g, " ").trim(),
         next: [epochLeft, "Skim the cards below. Come back after the next epoch if you like a routine."].filter(Boolean).join(" "),
         lastEpochSol: lastSum,
         totalActiveSol,
@@ -1558,11 +1599,9 @@
     return u.toString();
   }
 
-  /** Live delinquent, or recent voting under the Risk line (80%). */
-  function votingHasStopped(status, votingPct) {
-    if (String(status || "").toLowerCase() === "delinquent") return true;
-    const voting = Number(votingPct);
-    return Number.isFinite(voting) && voting < 80;
+  /** The network's delinquent list. A low recent-voting average is not that list. */
+  function votingHasStopped(status) {
+    return String(status || "").toLowerCase() === "delinquent";
   }
 
   /**

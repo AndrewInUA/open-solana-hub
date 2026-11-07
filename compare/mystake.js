@@ -64,7 +64,7 @@ const {
 const THEME_KEY = "vtd-theme";
 const FIAT_KEY = "vtd-fiat";
 const RATE_CACHE_KEY = "vtd-sol-fiat";
-const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v4";
+const OVERLAY_CACHE_KEY = "vtd-overlay-cache-v6";
 
 function apiBase() {
   const h = window.location.hostname;
@@ -1137,15 +1137,12 @@ function renderStakeCard(row, { compact = false, showValidatorLink = true } = {}
   }
   if (Number.isFinite(Number(health.voting))) {
     const voting = Number(health.voting);
-    const stopped =
-      String(liveStatus).toLowerCase() === "delinquent" || voting < 80;
+    const stopped = String(liveStatus).toLowerCase() === "delinquent";
     signals.append(
       signalChip(
         "Recent voting",
-        stopped && String(liveStatus).toLowerCase() === "delinquent"
-          ? "Stopped"
-          : `${voting.toFixed(1)}%`,
-        stopped ? "risk" : voting < 95 ? "watch" : "ok"
+        stopped ? "Stopped" : `${voting.toFixed(1)}%`,
+        stopped ? "risk" : "ok"
       )
     );
   }
