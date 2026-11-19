@@ -55,9 +55,9 @@ Constellation puts two or three clerks behind that counter. Your letter goes out
 
 ## Easy to mix up
 
-Alpenglow is how Solana reaches agreement. Once enough stake is behind a block, the network treats it as final. That has been the rule since 21 October. Constellation does not replace that vote. It comes first, and it decides who may put transactions into the block.
+Alpenglow is how Solana reaches agreement. Once enough stake is behind a block, the network treats it as final. That has been the rule since 21 October. Constellation does not replace that vote. It comes first, and it decides who gets to put transactions into the block.
 
-The name has already been used. In March 2026 Anza published a different design and called it Constellation too. That version still had a leader. Someone else only checked the leader's work. The Breakpoint talk was about the November design: several validators build the slot, and there is no single leader.
+The name has already been used. In March 2026, Anza published a different design and called it Constellation too. That version still had a leader. Someone else only checked the leader's work. Breakpoint was about the November design. Several validators build the slot together.
 
 ## Still open
 
