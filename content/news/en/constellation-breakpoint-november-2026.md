@@ -51,13 +51,13 @@ On 14 November, Quentin Kniep and Roger Wattenhofer, the authors of this design,
 
 Picture a counter with one clerk on duty. Every letter has to go through that person. They choose what gets sent and what waits, and they can slide their own letter to the front.
 
-Constellation puts two or three clerks behind that counter. Your letter goes out as soon as any one of them picks it up. Postage sets your place in line. Each clerk seals their stack before learning what the others took, so nobody can reshuffle the queue after a glance at a colleague.
+Constellation puts two or three clerks behind that counter. Your letter goes out as soon as any one of them picks it up. Postage sets your place in line. Each clerk seals their stack before learning what the others took. Nobody can reshuffle the queue after a glance at a colleague.
 
 ## Easy to mix up
 
-Alpenglow is how Solana reaches agreement. Once enough stake is behind a block, the network treats it as final. That has been the rule since 21 October. Constellation does not replace that vote. It comes first, and it decides who gets to put transactions into the block.
+Alpenglow is how Solana reaches agreement. Once enough stake is behind a block, the network treats it as final. That has been the rule since 21 October. Constellation does not replace that vote. It comes first. This step decides who gets to add transactions to the block.
 
-The name has already been used. In March 2026, Anza published a different design and called it Constellation too. That version still had a leader. Someone else only checked the leader's work. Breakpoint was about the November design. Several validators build the slot together.
+The name has already been used. In March 2026, Anza published a different design under the same name. That version still had a leader. Someone else only checked the leader's work. Breakpoint was about the November design. Several validators build the block together.
 
 ## Still open
 
